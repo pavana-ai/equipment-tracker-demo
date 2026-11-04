@@ -1,0 +1,1155 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.45 system-ui,-apple-system,'Segoe UI',sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Vessel Equipment Tracker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: navy ops header band + tab strip, single working column of lists; detail opens as a side sheet (full screen on phones). */
+:root{
+  --bg:#eef2f5; --surface:#ffffff; --sunk:#e4eaef; --ink:#0f1e2b; --muted:#566878; --line:#d3dce3;
+  --navy:#12324a; --navy-ink:#eaf2f8; --navy-muted:#9db6ca;
+  --accent:#d9561a; --accent-ink:#ffffff;
+  --ok:#1d7f47; --warn:#a96b0c; --bad:#bb3326; --info:#2a6894; --idle:#66727e;
+  --label-bg:#ffffff; --label-ink:#000000;
+  --f-display:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --r:8px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b141b; --surface:#13202a; --sunk:#0f1a22; --ink:#e3ebf1; --muted:#90a3b2; --line:#233541;
+  --navy:#0e2433; --navy-ink:#e3ebf1; --navy-muted:#86a2b8;
+  --accent:#ff7a38; --accent-ink:#1a0b02;
+  --ok:#4fc283; --warn:#e3a849; --bad:#f06a5a; --info:#6eaed9; --idle:#98a5b1;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b141b; --surface:#13202a; --sunk:#0f1a22; --ink:#e3ebf1; --muted:#90a3b2; --line:#233541;
+  --navy:#0e2433; --navy-ink:#e3ebf1; --navy-muted:#86a2b8;
+  --accent:#ff7a38; --accent-ink:#1a0b02;
+  --ok:#4fc283; --warn:#e3a849; --bad:#f06a5a; --info:#6eaed9; --idle:#98a5b1;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--navy)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto}
+
+/* Header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--navy);color:var(--navy-ink)}
+.top-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 260px}
+.brand svg{flex:none}
+.brand h1{font-family:var(--f-display);font-weight:700;font-size:21px;letter-spacing:.01em;margin:0;line-height:1.1}
+.brand .sub{font-size:12px;color:var(--navy-muted);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.demo-tag{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;background:var(--accent);color:var(--accent-ink);padding:1px 6px;border-radius:3px;font-weight:600}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sync{display:flex;align-items:center;gap:8px;border:1px solid color-mix(in srgb,var(--navy-ink) 25%,transparent);background:color-mix(in srgb,var(--navy-ink) 7%,transparent);color:var(--navy-ink);border-radius:999px;padding:6px 12px 6px 10px;font-size:12.5px}
+.sync .dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 30%,transparent)}
+.sync.off .dot{background:var(--warn);box-shadow:0 0 0 3px color-mix(in srgb,var(--warn) 30%,transparent)}
+.sync.busy .dot{background:var(--info);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.seg{display:inline-flex;border:1px solid color-mix(in srgb,var(--navy-ink) 25%,transparent);border-radius:999px;padding:2px;gap:2px}
+.seg button{border:0;background:transparent;color:var(--navy-muted);padding:4px 11px;border-radius:999px;font-size:12.5px}
+.seg button[aria-pressed="true"]{background:var(--navy-ink);color:var(--navy)}
+nav.tabs{overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+.tabs-in{display:flex;gap:2px;min-width:max-content}
+.tabs a{display:block;padding:10px 12px 11px;color:var(--navy-muted);text-decoration:none;font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:.02em;border-bottom:3px solid transparent}
+.tabs a:hover{color:var(--navy-ink)}
+.tabs a[aria-current="page"]{color:var(--navy-ink);border-bottom-color:var(--accent)}
+.tabs .count{font-family:var(--f-mono);font-size:11px;margin-left:5px;opacity:.75}
+
+main{padding-block:20px 48px}
+h2{font-family:var(--f-display);font-weight:700;font-size:24px;margin:0;text-wrap:balance;letter-spacing:.005em}
+h3{font-family:var(--f-display);font-weight:600;font-size:17px;margin:0;letter-spacing:.01em}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:16px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.panel-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:14px 16px 10px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.panel-b{padding:14px 16px}
+
+/* Demo guide */
+.guide{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;padding:14px 16px;border:1px dashed color-mix(in srgb,var(--accent) 60%,var(--line));border-radius:var(--r);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.guide b{font-family:var(--f-display);font-size:16px;font-weight:700}
+.guide ol{margin:4px 0 0;padding-left:18px;display:grid;gap:3px}
+.guide .x{grid-column:1/-1}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.kpi .n{font-family:var(--f-display);font-weight:700;font-size:32px;line-height:1.05;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:12.5px;color:var(--muted)}
+.kpi.alert .n{color:var(--bad)}
+.kpi.pend .n{color:var(--warn)}
+@media (max-width:720px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.grid2{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+
+/* status bar */
+.stackbar{display:flex;height:14px;border-radius:4px;overflow:hidden;background:var(--sunk)}
+.stackbar span{display:block;height:100%}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 14px;margin-top:12px}
+.legend div{display:flex;align-items:center;gap:7px;font-size:13px}
+.legend i{width:10px;height:10px;border-radius:2px;flex:none}
+.legend .mono{margin-left:auto}
+.bars{display:grid;gap:7px}
+.bar-row{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:13px}
+.bar-row .t{height:10px;border-radius:3px;background:var(--sunk);overflow:hidden}
+.bar-row .t span{display:block;height:100%;background:var(--info);border-radius:3px}
+.bar-row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-row .mono{text-align:right}
+
+/* attention */
+.att-group+.att-group{border-top:1px solid var(--line)}
+.att-group>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer}
+.att-group>summary::-webkit-details-marker{display:none}
+.att-group>summary .sev{width:4px;align-self:stretch;border-radius:2px}
+.att-group>summary .ttl{font-weight:600;flex:1}
+.att-group>summary .mono{font-weight:600}
+.att-group>summary::after{content:"›";color:var(--muted);transition:transform .15s}
+.att-group[open]>summary::after{transform:rotate(90deg)}
+.att-list{padding:0 16px 10px 30px;display:grid;gap:2px}
+.att-item{display:flex;gap:10px;align-items:baseline;justify-content:space-between;text-align:left;background:none;border:0;padding:5px 6px;border-radius:5px;width:100%}
+.att-item:hover{background:var(--sunk)}
+.att-item .d{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att-item .w{flex:none;font-size:12.5px}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:2px 8px;border-radius:999px;white-space:nowrap;color:var(--c,var(--idle));background:color-mix(in srgb,var(--c,var(--idle)) 13%,transparent);border:1px solid color-mix(in srgb,var(--c,var(--idle)) 28%,transparent)}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.c-ok{--c:var(--ok)}.c-warn{--c:var(--warn)}.c-bad{--c:var(--bad)}.c-info{--c:var(--info)}.c-idle{--c:var(--idle)}
+
+/* toolbar + lists */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.toolbar .search{flex:1 1 240px;min-width:0;position:relative}
+.toolbar .search input{width:100%;padding:9px 12px 9px 34px}
+.toolbar .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+input[type=text],input[type=search],input[type=number],input[type=date],input[type=datetime-local],select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-width:0}
+select{padding-right:28px}
+.toolbar select{flex:0 1 auto;max-width:100%}
+.result-count{font-size:12.5px;color:var(--muted);margin-left:auto}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.row{display:grid;grid-template-columns:92px minmax(0,1fr) minmax(0,190px) 150px;gap:12px;align-items:center;padding:10px 14px;border:0;border-top:1px solid var(--line);background:none;width:100%;text-align:left}
+.row:first-child{border-top:0}
+.row:hover{background:var(--sunk)}
+.row .id{font-family:var(--f-mono);font-size:12.5px;font-weight:600;color:var(--accent)}
+.row .main{min-width:0}
+.row .main .t{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .main .s{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .loc{font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .end{justify-self:end;display:flex;gap:6px;align-items:center}
+.row.sp{grid-template-columns:92px minmax(0,1fr) minmax(0,190px) 180px}
+@media (max-width:760px){
+  .row,.row.sp{grid-template-columns:76px minmax(0,1fr);row-gap:4px}
+  .row .loc{grid-column:2;font-size:12.5px;color:var(--muted)}
+  .row .end{grid-column:2;justify-self:start}
+}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--surface)}
+.qty button{border:0;background:var(--sunk);width:30px;height:30px;font-size:16px;font-weight:600}
+.qty button:hover{background:color-mix(in srgb,var(--accent) 18%,var(--sunk))}
+.qty span{min-width:58px;text-align:center;font-family:var(--f-mono);font-size:13px;padding:0 6px}
+.qty.low span{color:var(--bad);font-weight:600}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:8px 13px;font-weight:500}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.big{padding:14px 20px;font-size:16px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:color-mix(in srgb,#000 45%,transparent);z-index:40}
+.sheet{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);background:var(--bg);z-index:41;display:flex;flex-direction:column;box-shadow:-12px 0 40px color-mix(in srgb,#000 25%,transparent);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.sheet-h{display:flex;gap:12px;align-items:flex-start;padding:16px 18px;border-bottom:1px solid var(--line);background:var(--surface)}
+.sheet-h .x{margin-left:auto;border:1px solid var(--line);background:var(--surface);border-radius:6px;width:34px;height:34px;font-size:18px;flex:none}
+.sheet-b{overflow:auto;padding:16px 18px 32px;display:flex;flex-direction:column;gap:16px;flex:1 1 auto;min-height:0}
+.sheet-b>*{flex:none}
+.idbig{font-family:var(--f-mono);font-weight:600;color:var(--accent);font-size:13px}
+.sheet-h h3{font-size:21px;line-height:1.15;margin-top:2px}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.kv div{background:var(--surface);padding:8px 11px;min-width:0}
+.kv dt{font-size:11px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;font-family:var(--f-mono)}
+.kv dd{margin:2px 0 0;overflow-wrap:anywhere}
+.qrbox{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+.qrbox .q{background:var(--label-bg);padding:6px;border-radius:4px;flex:none;line-height:0}
+.actions{display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.act-row{display:flex;gap:8px;flex-wrap:wrap}
+.act-row select,.act-row input{flex:1 1 180px}
+.locked{font-size:13px;color:var(--muted);background:var(--sunk);border-radius:var(--r);padding:12px 14px}
+.hist{display:grid;gap:0}
+.hist div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}
+.hist div:first-child{border-top:0}
+
+/* activity */
+.log-row{display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.log-row:first-child{border-top:0}
+.log-row .who{font-size:12.5px;color:var(--muted)}
+.linkish{background:none;border:0;padding:0;color:var(--accent);font-family:var(--f-mono);font-weight:600;font-size:12.5px}
+@media (max-width:640px){.log-row{grid-template-columns:minmax(0,1fr) auto}.log-row .when{grid-column:1/-1}}
+
+/* scan */
+.scan-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:820px){.scan-hero{grid-template-columns:minmax(0,1fr)}}
+.viewfinder{position:relative;aspect-ratio:4/3;max-width:100%;border-radius:var(--r);background:var(--navy);display:grid;place-items:center;overflow:hidden}
+.viewfinder::before{content:"";position:absolute;inset:18%;border:2px solid color-mix(in srgb,var(--navy-ink) 35%,transparent);border-radius:10px}
+.viewfinder .scanline{position:absolute;left:18%;right:18%;height:2px;background:var(--accent);top:30%;animation:sweep 2.4s ease-in-out infinite alternate;box-shadow:0 0 12px var(--accent)}
+@keyframes sweep{to{top:70%}}
+@media (prefers-reduced-motion:reduce){.viewfinder .scanline{animation:none;top:50%}.sync.busy .dot{animation:none}}
+.viewfinder .inner{position:relative;z-index:1;display:grid;gap:10px;justify-items:center;text-align:center;color:var(--navy-ink);padding:16px}
+.samples{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.sample{display:grid;gap:8px;justify-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+.sample .q{background:var(--label-bg);padding:6px;border-radius:4px;line-height:0}
+
+/* labels */
+.labels{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.label{aspect-ratio:2/1;max-width:100%;background:var(--label-bg);color:var(--label-ink);border-radius:6px;padding:8px 10px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;box-shadow:0 1px 0 var(--line),0 0 0 1px var(--line)}
+.label .q{line-height:0}
+.label .id{font-family:var(--f-mono);font-weight:600;font-size:17px;letter-spacing:.02em}
+.label .d{font-size:11.5px;line-height:1.25;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.label .s{font-family:var(--f-mono);font-size:10.5px}
+.label .o{font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-top:3px;border-top:1px solid var(--label-ink);padding-top:2px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;z-index:60;font-size:13.5px;max-width:calc(100% - 32px);box-shadow:0 8px 24px color-mix(in srgb,#000 30%,transparent)}
+/* add equipment */
+.fab{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--accent-ink);border:0;font-size:30px;line-height:1;box-shadow:0 6px 18px color-mix(in srgb,#000 30%,transparent);z-index:25;display:none}
+@media (max-width:760px){.fab{display:grid;place-items:center}}
+.choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.choice>*{display:grid;gap:6px;justify-items:start;text-align:left;padding:16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer}
+.choice>*:hover{border-color:var(--accent)}
+.choice b{font-family:var(--f-display);font-size:18px}
+.ic{width:40px;height:40px;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+@media (max-width:520px){.choice{grid-template-columns:minmax(0,1fr)}}
+.warnbox,.infobox{border-radius:var(--r);padding:10px 12px;font-size:13px;display:grid;gap:6px}
+.warnbox{border:1px solid color-mix(in srgb,var(--warn) 45%,transparent);background:color-mix(in srgb,var(--warn) 10%,var(--surface))}
+.infobox{border:1px solid color-mix(in srgb,var(--info) 40%,transparent);background:color-mix(in srgb,var(--info) 9%,var(--surface))}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.fgrid label,.fgrid .lab{display:grid;gap:4px;font-size:12.5px;color:var(--muted);min-width:0}
+.fgrid input,.fgrid select,.fgrid textarea{width:100%;color:var(--ink)}
+.fgrid textarea{min-height:64px;resize:vertical}
+.fgrid .full{grid-column:1/-1}
+.fgrid .chk{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:13px}
+.fgrid .chk input{width:auto}
+.req::after{content:" *";color:var(--bad)}
+.fsec{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+@media (max-width:560px){.fgrid{grid-template-columns:minmax(0,1fr)}}
+.sheet.wide{width:min(1120px,100%)}
+.sheet-f{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line);background:var(--surface)}
+
+/* reports + builder */
+.tcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.tcards{grid-template-columns:minmax(0,1fr)}}
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px;align-content:start}
+.tcard .src{font-size:12px;color:var(--muted)}
+.tcard .act-row{margin-top:2px}
+.builder{display:grid;gap:16px;align-items:start;grid-template-columns:minmax(0,1fr)}
+.pane{min-width:0}
+.pane.off{display:none}
+@media (min-width:1000px){.builder{grid-template-columns:minmax(0,420px) minmax(0,1fr)}.builder .pane.off{display:block}.bview{display:none!important}.builder .pane:last-child{position:sticky;top:0}}
+.paper-scroll{background:var(--sunk);border-radius:var(--r);padding:12px;overflow:auto;max-height:calc(100vh - 190px)}
+.pick-list{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.pick-row{display:grid;grid-template-columns:auto 70px minmax(0,1fr);gap:8px;align-items:center;padding:7px 10px;border-top:1px solid var(--line);font-size:13px;cursor:pointer;color:var(--ink)}
+.pick-row:first-child{border-top:0}
+.pick-row:hover{background:var(--sunk)}
+.pick-row .d{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick-row .d small{color:var(--muted);font-size:12px}
+.bseg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px;background:var(--surface)}
+.bseg button{border:0;background:transparent;color:var(--muted);padding:5px 12px;border-radius:999px;font-size:13px}
+.bseg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* documents */
+.docs{display:grid;grid-template-columns:270px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.docs{grid-template-columns:minmax(0,1fr)}.tree{display:none}}
+.tree{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:8px 6px;display:grid;gap:1px}
+.tree button{display:flex;gap:7px;align-items:center;width:100%;border:0;background:none;padding:5px 8px;border-radius:5px;text-align:left;font-size:13px;min-width:0}
+@media (max-width:860px){.tree{display:none!important}}
+.tree button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tree button[aria-current="true"]{background:color-mix(in srgb,var(--accent) 14%,transparent);font-weight:600}
+.tree button:hover{background:var(--sunk)}
+.crumbs{display:flex;flex-wrap:wrap;gap:2px;align-items:center;font-size:13.5px}
+.crumbs button{border:0;background:none;padding:2px 4px;color:var(--accent);font-weight:500;border-radius:4px}
+.crumbs button:hover{background:var(--sunk)}
+.crumbs .sep{color:var(--muted)}
+.crumbs .here{font-weight:600;padding:2px 4px}
+.frow{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 14px;border:0;border-top:1px solid var(--line);background:none;width:100%;text-align:left}
+.frow:first-child{border-top:0}
+.frow:hover{background:var(--sunk)}
+.frow .nm{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frow .meta{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frow svg{display:block}
+.newfolder{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--sunk)}
+.newfolder input{flex:1 1 200px}
+
+footer{padding-block:0 32px;font-size:12.5px;color:var(--muted)}
+footer .wrap{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:14px}
+.note{font-size:12.5px;color:var(--muted)}
+</style>
+
+<header class="top">
+  <div class="gutter"><div class="wrap">
+    <div class="top-row">
+      <div class="brand">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><rect x="7" y="7" width="8" height="8" fill="currentColor"/><rect x="19" y="7" width="8" height="8" fill="currentColor"/><rect x="7" y="19" width="8" height="8" fill="currentColor"/><rect x="20" y="20" width="3" height="3" fill="currentColor"/><rect x="24" y="24" width="3" height="3" fill="currentColor"/><rect x="20" y="24" width="2" height="2" fill="currentColor"/></svg>
+        <div style="min-width:0">
+          <h1>Vessel Equipment Tracker</h1>
+          <div class="sub"><span>MV Northern Plover · Survey Dept.</span><span class="demo-tag">DEMO · SAMPLE DATA</span></div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="sync" id="syncBtn" type="button" title="Tap to switch between online and offline (simulated)"></button>
+        <div class="seg" role="group" aria-label="Signed in as">
+          <button type="button" id="roleEditor" aria-pressed="true">Editor</button>
+          <button type="button" id="roleViewer" aria-pressed="false">Viewer</button>
+        </div>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="Sections"><div class="tabs-in" id="tabs"></div></nav>
+  </div></div>
+</header>
+
+<main class="gutter"><div class="wrap" id="view"></div></main>
+<footer class="gutter"><div class="wrap">
+  <span>Demo build · made-up sample data · changes are saved only in this browser.</span>
+  <button class="btn" type="button" id="resetBtn">Reset demo data</button>
+</div></footer>
+<div id="sheetRoot"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+(function(){
+"use strict";
+const KEY="vet-demo-v6";
+const TODAY=new Date();TODAY.setHours(0,0,0,0);
+const DAY=864e5;
+const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10)};
+const dOff=n=>iso(new Date(TODAY.getTime()+n*DAY));
+const daysTo=s=>Math.round((new Date(s+"T00:00:00")-TODAY)/DAY);
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmtD=s=>{if(!s)return"—";const d=new Date(s+"T00:00:00");return d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear()};
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ago=t=>{const m=Math.round((Date.now()-t)/6e4);if(m<1)return"just now";if(m<60)return m+" min ago";const h=Math.round(m/60);if(h<24)return h+" h ago";const d=Math.round(h/24);return d+" day"+(d>1?"s":"")+" ago"};
+
+/* ---------- sample data (seeded, made up) ---------- */
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const LOCS=["Survey Desk","Online Room","Bridge","Workshop Below Deck","Crawl Space","Container on Deck","ROV-1 Hangar","ROV-2 Hangar","File Cabinet","Shore Base – Houston"];
+const EQ_STATUS=["In Service","Spare / Storage","Needs Verification","Sent Back","Defective","Lost"];
+const HD_STATUS=["On Hand","Issued to Client","Missing","Reformatted"];
+const CLIENTS=["Gulfline Energy","Bayou Subsea","Meridian Offshore","Coral Basin Oil","Pelican Pipeline Co."];
+const PEOPLE=["A. Rivera","J. Chen","M. Okafor","S. Patel"];
+const STATUS_C={"In Service":"ok","Spare / Storage":"info","Needs Verification":"warn","Sent Back":"idle","Defective":"bad","Lost":"bad","On Hand":"ok","Issued to Client":"info","Missing":"bad","Reformatted":"idle"};
+const VESSEL="MV Northern Plover";
+const CO={name:"Demo Marine Services USA Inc.",short:"DMS",addr:["1200 Harbor Point Dr","Suite 300","Houston, TX 77041"],tin:"TIN: 00-0000000",contact:"A. Rivera",phone:"713-555-0142",formRef:"DMS-OPS-0085-FR",formRev:"A1"};
+const CLIENT_ADDR={"Gulfline Energy":"Gulfline Energy LLC\n400 Louisiana St, Floor 12\nHouston, TX 77002\nAttn: Data Management","Bayou Subsea":"Bayou Subsea Inc.\n88 Canal Blvd\nThibodaux, LA 70301\nAttn: Survey Coordinator","Meridian Offshore":"Meridian Offshore Ltd\n15 Queens Wharf\nPort of Spain, Trinidad W.I.\nAttn: Project Engineer","Coral Basin Oil":"Coral Basin Oil Co.\n2100 Ocean Dr\nCorpus Christi, TX 78404\nAttn: Records","Pelican Pipeline Co.":"Pelican Pipeline Co.\n7 Industrial Pkwy\nGalliano, LA 70354\nAttn: Integrity Team"};
+const SCHEDB={"Subsea Sensors":"9015.80.8080","Surface Sensors":"9014.20.4080","Computers":"8471.50.0150","Monitors":"8528.52.0000","Video Equipment":"8525.89.4000","Network Equipment":"8517.62.0090","Serial Servers":"8517.62.0090","UPS":"8504.40.9580","Tools":"9030.33.3800"};
+const COO={Kongsberg:"Norway",Sonardyne:"UK",Teledyne:"USA",Paroscientific:"USA",Tritech:"UK",Trimble:"USA",iXblue:"France",Dell:"Malaysia",HP:"China",Imenco:"Norway",Blackmagic:"Australia",Cisco:"Mexico",Ubiquiti:"China",Moxa:"Taiwan",APC:"Philippines",Fluke:"USA",Megger:"UK"};
+const PACK={"Subsea Sensors":["24 x 16 x 10 in",28],"Surface Sensors":["20 x 14 x 9 in",18],"Computers":["22 x 9 x 18 in",24],"Monitors":["26 x 6 x 18 in",12],"Video Equipment":["18 x 14 x 8 in",14],"Network Equipment":["19 x 10 x 3 in",9],"Serial Servers":["10 x 7 x 3 in",3],"UPS":["18 x 8 x 10 in",45],"Tools":["12 x 9 x 5 in",4]};
+const RT={om:{label:"Outgoing Manifest",folder:"Outgoing Manifests",tpl:"Outgoing Manifest",c:"--info",src:"Based on your Commercial Invoice + Packing List master",blurb:"Commercial invoice and packing list for equipment leaving the vessel. Pick the items; values, ECCN, schedule B and weights fill in from the database."},
+          fr:{label:"Fault Report",folder:"Fault Reports",tpl:"Fault Report",c:"--bad",src:"Based on your Equipment Fault Report form",blurb:"Record a fault on one item. Description, serial, asset number and owner come from the item, and the item can be marked Defective."},
+          tr:{label:"Transmittal Report",folder:"Transmittals",tpl:"Transmittal Report",c:"--ok",src:"Based on your DSUS transmittal (TR) delivery note",blurb:"Delivery note for data drives handed to a client. Pick the drives; their serial numbers go on the note, the drives are marked Issued to Client, and the note is filed under that client."}};
+const STATUS_VAR={"In Service":"--ok","Spare / Storage":"--info","Needs Verification":"--warn","Sent Back":"--idle","Defective":"--bad","Lost":"--bad"};
+
+function build(){
+  const r=rng(20261027), pick=a=>a[Math.floor(r()*a.length)], ri=(a,b)=>a+Math.floor(r()*(b-a+1));
+  const alnum=n=>{let s="";const c="ABCDEFGHJKLMNPRSTUVWXYZ0123456789";for(let i=0;i<n;i++)s+=c[Math.floor(r()*c.length)];return s};
+  const T=[
+   ["Subsea Sensors","Kongsberg","USBL Transponder – Omni",14,1,9800,"6A991",["ROV-1 Hangar","ROV-2 Hangar","Crawl Space","Workshop Below Deck"]],
+   ["Subsea Sensors","Sonardyne","Wideband Mini Transponder",8,1,8700,"6A991",["ROV-1 Hangar","ROV-2 Hangar","Crawl Space"]],
+   ["Subsea Sensors","Teledyne","Doppler Velocity Log 600 kHz",4,1,32000,"6A991",["ROV-1 Hangar","ROV-2 Hangar","Workshop Below Deck"]],
+   ["Subsea Sensors","Paroscientific","Digiquartz Depth Sensor",6,1,7400,"EAR99",["ROV-1 Hangar","ROV-2 Hangar","Workshop Below Deck"]],
+   ["Subsea Sensors","Tritech","Altimeter PA500",5,1,3100,"EAR99",["ROV-1 Hangar","ROV-2 Hangar","Crawl Space"]],
+   ["Surface Sensors","Trimble","GNSS Receiver",4,1,12500,"7A994",["Bridge","Survey Desk","Container on Deck"]],
+   ["Surface Sensors","iXblue","Gyrocompass",3,1,48000,"7A994",["Bridge","Survey Desk"]],
+   ["Computers","Dell","Survey Workstation",8,0,2900,"5A992",["Survey Desk","Online Room"]],
+   ["Computers","HP","Thin Client",6,0,650,"5A992",["Survey Desk","Online Room","File Cabinet"]],
+   ["Computers","Dell","Rugged Field Laptop",4,0,3400,"5A992",["Survey Desk","Container on Deck"]],
+   ["Monitors","HP","24\" Monitor",14,0,210,"EAR99",["Survey Desk","Online Room","Bridge","Workshop Below Deck"]],
+   ["Video Equipment","Imenco","HD Zoom Camera",6,0,5600,"EAR99",["ROV-1 Hangar","ROV-2 Hangar","Workshop Below Deck"]],
+   ["Video Equipment","Blackmagic","HD Video Recorder",5,0,1300,"EAR99",["Online Room","Survey Desk"]],
+   ["Network Equipment","Cisco","24-Port Network Switch",5,0,1800,"5A992",["Online Room","Survey Desk"]],
+   ["Network Equipment","Ubiquiti","Wireless Bridge",4,0,240,"5A992",["Container on Deck","Online Room"]],
+   ["Serial Servers","Moxa","NPort 5450 Serial Server",5,0,520,"5A992",["Online Room","Survey Desk"]],
+   ["UPS","APC","Smart-UPS 1500VA",6,0,780,"EAR99",["Online Room","Survey Desk","Container on Deck"]],
+   ["Tools","Fluke","Digital Multimeter",3,1,420,"EAR99",["Workshop Below Deck"]],
+   ["Tools","Megger","Insulation Tester",2,1,1650,"EAR99",["Workshop Below Deck"]]
+  ];
+  const eq=[];let n=1;
+  T.forEach(t=>{for(let k=0;k<t[3];k++){
+    const x=r();const status=x<.60?"In Service":x<.84?"Spare / Storage":x<.91?"Needs Verification":x<.95?"Sent Back":x<.985?"Defective":"Lost";
+    let loc=pick(t[7]);if(status==="Sent Back")loc="Shore Base – Houston";if(status==="Lost")loc="Unknown";
+    const verified=status==="Needs Verification"?dOff(-ri(110,240)):dOff(-ri(2,104));
+    eq.push({type:"eq",id:"EQ-"+String(n).padStart(4,"0"),category:t[0],manufacturer:t[1],description:t[2],
+      serial:(t[1].slice(0,2).toUpperCase())+ri(10000,99999)+alnum(1),
+      assetTag:r()<.94?"DMS-"+(10400+n*7):"",status,location:loc,
+      caseLoc:t[0].indexOf("Sensors")>-1&&status==="Spare / Storage"?"Pelican Case "+ri(1,12):"No case",
+      owner:r()<.85?"Company":"Rental – SeaTech",verified,certExp:t[4]?dOff(ri(-25,420)):"",
+      cost:t[5],eccn:t[6],coo:COO[t[1]]||"",schedB:SCHEDB[t[0]]||"",dims:(PACK[t[0]]||["",""])[0],weightLb:(PACK[t[0]]||["",0])[1],notes:status==="Defective"?pick(["Intermittent comms on RS-232","Bad battery, will not hold charge","Cracked housing – do not deploy","Fails self-test at power-up"]):""});
+    n++;}});
+  const S=[
+   ["Consumable","Black Printer Cartridge (934XL)","EA",2,"File Cabinet"],["Consumable","Colour Cartridge Set (935)","SET",2,"File Cabinet"],
+   ["Consumable","Electrical Tape","RL",6,"Workshop Below Deck"],["Consumable","Self-Amalgamating Tape","RL",4,"Workshop Below Deck"],
+   ["Consumable","Cable Ties 300 mm (bag of 100)","BG",3,"Workshop Below Deck"],["Consumable","Hose Clamps – Medium","EA",10,"Workshop Below Deck"],
+   ["Consumable","Silicone Grease","TU",3,"Workshop Below Deck"],["Consumable","Isopropyl Alcohol 1 L","BT",2,"Workshop Below Deck"],
+   ["Consumable","Heat Shrink Assortment","KT",2,"Workshop Below Deck"],["Consumable","AA Batteries (pack of 24)","PK",3,"Survey Desk"],
+   ["Consumable","9V Batteries","EA",6,"Survey Desk"],["Consumable","O-Ring Kit (metric)","KT",1,"Workshop Below Deck"],
+   ["Consumable","Label Printer Tape 2 × 1 in","RL",2,"Survey Desk"],["Consumable","Fuses 5 A","EA",10,"Workshop Below Deck"],
+   ["Connector Kit","8-Pin Wet-Mate Bulkhead (male)","EA",2,"Survey Desk"],["Connector Kit","8-Pin Wet-Mate Inline (female)","EA",2,"Survey Desk"],
+   ["Connector Kit","4-Pin Wet-Mate Bulkhead (male)","EA",2,"Survey Desk"],["Connector Kit","Locking Sleeves","EA",4,"Survey Desk"],
+   ["Connector Kit","Dummy Plugs 8-Pin","EA",4,"Survey Desk"],["Connector Kit","Fibre Optic Pigtails ST","EA",6,"Survey Desk"],
+   ["Connector Kit","DB9 Female Solder Kit","EA",6,"Survey Desk"],["Connector Kit","RJ45 Shielded Plugs (bag of 50)","BG",1,"Survey Desk"],
+   ["Connector Kit","BNC Crimp Connectors","EA",10,"Survey Desk"],
+   ["Bulk Cable","Cat6 Shielded Cable","M",50,"Crawl Space"],["Bulk Cable","RG59 Coax","M",50,"Crawl Space"],
+   ["Bulk Cable","4-Pair Instrumentation Cable","M",30,"Crawl Space"],["Bulk Cable","14 AWG Power Cable","M",30,"Crawl Space"],
+   ["Bulk Cable","Single-Mode Fibre Patch 10 m","EA",4,"Crawl Space"]
+  ];
+  const sp=S.map((s,i)=>{const x=r();const qty=x<.14?0:x<.3?ri(1,s[3]):ri(s[3]+1,s[3]*4);
+    return{type:"sp",id:"SP-"+String(i+1).padStart(4,"0"),kind:s[0],description:s[1],unit:s[2],min:s[3],qty,location:s[4],
+      box:s[0]==="Connector Kit"?"Connector drawer "+ri(1,6):s[0]==="Bulk Cable"?"Cable reel rack":"Consumables bin "+ri(1,4)}});
+  const hd=[];
+  for(let i=0;i<24;i++){const x=r();const status=i<15?"On Hand":i<22?"Issued to Client":"Missing";
+    const used=status!=="On Hand"||r()<.4;const client=used?pick(CLIENTS):"";const job=used?"J-"+ri(2601,2648):"";
+    hd.push({type:"hd",id:"HD-"+String(i+1).padStart(4,"0"),manufacturer:x<.6?"Seagate":"WD",size:pick(["4 TB HDD","4 TB HDD","8 TB HDD","2 TB SSD"]),
+      serial:(x<.6?"NA":"WX")+alnum(6),status,job,client,dataDesc:used?pick(["Client copy – survey video","Office copy – project data","Client copy – as-built report data","Backup – raw sensor logs"]):"Blank",
+      issued:status==="Issued to Client"?dOff(-ri(5,80)):""})}
+  {const a=hd[6],b2=hd[7];a.status="Reformatted";a.dataDesc="Office copy – project data";a.client=a.client||CLIENTS[0];a.job=a.job||"J-2604";a.reusedAs=b2.id;
+   b2.serial=a.serial;b2.manufacturer=a.manufacturer;b2.size=a.size;b2.status="On Hand";b2.dataDesc="Blank";b2.client="";b2.job="";b2.issued=""}
+  const log=[];const all=[...eq,...sp,...hd];
+  const acts=[
+    it=>it.type==="eq"?["Verified on board","Checked serial and location"]:null,
+    it=>it.type==="eq"?["Moved","Workshop Below Deck → "+it.location]:null,
+    it=>it.type==="sp"?["Quantity changed",(it.qty+2)+" → "+it.qty+" "+it.unit+" (used)"]:null,
+    it=>it.type==="hd"&&it.status==="Issued to Client"?["Issued to client",it.client+" · "+it.job]:null,
+    it=>it.type==="eq"&&it.status==="Defective"?["Status changed","In Service → Defective"]:null
+  ];
+  for(let i=0;i<26;i++){const it=pick(all);const a=pick(acts)(it);if(!a){i--;continue}
+    log.push({id:"L"+i,at:Date.now()-ri(30,60*24*12)*6e4,who:pick(PEOPLE),ref:it.id,what:a[0],detail:a[1],synced:true})}
+  log.sort((a,b)=>b.at-a.at);
+  return{eq,sp,hd,log,online:true,role:"editor",lastSync:Date.now()-14*6e4,f:{q:"",cat:"",st:"",loc:""},fs:{q:"",kind:""},fh:{q:"",st:""},lab:{cat:"Subsea Sensors"},
+    folders:[],files:[],reports:[],seq:1,docFolder:null};
+}
+
+let S;
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);if(o&&o.eq&&o.sp&&o.hd)return o}}catch(e){}return build()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+S=load();
+const byId=id=>S.eq.find(x=>x.id===id)||S.sp.find(x=>x.id===id)||S.hd.find(x=>x.id===id);
+const pending=()=>S.log.filter(e=>!e.synced).length;
+const editor=()=>S.role==="editor";
+
+/* ---------- QR ---------- */
+function qrMatrix(text){if(typeof window.qrcode!=="function")return null;try{const q=window.qrcode(0,"M");q.addData(text);q.make();const n=q.getModuleCount();const m=[];for(let r=0;r<n;r++){const row=[];for(let c=0;c<n;c++)row.push(q.isDark(r,c));m.push(row)}return m}catch(e){return null}}
+function qrSvg(text,px){const m=qrMatrix(text);const qz=2;
+  if(!m)return'<svg width="'+px+'" height="'+px+'" viewBox="0 0 10 10" role="img" aria-label="QR code unavailable"><rect width="10" height="10" fill="#fff" stroke="#000" stroke-width=".3" stroke-dasharray=".6 .6"/><text x="5" y="5.6" font-size="1.6" text-anchor="middle" fill="#000">QR</text></svg>';
+  const n=m.length+qz*2;let d="";m.forEach((row,r)=>row.forEach((v,c)=>{if(v)d+="M"+(c+qz)+","+(r+qz)+"h1v1h-1z"}));
+  return'<svg width="'+px+'" height="'+px+'" viewBox="0 0 '+n+' '+n+'" shape-rendering="crispEdges" role="img" aria-label="QR code for '+esc(text)+'"><rect width="'+n+'" height="'+n+'" fill="#fff"/><path d="'+d+'" fill="#000"/></svg>'}
+function qrCanvas(text){const m=qrMatrix(text);if(!m)return null;const s=8,qz=4,n=m.length+qz*2;const c=document.createElement("canvas");c.width=c.height=n*s;const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.fillStyle="#000";m.forEach((row,r)=>row.forEach((v,k)=>{if(v)g.fillRect((k+qz)*s,(r+qz)*s,s,s)}));return c}
+function decodeCanvas(c){if(typeof window.jsQR!=="function")return null;const g=c.getContext("2d");const im=g.getImageData(0,0,c.width,c.height);const res=window.jsQR(im.data,im.width,im.height);return res?res.data:null}
+function idFromCode(s){const m=String(s||"").toUpperCase().match(/(EQ|SP|HD)-\d{4}/);return m?m[0]:null}
+
+/* ---------- chrome ---------- */
+const TABS=[["overview","Overview"],["equipment","Equipment"],["supplies","Supplies"],["drives","Hard drives"],["scan","Scan"],["labels","Labels"],["reports","Reports"],["documents","Documents"],["activity","Activity"]];
+let tab="overview";
+function readHash(){const h=(location.hash||"").slice(1);tab=TABS.some(t=>t[0]===h)?h:"overview"}
+function renderTabs(){const cnt={equipment:S.eq.length,supplies:S.sp.length,drives:S.hd.length};
+  document.getElementById("tabs").innerHTML=TABS.map(t=>'<a href="#'+t[0]+'"'+(t[0]===tab?' aria-current="page"':'')+'>'+t[1]+(cnt[t[0]]?'<span class="count">'+cnt[t[0]]+'</span>':'')+'</a>').join("")}
+let syncing=false;
+function renderSync(){const b=document.getElementById("syncBtn");const p=pending();
+  b.className="sync"+(syncing?" busy":S.online?"":" off");
+  b.innerHTML='<span class="dot"></span><span>'+(syncing?"Syncing "+p+" change"+(p===1?"":"s")+"…":S.online?"Online · synced "+ago(S.lastSync):"Offline · "+(p?p+" change"+(p===1?"":"s")+" waiting":"working locally"))+'</span>';
+  document.getElementById("roleEditor").setAttribute("aria-pressed",String(editor()));
+  document.getElementById("roleViewer").setAttribute("aria-pressed",String(!editor()));}
+let toastT;function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)}
+
+/* ---------- sync ---------- */
+let syncT;
+function scheduleSync(){clearTimeout(syncT);syncT=setTimeout(doSync,900)}
+function doSync(){if(!S.online||syncing)return;const p=S.log.filter(e=>!e.synced);if(!p.length){S.lastSync=Date.now();save();renderSync();return}
+  syncing=true;renderSync();
+  setTimeout(()=>{p.forEach(e=>e.synced=true);S.lastSync=Date.now();syncing=false;save();renderSync();if(tab==="activity"||tab==="overview")render();refreshSheet();
+    toast("Synced "+p.length+" change"+(p.length===1?"":"s")+" to the central database")},1400)}
+function record(it,what,detail){S.log.unshift({id:"L"+Date.now()+Math.random().toString(36).slice(2,6),at:Date.now(),who:"You",ref:it.id,what,detail,synced:false});save();
+  if(S.online)scheduleSync();else toast("Saved on this device. It will sync when you're back online.");renderSync();}
+
+/* ---------- helpers ---------- */
+const chip=s=>'<span class="chip c-'+(STATUS_C[s]||"idle")+'">'+esc(s)+'</span>';
+const opts=(arr,sel,blank)=>(blank!=null?'<option value="">'+esc(blank)+'</option>':'')+arr.map(v=>'<option'+(v===sel?' selected':'')+'>'+esc(v)+'</option>').join("");
+const uniq=a=>[...new Set(a)].sort();
+const searchIcon='<svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+function match(it,q){if(!q)return true;q=q.toLowerCase();return Object.values(it).some(v=>typeof v==="string"&&v.toLowerCase().includes(q))}
+
+/* ---------- attention ---------- */
+function attention(){
+  const live=S.eq.filter(e=>e.status!=="Sent Back"&&e.status!=="Lost");
+  const cert=live.filter(e=>e.certExp&&daysTo(e.certExp)<=60).sort((a,b)=>a.certExp<b.certExp?-1:1)
+    .map(e=>{const d=daysTo(e.certExp);return[e,d<0?"expired "+(-d)+" d ago":"expires in "+d+" d",d<0?"bad":"warn"]});
+  const ver=live.filter(e=>e.status==="Needs Verification"||-daysTo(e.verified)>90).sort((a,b)=>a.verified<b.verified?-1:1)
+    .map(e=>[e,"last checked "+(-daysTo(e.verified))+" d ago","warn"]);
+  const bad=S.eq.filter(e=>e.status==="Defective"||e.status==="Lost").map(e=>[e,e.status,"bad"]);
+  const low=S.sp.filter(s=>s.qty<=s.min).sort((a,b)=>a.qty-b.qty).map(s=>[s,s.qty===0?"out of stock":s.qty+" left · reorder at "+s.min,s.qty===0?"bad":"warn"]);
+  const drv=S.hd.filter(h=>h.status==="Issued to Client"||h.status==="Missing").map(h=>[h,h.status==="Missing"?"missing":"with "+h.client,h.status==="Missing"?"bad":"info"]);
+  return[["Calibration certificates due or expired",cert,"--bad"],["Not verified in 90+ days",ver,"--warn"],["Defective or lost",bad,"--bad"],["Supplies at or below reorder level",low,"--warn"],["Hard drives off the vessel",drv,"--info"]]}
+
+/* ---------- views ---------- */
+function vOverview(){
+  const att=attention();const attCount=att[0][1].length+att[1][1].length+att[2][1].length+att[3][1].length;
+  const counts=EQ_STATUS.map(s=>[s,S.eq.filter(e=>e.status===s).length]);const tot=S.eq.length;
+  const locs={};S.eq.forEach(e=>locs[e.location]=(locs[e.location]||0)+1);const locArr=Object.entries(locs).sort((a,b)=>b[1]-a[1]);const lmax=locArr[0]?locArr[0][1]:1;
+  const value=S.eq.filter(e=>e.status!=="Lost").reduce((a,e)=>a+(e.cost||0),0);
+  return'<div class="stack">'+
+  '<div class="guide"><b>Try the demo</b><span class="muted">Everything here is made-up sample data.</span><ol class="x">'+
+   '<li>Open <a href="#equipment">Equipment</a>, tap any item, and move it to a new location.</li>'+
+   '<li>Tap the <b>Online</b> pill at the top to go offline, make a change, then tap it again to watch it sync.</li>'+
+   '<li>Open <a href="#scan">Scan</a> and scan a sample label, or take a photo of a printed label.</li>'+
+   '<li>Tap <b>+</b> on Equipment, Supplies or Hard drives to add something by scanning or typing.</li>'+
+   '<li>Open <a href="#reports">Reports</a>, create a fault report, then find it filed under <a href="#documents">Documents</a>.</li>'+
+   '<li>Switch to <b>Viewer</b> to see what read-only staff can do.</li></ol></div>'+
+  '<div class="kpis">'+
+   '<div class="kpi"><div class="n">'+tot+'</div><div class="l">Equipment items tracked</div></div>'+
+   '<div class="kpi"><div class="n">'+counts[0][1]+'</div><div class="l">In service right now</div></div>'+
+   '<div class="kpi alert"><div class="n">'+attCount+'</div><div class="l">Need attention</div></div>'+
+   '<div class="kpi"><div class="n">$'+(value/1000).toFixed(0)+'k</div><div class="l">Equipment value on record</div></div>'+
+  '</div>'+
+  '<div class="grid2">'+
+   '<section class="panel"><div class="panel-h"><h3>Needs attention</h3><span class="eyebrow">Tap a group to expand</span></div>'+
+    att.map((g,i)=>'<details class="att-group"'+(i===0?' open':'')+'><summary><span class="sev" style="background:var('+g[2]+')"></span><span class="ttl">'+esc(g[0])+'</span><span class="mono">'+g[1].length+'</span></summary>'+
+     '<div class="att-list">'+(g[1].length?g[1].map(x=>'<button class="att-item" type="button" data-open="'+x[0].id+'"><span class="d"><span class="mono" style="color:var(--accent);font-weight:600">'+x[0].id+'</span> '+esc(x[0].description)+'</span><span class="w chip c-'+x[2]+'">'+esc(x[1])+'</span></button>').join(""):'<div class="muted" style="padding:4px 6px">Nothing here.</div>')+'</div></details>').join("")+
+   '</section>'+
+   '<div class="stack">'+
+    '<section class="panel"><div class="panel-h"><h3>Equipment by status</h3><span class="eyebrow">'+tot+' items</span></div><div class="panel-b">'+
+     '<div class="stackbar" role="img" aria-label="Equipment by status">'+counts.filter(c=>c[1]).map(c=>'<span style="width:'+(c[1]/tot*100)+'%;background:var('+STATUS_VAR[c[0]]+')" title="'+esc(c[0])+': '+c[1]+'"></span>').join("")+'</div>'+
+     '<div class="legend">'+counts.map(c=>'<div><i style="background:var('+STATUS_VAR[c[0]]+')"></i>'+esc(c[0])+'<span class="mono">'+c[1]+'</span></div>').join("")+'</div></div></section>'+
+    '<section class="panel"><div class="panel-h"><h3>Where it is</h3><span class="eyebrow">Items per location</span></div><div class="panel-b bars">'+
+     locArr.map(l=>'<div class="bar-row"><span class="nm" title="'+esc(l[0])+'">'+esc(l[0])+'</span><span class="t"><span style="width:'+(l[1]/lmax*100)+'%"></span></span><span class="mono">'+l[1]+'</span></div>').join("")+'</div></section>'+
+   '</div>'+
+  '</div></div>'}
+
+function eqRows(){const f=S.f;const list=S.eq.filter(e=>(!f.cat||e.category===f.cat)&&(!f.st||e.status===f.st)&&(!f.loc||e.location===f.loc)&&match(e,f.q));
+  document.getElementById("rc").textContent=list.length+" of "+S.eq.length;
+  document.getElementById("lst").innerHTML=list.length?list.map(e=>'<button class="row" type="button" data-open="'+e.id+'"><span class="id">'+e.id+'</span><span class="main"><div class="t">'+esc(e.description)+'</div><div class="s">'+esc(e.manufacturer)+' · SN <span class="mono">'+esc(e.serial)+'</span>'+(e.assetTag?' · '+esc(e.assetTag):'')+'</div></span><span class="loc">'+esc(e.location)+'</span><span class="end">'+chip(e.status)+'</span></button>').join(""):'<div class="empty">No equipment matches these filters.</div>'}
+function vEquipment(){const f=S.f;
+  return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Serialised assets</div><h2>Equipment</h2></div>'+
+  (editor()?'<button class="btn primary" type="button" data-add-eq="1"><span style="font-size:18px;line-height:1">+</span> Add equipment</button>':'')+'</div>'+
+  (editor()?'<button class="fab" type="button" data-add-eq="1" aria-label="Add equipment">+</button>':'')+
+  '<div class="toolbar"><label class="search">'+searchIcon+'<input type="search" id="q" placeholder="Search description, serial, asset tag…" value="'+esc(f.q)+'" aria-label="Search equipment"></label>'+
+  '<select id="fcat" aria-label="Category">'+opts(uniq(S.eq.map(e=>e.category)),f.cat,"All categories")+'</select>'+
+  '<select id="fst" aria-label="Status">'+opts(EQ_STATUS,f.st,"All statuses")+'</select>'+
+  '<select id="floc" aria-label="Location">'+opts(uniq(S.eq.map(e=>e.location)),f.loc,"All locations")+'</select>'+
+  '<span class="result-count" id="rc"></span></div><div class="list" id="lst"></div></div>'}
+
+function spRows(){const f=S.fs;const list=S.sp.filter(s=>(!f.kind||s.kind===f.kind)&&match(s,f.q));
+  document.getElementById("rc").textContent=list.length+" of "+S.sp.length;
+  document.getElementById("lst").innerHTML=list.length?list.map(s=>{const low=s.qty<=s.min;return'<div class="row sp" role="button" tabindex="0" data-open="'+s.id+'"><span class="id">'+s.id+'</span><span class="main"><div class="t">'+esc(s.description)+'</div><div class="s">'+esc(s.kind)+' · reorder at '+s.min+' '+esc(s.unit)+'</div></span><span class="loc">'+esc(s.location)+' · '+esc(s.box)+'</span><span class="end">'+
+   (editor()?'<span class="qty'+(low?' low':'')+'"><button type="button" data-q="-1" data-id="'+s.id+'" aria-label="Use one">−</button><span>'+s.qty+' '+esc(s.unit)+'</span><button type="button" data-q="1" data-id="'+s.id+'" aria-label="Add one">+</button></span>':'<span class="mono" style="'+(low?'color:var(--bad);font-weight:600':'')+'">'+s.qty+' '+esc(s.unit)+'</span>')+
+   (s.qty===0?'<span class="chip c-bad">Out</span>':low?'<span class="chip c-warn">Low</span>':'')+'</span></div>'}).join(""):'<div class="empty">No supplies match.</div>'}
+function vSupplies(){const f=S.fs;
+  return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Counted stock</div><h2>Supplies</h2></div>'+
+  (editor()?'<button class="btn primary" type="button" data-add-eq="sp"><span style="font-size:18px;line-height:1">+</span> Add supplies</button>':'')+'</div>'+
+  (editor()?'<button class="fab" type="button" data-add-eq="sp" aria-label="Add supplies">+</button>':'')+
+  '<div class="toolbar"><label class="search">'+searchIcon+'<input type="search" id="q" placeholder="Search supplies…" value="'+esc(f.q)+'" aria-label="Search supplies"></label>'+
+  '<select id="fkind" aria-label="Type">'+opts(["Consumable","Connector Kit","Bulk Cable"],f.kind,"All types")+'</select><span class="result-count" id="rc"></span></div>'+
+  '<div class="list" id="lst"></div>'+(editor()?'<p class="note">Tap − when you use something and + when stock arrives. Items at or below their reorder level turn red.</p>':'')+'</div>'}
+
+function hdRows(){const f=S.fh;const list=S.hd.filter(h=>(!f.st||h.status===f.st)&&match(h,f.q));
+  document.getElementById("rc").textContent=list.length+" of "+S.hd.length;
+  document.getElementById("lst").innerHTML=list.length?list.map(h=>'<button class="row" type="button" data-open="'+h.id+'"><span class="id">'+h.id+'</span><span class="main"><div class="t">'+esc(h.manufacturer)+' '+esc(h.size)+' · <span class="mono">'+esc(h.serial)+'</span></div><div class="s">'+esc(h.dataDesc)+'</div></span><span class="loc">'+(h.client?esc(h.client)+' · <span class="mono">'+esc(h.job)+'</span>':'<span class="muted">Not assigned</span>')+'</span><span class="end">'+chip(h.status)+'</span></button>').join(""):'<div class="empty">No drives match.</div>'}
+function vDrives(){const f=S.fh;
+  return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Data custody</div><h2>Hard drives</h2></div>'+
+  (editor()?'<button class="btn primary" type="button" data-add-eq="hd"><span style="font-size:18px;line-height:1">+</span> Add hard drive</button>':'')+'</div>'+
+  (editor()?'<button class="fab" type="button" data-add-eq="hd" aria-label="Add hard drive">+</button>':'')+
+  '<div class="toolbar"><label class="search">'+searchIcon+'<input type="search" id="q" placeholder="Search serial, client, job…" value="'+esc(f.q)+'" aria-label="Search hard drives"></label>'+
+  '<select id="fhst" aria-label="Status">'+opts(HD_STATUS,f.st,"All statuses")+'</select><span class="result-count" id="rc"></span></div><div class="list" id="lst"></div></div>'}
+
+function vScan(){const samples=[S.eq[2],S.sp[4],S.hd[16]].filter(Boolean);
+  return'<div class="stack"><div class="page-head"><div><div class="eyebrow">QR labels</div><h2>Scan an item</h2></div></div>'+
+  '<div class="scan-hero"><div class="viewfinder"><div class="scanline"></div><div class="inner">'+
+   '<label class="btn primary big" for="photo">Scan with camera</label><input id="photo" type="file" accept="image/*" capture="environment" hidden>'+
+   '<span style="font-size:12.5px;color:var(--navy-muted);max-width:30ch">On a phone this opens the camera. Point it at a label and take the picture.</span></div></div>'+
+   '<div class="panel"><div class="panel-h"><h3>Or type the ID</h3></div><div class="panel-b stack" style="gap:10px">'+
+    '<form id="idForm" class="act-row"><input type="text" id="idIn" placeholder="e.g. EQ-0003" class="mono" autocomplete="off" aria-label="Item ID"><button class="btn primary" type="submit">Open</button></form>'+
+    '<p class="note" style="margin:0">In the finished app the camera reads labels live, with no photo step. Each label holds only the item ID, so a label never goes out of date.</p></div></div></div>'+
+  '<section class="panel"><div class="panel-h"><h3>Sample labels</h3><span class="eyebrow">Real QR codes · tap to scan</span></div><div class="panel-b samples">'+
+   samples.map(s=>'<div class="sample"><span class="q">'+qrSvg(s.id,108)+'</span><span class="mono" style="font-weight:600">'+s.id+'</span><button class="btn" type="button" data-scan="'+s.id+'">Scan this label</button></div>').join("")+
+  '</div></section></div>'}
+
+function vLabels(){const cats=uniq(S.eq.map(e=>e.category));const c=S.lab.cat;
+  const items=c==="__sp"?S.sp:c==="__hd"?S.hd:S.eq.filter(e=>e.category===c);
+  return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Print preview · 2 × 1 in labels</div><h2>Labels</h2></div>'+
+  '<select id="labCat" aria-label="Which labels">'+cats.map(x=>'<option value="'+esc(x)+'"'+(x===c?' selected':'')+'>Equipment – '+esc(x)+'</option>').join("")+'<option value="__sp"'+(c==="__sp"?' selected':'')+'>All supplies</option><option value="__hd"'+(c==="__hd"?' selected':'')+'>All hard drives</option></select></div>'+
+  '<p class="note" style="margin:0">'+items.length+' labels. The finished app sends these straight to a label printer.</p>'+
+  '<div class="labels">'+items.map(it=>'<div class="label"><span class="q">'+qrSvg(it.id,84)+'</span><span style="min-width:0"><div class="id">'+it.id+'</div><div class="d">'+esc(it.description||(it.manufacturer+" "+it.size))+'</div><div class="s">'+(it.serial?"SN "+esc(it.serial):esc(it.location))+'</div><div class="o">Property of Demo Marine Services</div></span></div>').join("")+'</div></div>'}
+
+function vActivity(){const p=pending();
+  return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Audit trail</div><h2>Activity</h2></div><span class="note">'+(p?p+" change"+(p===1?"":"s")+" waiting to sync":"All changes synced")+'</span></div>'+
+  '<div class="list">'+S.log.slice(0,80).map(e=>{const it=byId(e.ref);return'<div class="log-row"><span class="when mono muted" style="font-size:12px">'+ago(e.at)+'</span><span style="min-width:0"><div><b>'+esc(e.what)+'</b> · <button class="linkish" type="button" data-open="'+e.ref+'">'+e.ref+'</button> <span class="muted">'+esc(it?(it.description||""):"")+'</span></div><div class="who">'+esc(e.detail)+' · by '+esc(e.who)+'</div></span>'+(e.synced?'<span class="chip c-ok">Synced</span>':'<span class="chip c-warn">Waiting</span>')+'</div>'}).join("")+'</div>'+
+  '<p class="note" style="margin:0">Every change is recorded with who made it and when. Changes made offline are kept on the device until it can reach the server.</p></div>'}
+
+/* =====================================================================
+   FOLDERS (Documents library)
+   ===================================================================== */
+const IC={
+  folder:'<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h5l2 2h8A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z" fill="var(--warn)" opacity=".85"/></svg>',
+  doc:c=>'<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z" fill="none" stroke="var('+c+')" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v4h4M9 12h6M9 15h6M9 18h4" fill="none" stroke="var('+c+')" stroke-width="1.6"/></svg>',
+  scan:'<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 8h3v3H8zM13 13h3v3h-3zM13 8h3v3h-3zM8 13h3v3H8z" fill="currentColor"/></svg>',
+  pen:'<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13 7l4 4" stroke="currentColor" stroke-width="1.8"/></svg>'
+};
+const folderById=id=>S.folders.find(f=>f.id===id);
+function ensurePath(names){let p=null;names.forEach(n=>{let f=S.folders.find(x=>x.parent===p&&x.name===n);
+  if(!f){f={id:"F"+(S.seq++),name:n,parent:p,created:Date.now(),by:"System"};S.folders.push(f)}p=f.id});return p}
+function pathOf(fid){const a=[];let f=folderById(fid);while(f){a.unshift(f);f=folderById(f.parent)}return a}
+const pathText=fid=>pathOf(fid).map(f=>f.name).join(" › ");
+const kidsOf=fid=>S.folders.filter(f=>f.parent===fid).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+const filesIn=fid=>S.files.filter(f=>f.folder===fid).sort((a,b)=>b.created-a.created);
+function countDeep(fid){return filesIn(fid).length+kidsOf(fid).reduce((a,k)=>a+countDeep(k.id),0)}
+const repFolder=(type,date,client)=>{const y=(date||iso(TODAY)).slice(0,4);const p=["Reports",RT[type].folder,y];if(type==="tr")p.push(client||"Unassigned client");return ensurePath(p)};
+
+/* =====================================================================
+   REPORT DOCUMENTS (shared by preview and print file)
+   ===================================================================== */
+const DOC_CSS=[
+".pdoc{color:#000;font:10.5px/1.35 Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}",
+".pdoc .page{background:#fff;width:1000px;min-height:700px;padding:26px 28px 44px;margin:0 auto 14px;box-shadow:0 1px 4px rgba(0,0,0,.25);position:relative;box-sizing:border-box}",
+".pdoc.portrait .page{width:760px;min-height:1000px}",
+".pdoc table{border-collapse:collapse;width:100%}",
+".pdoc td,.pdoc th{border:1px solid #000;padding:3px 5px;vertical-align:top;text-align:left}",
+".pdoc th{background:#d9d9d9;font-weight:700;font-size:9.5px}",
+".pdoc .nb>tbody>tr>td,.pdoc .nb>tr>td{border:0;padding:0}",
+".pdoc .kvt td{border:0;padding:2px 6px}.pdoc .kvt td:first-child{text-align:right;font-weight:700;width:125px;white-space:nowrap}",
+".pdoc .title{font-size:17px;text-align:center;letter-spacing:.04em;vertical-align:middle}",
+".pdoc .title small{display:block;font-size:10px;letter-spacing:.02em;color:#333;margin-top:2px}",
+".pdoc .logo{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:15px;color:#12324a}",
+".pdoc .logo b{background:#12324a;color:#fff;padding:3px 6px;border-radius:2px;letter-spacing:.06em;font-size:14px}",
+".pdoc .lbl{font-weight:700;white-space:nowrap}",
+".pdoc .r{text-align:right}.pdoc .c{text-align:center}.pdoc .n{text-align:right;white-space:nowrap}",
+".pdoc .box{border:1px solid #000;padding:5px 7px;min-height:62px;white-space:pre-line}",
+".pdoc .small{font-size:8.5px}",
+".pdoc .sig{margin-top:14px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}",
+".pdoc .foot{position:absolute;left:28px;right:28px;bottom:14px;display:flex;justify-content:space-between;font-size:8.5px;color:#333}",
+".pdoc tr.tot td{font-weight:700;background:#f2f2f2}",
+".pdoc .items td{height:15px}",
+".pdoc .inner td{border:0;border-bottom:1px solid #000}.pdoc .inner tr:last-child td{border-bottom:0}",
+".pdoc ul{margin:4px 0 0;padding-left:18px}.pdoc li{margin:1px 0}",
+".pdoc .h40{height:42px}.pdoc .h28{height:26px}"
+].join("\n");
+const PRINT_CSS="@media print{.pdoc .page{box-shadow:none;margin:0;width:auto!important;min-height:0!important;padding:0 0 10px;page-break-after:always;break-after:page}.pdoc .page:last-child{page-break-after:auto;break-after:auto}.pdoc .foot{position:static;margin-top:18px}}";
+const fd=s=>s?fmtD(s):"";
+const fdt=s=>{if(!s)return"";const [d,t]=String(s).split("T");return fmtD(d)+(t?", "+t.slice(0,5):"")};
+const money=n=>(n===""||n==null||isNaN(n))?"":"$"+Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const logo='<span class="logo"><b>'+CO.short+'</b>Demo Marine</span>';
+const nl=s=>esc(s||"");
+const EXPORT_TXT="These items are controlled by the U.S. Government and authorized for export only to the country of ultimate destination for use by the ultimate consignee or end-user(s) herein identified. They may not be resold, transferred, or otherwise disposed of, to any other country or to any person other than the authorized ultimate consignee or end-user(s), either in their original form or after being incorporated into other items, without first obtaining approval from the U.S. government or as otherwise authorized by U.S. law and regulations.";
+
+function omLines(ids){return ids.map(id=>byId(id)).filter(Boolean).map(e=>({id:e.id,owner:e.owner==="Company"?CO.short:"SeaTech",qty:1,desc:e.manufacturer+" "+e.description,sn:e.serial,schedB:e.schedB||"",eccn:e.eccn||"",coo:e.coo||"",value:e.cost,dims:e.dims||"",wt:e.weightLb||""}))}
+function trLines(ids,client){return ids.map(id=>byId(id)).filter(Boolean).map(h=>({id:h.id,owner:client||"",qty:1,desc:h.manufacturer+" "+h.size+" – "+(h.dataDesc&&h.dataDesc!=="Blank"?h.dataDesc:"project data"),sn:h.serial,asset:h.id,schedB:"8471.70.6000",eccn:"EAR99",coo:h.manufacturer==="Seagate"?"Thailand":"Malaysia",value:120,dims:"10 x 2 x 30 cm",wt:0.25}))}
+const trAutoPkg=n=>n?n+"x hard drive"+(n>1?"s":"")+" with project video and data":"";
+function padRows(n,cols,min){let s="";for(let i=n;i<min;i++)s+="<tr>"+"<td></td>".repeat(cols)+"</tr>";return s}
+
+function docOM(d){const L=d.lines||[];const tv=L.reduce((a,l)=>a+(+l.value||0)*(+l.qty||1),0);const tw=L.reduce((a,l)=>a+(+l.wt||0)*(+l.qty||1),0);const tq=L.reduce((a,l)=>a+(+l.qty||1),0);
+  const head='<table class="nb"><tr><td style="width:30%;vertical-align:middle">'+logo+'</td><td class="title">COMMERCIAL INVOICE<small>Outgoing Equipment Manifest</small></td><td style="width:30%" class="r small">'+CO.addr.join("<br>")+'<br>'+CO.phone+'</td></tr></table>';
+  const p1='<div class="page">'+head+
+  '<table class="nb" style="margin-top:10px"><tr><td style="width:55%"><table class="kvt">'+
+   '<tr><td>Consignor:</td><td><b>'+CO.name+'</b><br>'+CO.addr.join("<br>")+'<br>'+CO.tin+'<br>'+CO.contact+' · '+CO.phone+'</td></tr>'+
+   '<tr><td>Handling Agent:</td><td>'+nl(d.agent)+'</td></tr>'+
+   '<tr><td>Client:</td><td>'+nl(d.client)+'</td></tr><tr><td>Vessel:</td><td>'+nl(d.vessel)+'</td></tr><tr><td>Project No:</td><td>'+nl(d.project)+'</td></tr>'+
+   '<tr><td>Invoice REF:</td><td>'+nl(d.invRef)+'</td></tr><tr><td>Port of Loading:</td><td>'+nl(d.pol)+'</td></tr><tr><td>Port of Discharge:</td><td>'+nl(d.pod)+'</td></tr></table></td>'+
+   '<td><table class="kvt" style="margin-bottom:8px"><tr><td>Date:</td><td>'+fd(d.date)+'</td></tr><tr><td>Shipping Invoice No:</td><td><b>'+nl(d.no)+'</b></td></tr></table>'+
+   '<div class="lbl">CONSIGNEE</div><div class="box">'+nl(d.consignee)+'</div><div class="lbl" style="margin-top:6px">Notify:</div><div class="box" style="min-height:44px">'+nl(d.notify)+'</div></td></tr></table>'+
+  '<table class="items" style="margin-top:12px"><tr><th>Item</th><th>Owner / Supplier</th><th>Qty</th><th>Description of material</th><th>SN / MR / PO</th><th>Schedule B Number</th><th>ECCN</th><th>COO</th><th class="n">Value</th><th class="n">Extended Value</th><th>Dimensions</th><th class="n">Weight lbs</th></tr>'+
+   L.map((l,i)=>'<tr><td class="c">'+(i+1)+'</td><td>'+nl(l.owner)+'</td><td class="c">'+l.qty+'</td><td>'+nl(l.desc)+'</td><td>'+nl(l.sn)+'</td><td>'+nl(l.schedB)+'</td><td>'+nl(l.eccn)+'</td><td>'+nl(l.coo)+'</td><td class="n">'+money(l.value)+'</td><td class="n">'+money((+l.value||0)*(+l.qty||1))+'</td><td>'+nl(l.dims)+'</td><td class="n">'+(l.wt||"")+'</td></tr>').join("")+
+   padRows(L.length,12,10)+
+   '<tr class="tot"><td colspan="2">Totals</td><td class="c">'+(tq||"")+'</td><td colspan="6"></td><td class="n">'+(L.length?money(tv):"")+'</td><td></td><td class="n">'+(L.length?tw:"")+'</td></tr></table>'+
+  '<div class="sig"><div>Shipped by: <b>'+nl(d.signName)+'</b><br>'+nl(d.signTitle)+'</div><div>Signature: ____________________________ &nbsp; Date: '+fd(d.date)+'</div></div>'+
+  '<p class="small" style="margin:12px 0 6px">'+EXPORT_TXT+'</p><div class="lbl">Notes:</div><div class="box" style="min-height:34px">'+nl(d.notes)+'</div>'+
+  '<div class="foot"><span>'+nl(d.no)+' · Commercial Invoice</span><span>Page 1 of 2</span></div></div>';
+  const p2='<div class="page">'+head.replace("COMMERCIAL INVOICE<small>Outgoing Equipment Manifest</small>","PACKING LIST<small>Outgoing Equipment Manifest</small>")+
+  '<table class="kvt" style="margin-top:10px;width:auto"><tr><td>Date:</td><td>'+fd(d.date)+'</td><td style="width:40px"></td><td>Client:</td><td>'+nl(d.client)+'</td></tr><tr><td>Invoice #:</td><td>'+nl(d.no)+'</td><td></td><td>Vessel:</td><td>'+nl(d.vessel)+'</td></tr><tr><td>Project No:</td><td>'+nl(d.project)+'</td><td></td><td>Destination:</td><td>'+nl(d.pod)+'</td></tr></table>'+
+  '<table class="items" style="margin-top:12px"><tr><th>Item</th><th>Owner / Supplier</th><th>Qty</th><th>Description of Material</th><th>SN / MR / PO</th><th>Dimensions</th><th class="n">Weight lbs</th><th>COO</th></tr>'+
+   L.map((l,i)=>'<tr><td class="c">'+(i+1)+'</td><td>'+nl(l.owner)+'</td><td class="c">'+l.qty+'</td><td>'+nl(l.desc)+'</td><td>'+nl(l.sn)+'</td><td>'+nl(l.dims)+'</td><td class="n">'+(l.wt||"")+'</td><td>'+nl(l.coo)+'</td></tr>').join("")+padRows(L.length,8,10)+
+   '<tr class="tot"><td colspan="2">Totals</td><td class="c">'+(tq||"")+'</td><td colspan="3">'+(L.length?L.length+" line"+(L.length>1?"s":""):"")+'</td><td class="n">'+(L.length?tw:"")+'</td><td></td></tr></table>'+
+  '<div class="foot"><span>'+nl(d.no)+' · Packing List</span><span>Page 2 of 2</span></div></div>';
+  return'<div class="pdoc">'+p1+p2+'</div>'}
+
+function docFR(d){
+  return'<div class="pdoc portrait"><div class="page">'+
+  '<table><tr><td style="width:24%;vertical-align:middle">'+logo+'</td><td class="title">EQUIPMENT FAULT REPORT</td><td style="width:32%;padding:0"><table class="inner"><tr><td>Form Reference:</td><td>'+CO.formRef+'</td></tr><tr><td>Form Revision:</td><td>'+CO.formRev+'</td></tr></table></td></tr></table>'+
+  '<table style="margin-top:12px"><tr><td class="lbl" style="width:13%">Vessel:</td><td>'+nl(d.vessel)+'</td><td class="lbl" style="width:12%">Job Nr.:</td><td style="width:20%">'+nl(d.job)+'</td></tr></table>'+
+  '<table style="margin-top:12px">'+
+   '<tr><td class="lbl" style="width:24%">Equipment Description</td><td>: <b>'+nl(d.desc)+'</b></td><td rowspan="2" class="c" style="width:22%;vertical-align:middle"><b>Report N°</b><br><span style="font-size:13px">'+nl(d.no)+'</span></td></tr>'+
+   '<tr><td class="lbl">Model N°</td><td>: '+nl(d.model)+'</td></tr>'+
+   '<tr><td class="lbl">Serial N°</td><td colspan="2">: '+nl(d.serial)+' &nbsp; &nbsp; <b>Asset N°</b> : '+nl(d.asset)+(d.itemId?' &nbsp; &nbsp; <b>Tracker ID</b> : '+nl(d.itemId):'')+'</td></tr>'+
+   '<tr><td class="lbl">Equipment Owner</td><td colspan="2">: '+nl(d.owner)+'</td></tr>'+
+   '<tr><td colspan="3"><b>Date / Time Fault occurred:</b> '+fdt(d.when)+'</td></tr>'+
+   '<tr><td colspan="3" class="h40"><b>Fault Description:</b> '+nl(d.fault)+'</td></tr>'+
+   '<tr><td colspan="3" class="lbl">Detail exactly how the equipment was being used when the Fault occurred</td></tr><tr><td colspan="3" class="h40">'+nl(d.usage)+'</td></tr>'+
+   '<tr><td colspan="3" class="lbl">Any Subsequent action taken:</td></tr><tr><td colspan="3" class="h40">'+nl(d.action)+'</td></tr></table>'+
+  '<div class="small" style="margin-top:10px"><b>Offshore Equipment Procedure:</b><ul><li>Inform Project Manager/Survey Manager of Fault/Damage or Loss of equipment on Daily Report.</li><li>Ensure that a copy of this report is sent to the Project Manager.</li><li>The Project Manager shall update workshop Supervisor with current damage report forms.</li><li>It is MANDATORY that a copy of this form is included with the equipment prior to despatch from location.</li><li>Securely attach a “<b>red label</b>” to the equipment prior to despatch from location.</li></ul></div>'+
+  '<div class="lbl" style="margin:14px 0 4px;font-size:12px">For Office Use</div>'+
+  '<table><tr><td class="lbl" style="width:24%">Asset N°</td><td colspan="3">: '+nl(d.asset)+'</td></tr><tr><td class="lbl">Action Taken</td><td style="width:26%">:</td><td colspan="2" class="lbl">REPAIR COSTS</td></tr>'+
+   '<tr><td></td><td></td><td class="lbl">Materials</td><td>: £ / $</td></tr>'+'<tr><td class="h28"></td><td></td><td></td><td>:</td></tr>'.repeat(3)+
+   '<tr><td class="lbl">Serviceable</td><td>: &nbsp; Yes / No</td><td></td><td>:</td></tr><tr><td class="lbl" colspan="4">If beyond repair, reason for disposal :</td></tr><tr><td colspan="4" class="h28"></td></tr></table>'+
+  '<table style="margin-top:22px"><tr><th>Action</th><th>Print Name</th><th>Signature</th><th>Date</th></tr><tr><td>Completed By:</td><td>'+nl(d.completedBy)+'</td><td class="h28"></td><td>'+fd(d.date)+'</td></tr><tr><td>Checked by:</td><td>'+nl(d.checkedBy)+'</td><td class="h28"></td><td>'+(d.checkedBy?fd(d.date):"")+'</td></tr></table>'+
+  '<div class="foot"><span>'+nl(d.no)+' · Equipment Fault Report</span><span>Page 1 of 1</span></div></div></div>'}
+
+function trDescText(d){const L=d.lines||[];const sn=L.map(l=>"(HDD S/No: "+l.sn+")").join(" & ");return[(d.contents||"").trim(),sn].filter(Boolean).join("\n\n")}
+function docTR(d){const L=d.lines||[];const fname=d.no?d.no+" ("+(d.title||"")+").docx":"";
+  const hd='style="background:#e6e6e6;font-weight:700;text-align:center"';
+  return'<div class="pdoc portrait"><div class="page">'+
+  '<table class="nb"><tr><td style="vertical-align:middle">'+logo+'</td><td class="r" style="vertical-align:middle;font-size:13px;color:#444">Demo Marine Services USA Transmittal</td></tr></table>'+
+  '<table style="margin-top:22px;font-size:11px"><tr><td colspan="3" '+hd+'>From: Address</td><td colspan="3" '+hd+'>To: Delivery Address</td></tr>'+
+   '<tr><td colspan="3" style="width:50%;height:120px">'+CO.name+'<br>'+CO.addr.join("<br>")+'<br><br>Tel: '+CO.phone+'<br>E-mail: northernplover.survey@demo-marine.example</td>'+
+   '<td colspan="3" style="white-space:pre-line">'+nl(d.toName)+(d.recipient?'\n<b>'+nl(d.recipient)+'</b>':'')+(d.toAddr?'\n\n'+nl(d.toAddr):'')+'</td></tr>'+
+   '<tr><td colspan="3" '+hd+'>Contact Name:</td><td colspan="3" '+hd+'>Delivery Note reference Number:</td></tr>'+
+   '<tr><td colspan="3" class="c">'+nl(d.contact)+'</td><td colspan="3" class="c">'+nl(d.no)+'</td></tr>'+
+   '<tr><td colspan="2" '+hd+'>Sent By: Print Name</td><td colspan="2" '+hd+'>Signed</td><td colspan="2" '+hd+'>Date</td></tr>'+
+   '<tr><td colspan="2" class="c">'+nl(d.signName)+'</td><td colspan="2" class="c"></td><td colspan="2" class="c">'+fd(d.date)+'</td></tr>'+
+   '<tr><td '+hd+' style="width:11%">Item No</td><td '+hd+' style="width:11%">Qty</td><td colspan="4" '+hd+'>Description</td></tr>'+
+   '<tr><td class="c" style="height:170px;padding-top:10px">'+(L.length?1:"")+'</td><td class="c" style="padding-top:10px">'+(L.length||"")+'</td><td colspan="4" style="white-space:pre-line;padding:10px 8px">'+nl(trDescText(d))+'</td></tr></table>'+
+  '<div style="font-size:11.5px;margin-top:4px">**Please return a signed copy of transmittal within 3 – 5 business days**</div>'+
+  '<table style="margin-top:120px;font-size:11px"><tr><td style="border:0;width:22%"></td><td class="c" style="background:#e6e6e6">Print Name</td><td class="c" style="background:#e6e6e6">Signature</td><td class="c" style="background:#e6e6e6">Date</td></tr>'+
+   '<tr><td style="background:#e6e6e6;height:36px;vertical-align:middle" class="c">Received by:</td><td class="c" style="vertical-align:middle"><b>'+nl(d.recipient)+'</b></td><td></td><td></td></tr></table>'+
+  '<div class="foot" style="border-top:5px solid #12324a;padding-top:8px;bottom:22px"><span>'+nl(fname)+'</span><span>Page: 1 of 1</span></div></div></div>'}
+
+const DOCS={om:docOM,fr:docFR,tr:docTR};
+const blankDoc=type=>DOCS[type]({no:"",lines:[],vessel:"",date:""});
+const safeName=s=>String(s).replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g," ").trim().slice(0,150);
+function fullDocHTML(title,type,body){const orient=type==="om"?"landscape":"portrait";
+  return'<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(title)+'</title><style>'+DOC_CSS+"\n"+PRINT_CSS+
+  "\nbody{margin:0;background:#e9ecef;font-family:Arial,Helvetica,sans-serif}.bar{position:sticky;top:0;z-index:2;background:#12324a;color:#fff;padding:10px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:14px}.bar button{font:inherit;font-weight:700;padding:7px 16px;border:0;border-radius:4px;background:#d9561a;color:#fff;cursor:pointer}.bar span{opacity:.8;font-size:12.5px}.wrapd{padding:16px;overflow-x:auto}@page{size:letter "+orient+";margin:9mm}@media print{.bar{display:none}.wrapd{padding:0}body{background:#fff}}"+
+  '</style></head><body><div class="bar"><b>'+esc(title)+'</b><button type="button" onclick="window.print()">Print</button><span>Tip: choose “Save as PDF” in the print window to keep a PDF copy.</span></div><div class="wrapd">'+body+'</div><script>window.addEventListener("load",function(){setTimeout(function(){window.print()},500)});<\/script></body></html>'}
+
+let dlP=null;
+function getDownloads(){if(!dlP){try{dlP=(window.claude&&typeof window.claude.use==="function")?window.claude.use("downloads").catch(()=>null):Promise.resolve(null)}catch(e){dlP=Promise.resolve(null)}}return dlP}
+async function downloadDoc(title,type,body){const inClaude=!!(window.claude&&typeof window.claude.use==="function");const dl=inClaude?await getDownloads():null;
+  if(!dl){if(inClaude){toast("Downloading isn't available for this viewer.");return}
+    const html=fullDocHTML(title,type,body);const url=URL.createObjectURL(new Blob([html],{type:"text/html"}));
+    const w=window.open(url,"_blank");
+    if(w){toast("Opened in a new tab. The print window will appear.")}
+    else{const a=document.createElement("a");a.href=url;a.download=safeName(title)+".html";document.body.appendChild(a);a.click();a.remove();toast("Saved. Open the file and it goes straight to the print window.")}
+    setTimeout(()=>URL.revokeObjectURL(url),60000);return}
+  try{await dl.save({filename:safeName(title)+".html",data:fullDocHTML(title,type,body)});toast("Saved. Open the file and it goes straight to the print window.")}
+  catch(e){const c=e&&e.code;if(c==="declined")return;if(c==="rate_limited")toast("A download prompt is already open.");else toast("Couldn't save the file in this view.")}}
+
+/* ---------- report numbers, saving, filing ---------- */
+function nextNo(type,date){const y=(date||iso(TODAY)).slice(0,4);
+  if(type==="fr"){const n=S.reports.filter(r=>r.type==="fr").map(r=>parseInt(String(r.no).replace(/\D/g,""),10)||0);return"FR-"+String((n.length?Math.max(...n):45)+1).padStart(3,"0")}
+  if(type==="tr"){const job=arguments[2]||"J-0000";const pre=CO.short+"_"+job+"-TR-";const n=S.reports.filter(r=>r.type==="tr"&&String(r.no).indexOf(pre)===0).map(r=>parseInt(r.no.slice(pre.length),10)||0);return pre+String((n.length?Math.max(...n):0)+1).padStart(3,"0")}
+  const P="OM";const n=S.reports.filter(r=>r.type===type&&String(r.no).indexOf(P+"-"+y)===0).map(r=>parseInt(r.no.split("-")[2],10)||0);
+  return P+"-"+y+"-"+String((n.length?Math.max(...n):0)+1).padStart(3,"0")}
+function repTitle(type,d){if(type==="om")return(d.client||"No client")+" – "+(d.pol||"?")+" to "+(d.pod||"?");
+  if(type==="fr")return(d.desc||"Equipment")+(d.serial?" SN "+d.serial:"");
+  return[(d.client||"Client"),(d.subject||"Project Data")].join(" ")+" To Client"}
+function frSnapshot(d){const e=byId(d.itemId);return Object.assign({},d,e?{desc:e.manufacturer+" "+e.description,serial:e.serial,asset:e.assetTag,owner:e.owner,itemId:e.id}:{})}
+function snapshot(type,d){if(type==="om")return Object.assign({},d,{lines:omLines(d.ids||[])});
+  if(type==="fr")return frSnapshot(d);
+  const lines=trLines(d.ids||[],d.client);const o=Object.assign({},d,{lines});o.title=repTitle("tr",o);return o}
+function saveReport(type,draft,opt){opt=opt||{};const data=snapshot(type,draft);delete data.ids;
+  const rep={id:"R"+(S.seq++),type,no:draft.no,date:draft.date||iso(TODAY),created:opt.at||Date.now(),by:opt.by||"You",data};
+  rep.title=repTitle(type,data);
+  const folder=repFolder(type,rep.date,data.client);
+  const file={id:"D"+(S.seq++),name:type==="tr"?rep.no+" ("+rep.title+")":rep.no+" "+RT[type].label+" – "+rep.title,folder,kind:"report",type,repId:rep.id,created:rep.created,by:rep.by};
+  rep.fileId=file.id;S.reports.unshift(rep);S.files.push(file);return rep}
+
+function seedDocs(){S.folders=[];S.files=[];S.reports=[];S.seq=1;
+  ["om","fr","tr"].forEach(t=>{const fid=ensurePath(["Templates",RT[t].tpl]);
+    S.files.push({id:"D"+(S.seq++),name:RT[t].tpl+" Template",folder:fid,kind:"template",type:t,created:Date.now()-40*DAY,by:"System"})});
+  ensurePath(["Reports","Outgoing Manifests"]);ensurePath(["Reports","Fault Reports"]);ensurePath(["Reports","Transmittals"]);
+  const cal=ensurePath(["Certificates","Calibration"]);ensurePath(["Certificates","Export Licences"]);ensurePath(["Equipment Photos"]);ensurePath(["Manuals & Datasheets"]);
+  S.eq.filter(e=>e.certExp).slice(0,4).forEach((e,i)=>S.files.push({id:"D"+(S.seq++),name:e.id+" "+e.description+" – Calibration Certificate.pdf",folder:cal,kind:"file",created:Date.now()-(20+i*9)*DAY,by:"J. Chen"}));
+  const sent=S.eq.filter(e=>e.status==="Sent Back").slice(0,5);
+  if(sent.length)saveReport("om",{no:"OM-"+iso(TODAY).slice(0,4)+"-001",date:dOff(-21),consignee:"Demo Marine Services – Shore Base\n1200 Harbor Point Dr\nHouston, TX 77041\nAttn: Workshop",agent:"Gulf Coast Freight Agents",notify:"A. Rivera\nWorkshop Supervisor",client:"Gulfline Energy",vessel:VESSEL,project:"J-2611",invRef:"",pol:"Port Fourchon, LA",pod:"Houston, TX",signName:"A. Rivera",signTitle:"Logistics Coordinator",notes:"Returned for service after project completion.",ids:sent.map(e=>e.id)},{at:Date.now()-21*DAY,by:"A. Rivera"});
+  const bad=S.eq.find(e=>e.status==="Defective");
+  if(bad)saveReport("fr",{no:"FR-046",date:dOff(-9),vessel:VESSEL,job:"J-2624",itemId:bad.id,model:"",when:dOff(-10)+"T14:30",fault:bad.notes||"Unit fails to respond",usage:"Mounted on ROV during pipeline survey.",action:"Swapped to spare unit. Faulty unit tagged and moved to workshop.",completedBy:"M. Okafor",checkedBy:"J. Chen"},{at:Date.now()-9*DAY,by:"M. Okafor"});
+  const iss=S.hd.filter(h=>h.status==="Issued to Client");
+  if(iss.length){const cl=iss[0].client;const grp=iss.filter(h=>h.client===cl);
+    const job=grp[0].job;saveReport("tr",{no:CO.short+"_"+job+"-TR-001",date:grp[0].issued||dOff(-12),client:cl,toName:"Onboard "+cl+" Representative",recipient:"R. Delgado",toAddr:"",contact:"J. Chen",job,subject:"Pipeline Survey Video",signName:"J. Chen",contents:grp.length+"x hard drive"+(grp.length>1?"s":"")+" containing video and stills recorded during the "+cl+" pipeline survey. ROV DVR and dive logs are also included.",ids:grp.map(h=>h.id)},{at:Date.now()-12*DAY,by:"J. Chen"})}
+}
+
+/* =====================================================================
+   VIEWS: Reports + Documents
+   ===================================================================== */
+function vReports(){
+  return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Paperwork from the database</div><h2>Reports</h2></div></div>'+
+  '<div class="tcards">'+["om","fr","tr"].map(t=>'<div class="tcard"><span class="ic" style="color:var('+RT[t].c+');background:color-mix(in srgb,var('+RT[t].c+') 14%,transparent)">'+IC.doc(RT[t].c)+'</span><h3>'+RT[t].label+'</h3><div>'+RT[t].blurb+'</div><div class="src">'+RT[t].src+'</div>'+
+   '<div class="act-row">'+(editor()?'<button class="btn primary" type="button" data-new-report="'+t+'">New '+RT[t].label.toLowerCase()+'</button>':'')+'<button class="btn" type="button" data-tpl="'+t+'">View blank template</button></div></div>').join("")+'</div>'+
+  '<section class="panel"><div class="panel-h"><h3>Recent reports</h3><span class="eyebrow">'+S.reports.length+' filed</span></div>'+
+   (S.reports.length?S.reports.slice(0,30).map(r=>{const f=S.files.find(x=>x.id===r.fileId);return'<button class="frow" type="button" data-open-file="'+r.fileId+'">'+IC.doc(RT[r.type].c)+'<span style="min-width:0"><div class="nm"><span class="mono" style="color:var(--accent);font-weight:600">'+esc(r.no)+'</span> '+esc(r.title)+'</div><div class="meta">'+RT[r.type].label+' · '+fmtD(r.date)+' · by '+esc(r.by)+' · '+esc(f?pathText(f.folder):"")+'</div></span><span class="chip c-idle">Open</span></button>'}).join(""):'<div class="empty">No reports yet.</div>')+
+  '</section></div>'}
+
+function treeHTML(parent,depth){return kidsOf(parent).map(f=>'<button type="button" data-folder="'+f.id+'" aria-current="'+(S.docFolder===f.id)+'" style="padding-left:'+(8+depth*14)+'px">'+IC.folder+'<span>'+esc(f.name)+'</span><span class="mono muted" style="margin-left:auto;font-size:11px">'+countDeep(f.id)+'</span></button>'+treeHTML(f.id,depth+1)).join("")}
+let newFolderOpen=false;
+function vDocuments(){if(S.docFolder&&!folderById(S.docFolder))S.docFolder=null;const cur=S.docFolder;const path=pathOf(cur);
+  const kids=kidsOf(cur),files=filesIn(cur);
+  const crumbs='<div class="crumbs"><button type="button" data-folder="">All documents</button>'+path.map((f,i)=>'<span class="sep">›</span>'+(i===path.length-1?'<span class="here">'+esc(f.name)+'</span>':'<button type="button" data-folder="'+f.id+'">'+esc(f.name)+'</button>')).join("")+'</div>';
+  const fileIcon=f=>f.kind==="report"||f.kind==="template"?IC.doc(f.kind==="template"?"--idle":RT[f.type].c):IC.doc("--muted");
+  const fileMeta=f=>(f.kind==="template"?"Blank template · "+RT[f.type].src:f.kind==="report"?RT[f.type].label+" · "+fmtD(iso(new Date(f.created)))+" · by "+esc(f.by):"PDF · added "+ago(f.created)+" by "+esc(f.by));
+  return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Filed automatically by type, year and client</div><h2>Documents</h2></div>'+
+   (editor()?'<button class="btn" type="button" data-newfolder="1">'+IC.folder+' New folder</button>':'')+'</div>'+
+  '<div class="docs"><nav class="tree" aria-label="Folders"><button type="button" data-folder="" aria-current="'+(cur===null)+'"><span style="font-weight:600">All documents</span><span class="mono muted" style="margin-left:auto;font-size:11px">'+S.files.length+'</span></button>'+treeHTML(null,0)+'</nav>'+
+  '<div class="stack" style="gap:10px;min-width:0">'+crumbs+'<div class="list">'+
+   (newFolderOpen&&editor()?'<form class="newfolder" id="nfForm"><input type="text" id="nfName" placeholder="Folder name, e.g. Bayou Subsea" aria-label="New folder name" autocomplete="off"><button class="btn primary" type="submit">Create in '+esc(cur?folderById(cur).name:"All documents")+'</button><button class="btn" type="button" data-newfolder="0">Cancel</button></form>':'')+
+   kids.map(f=>'<button class="frow" type="button" data-folder="'+f.id+'">'+IC.folder+'<span style="min-width:0"><div class="nm">'+esc(f.name)+'</div><div class="meta">'+kidsOf(f.id).length+' folder'+(kidsOf(f.id).length===1?'':'s')+' · '+countDeep(f.id)+' file'+(countDeep(f.id)===1?'':'s')+(f.by!=="System"?' · created by '+esc(f.by):'')+'</div></span><span class="muted">›</span></button>').join("")+
+   files.map(f=>'<button class="frow" type="button" data-open-file="'+f.id+'">'+fileIcon(f)+'<span style="min-width:0"><div class="nm">'+esc(f.name)+'</div><div class="meta">'+fileMeta(f)+'</div></span><span class="chip c-idle">Open</span></button>').join("")+
+   (!kids.length&&!files.length&&!(newFolderOpen&&editor())?'<div class="empty">This folder is empty.'+(editor()?' Reports are filed here automatically when you save them.':'')+'</div>':'')+
+  '</div><p class="note" style="margin:0">Saved reports are filed automatically: <span class="mono">Reports › type › year</span>, and transmittals one level deeper by client. Missing folders are created as needed.</p></div></div></div>'}
+
+/* =====================================================================
+   PANELS: add equipment, report builder, document viewer
+   ===================================================================== */
+let panel=null;
+function openPanel(p){openId=null;panel=p;renderPanel()}
+function renderPanel(){if(!panel)return;const root=document.getElementById("sheetRoot");
+  const r=panel.kind==="add"?pAdd():panel.kind==="report"?pReport():pDoc();
+  root.innerHTML='<div class="scrim" data-close="1"></div><aside class="sheet'+(r.wide?' wide':'')+'" role="dialog" aria-modal="true" aria-label="'+esc(r.label)+'">'+
+   '<div class="sheet-h"><div style="min-width:0;flex:1">'+r.head+'</div><button class="x" type="button" data-close="1" aria-label="Close">×</button></div>'+
+   '<div class="sheet-b">'+r.body+'</div>'+(r.foot?'<div class="sheet-f">'+r.foot+'</div>':'')+'</aside>';
+  fitPapers();if(r.after)r.after()}
+function fitPapers(){document.querySelectorAll(".paper-scroll").forEach(c=>{const d=c.querySelector(".pdoc");if(!d)return;const pw=d.classList.contains("portrait")?760:1000;const k=Math.max(.3,Math.min(1,(c.clientWidth-26)/pw));d.style.zoom=k})}
+window.addEventListener("resize",fitPapers);
+
+/* ---------- add equipment ---------- */
+const ADD={
+  eq:{noun:"equipment",title:"Add equipment",prefix:"EQ",list:()=>S.eq,
+      mfrSample:"MFR:Sonardyne;MODEL:Wideband Mini Transponder;SN:WS20417K",mfrLabel:"Maker’s QR on a transponder",
+      scanText:"Scan the maker’s QR code on the item to fill in the serial number, or scan a blank pre-printed label to give the item that ID."},
+  sp:{noun:"supplies",title:"Add supplies",prefix:"SP",list:()=>S.sp,
+      mfrSample:"MFR:3M;MODEL:Scotch 88 Vinyl Electrical Tape 3/4 in;PN:88-SUPER",mfrLabel:"Product QR on a roll of tape",
+      scanText:"Scan the product code on the box to fill in what it is, or scan a blank pre-printed label to give the shelf or bin that ID."},
+  hd:{noun:"hard drive",title:"Add hard drive",prefix:"HD",list:()=>S.hd,
+      mfrSample:"MFR:Seagate;MODEL:Expansion 4 TB HDD;SN:NA9K3LQ2",mfrLabel:"Serial QR on a new Seagate drive",
+      scanText:"Scan the QR code on the drive to fill in its serial number and size, or scan a blank pre-printed label to give the drive that ID."}};
+const SP_UNITS=["EA","RL","M","BG","KT","PK","SET","BT","TU","BX"];
+const HD_SIZES=["2 TB SSD","4 TB HDD","5 TB HDD","8 TB HDD","12 TB HDD"];
+function openAdd(seed,type){type=type||"eq";if(!editor()){toast("Only editors can add "+ADD[type].noun+".");return}
+  const base={eq:{category:"Subsea Sensors",newCat:"",manufacturer:"",description:"",serial:"",noSN:false,assetTag:"",location:"Survey Desk",caseLoc:"No case",status:"In Service",owner:"Company",certExp:"",cost:"",eccn:"EAR99",coo:"",schedB:"",dims:"",weightLb:"",notes:"",assignId:""},
+    sp:{kind:"Consumable",description:"",unit:"EA",qty:"1",min:"2",location:"Workshop Below Deck",box:"",assignId:""},
+    hd:{manufacturer:"Seagate",size:"4 TB HDD",serial:"",status:"On Hand",dataDesc:"Blank",client:"",job:"",assignId:"",closeOld:true}}[type];
+  openPanel({kind:"add",addType:type,step:seed&&seed.form?"form":"choose",how:seed&&seed.how||"Manual entry",note:seed&&seed.note||"",confirm:false,draft:Object.assign(base,seed&&seed.draft||{})})}
+function nextIdFor(type){const P=ADD[type].prefix;const n=ADD[type].list().map(e=>parseInt(e.id.slice(3),10)||0);return P+"-"+String(Math.max(0,...n)+1).padStart(4,"0")}
+function nextEqId(){return nextIdFor("eq")}
+function blankSampleId(type){type=type||"eq";const n=parseInt(nextIdFor(type).slice(3),10);return ADD[type].prefix+"-"+String(Math.ceil((n+20)/50)*50).padStart(4,"0")}
+function dupInfo(d,type){type=type||"eq";const out=[];const U=s=>String(s||"").trim().toUpperCase();
+  if(type==="eq"){const sn=U(d.serial),tag=U(d.assetTag);
+    if(sn&&!d.noSN)S.eq.filter(e=>U(e.serial)===sn).forEach(e=>out.push(["serial number",e]));
+    if(tag)S.eq.filter(e=>U(e.assetTag)===tag).forEach(e=>out.push(["asset tag",e]))}
+  else if(type==="sp"){const ds=U(d.description);if(ds)S.sp.filter(s=>U(s.description)===ds).forEach(s=>out.push(["description",s]))}
+  else{const sn=U(d.serial);if(sn)S.hd.filter(h=>U(h.serial)===sn).forEach(h=>out.push(["serial number",h]))}
+  return out}
+function dupHTML(d,type){type=type||"eq";const dups=dupInfo(d,type);if(!dups.length)return"";
+  if(type==="hd"){const open=dups.filter(x=>x[1].status!=="Reformatted");
+    return'<div class="infobox"><div><b>This drive has been used before</b></div>'+dups.map(x=>'<div>Same serial as <button class="linkish" type="button" data-open="'+x[1].id+'">'+x[1].id+'</button> '+esc(x[1].dataDesc+" · "+x[1].status+(x[1].client?" · "+x[1].client:""))+'.</div>').join("")+
+     '<div class="note">That’s fine for office copies that were reformatted and sent out again. A new record is added and the earlier ones keep their history.</div>'+
+     (open.length?'<label class="chk" style="color:var(--ink)"><input type="checkbox" data-a="closeOld"'+(d.closeOld?' checked':'')+'> Close '+open.map(x=>x[1].id).join(", ")+' as Reformatted</label>':'')+'</div>'}
+  const nm=x=>type==="sp"?x.description+" ("+x.qty+" "+x.unit+" in "+x.location+")":type==="hd"?x.manufacturer+" "+x.size+" · "+x.status:x.manufacturer+" "+x.description+" at "+x.location;
+  return'<div class="warnbox"><b>'+(type==="sp"?"Already stocked":"Possible duplicate")+'</b>'+dups.map(x=>'<div>Same '+x[0]+' as <button class="linkish" type="button" data-open="'+x[1].id+'">'+x[1].id+'</button> '+esc(nm(x[1]))+'.</div>').join("")+
+   '<div class="note">'+(type==="sp"?"To add stock to an existing line, open it and tap +. Only add a new line for a different product.":"Check it before adding it again. Duplicates were one of the problems in the old spreadsheet.")+'</div></div>'}
+function pAdd(){const p=panel,d=p.draft,T=p.addType,A=ADD[T];
+  const head='<div class="eyebrow">New '+A.noun+'</div><h3>'+A.title+'</h3><div class="muted" style="font-size:13px;margin-top:3px">'+(p.step==="choose"?"Scan a code or type the details.":"Will be added as <b class=\"mono\" style=\"color:var(--accent)\">"+(d.assignId||nextIdFor(T))+"</b> · "+esc(p.how))+'</div>';
+  if(p.step==="choose")return{label:A.title,head,body:
+   '<div class="choice"><label for="addPhoto"><span class="ic">'+IC.scan+'</span><b>Scan to add</b><span class="muted">'+A.scanText+'</span></label>'+
+   '<button type="button" data-add-mode="manual"><span class="ic">'+IC.pen+'</span><b>Enter manually</b><span class="muted">Type the details yourself. The app gives it the next free ID and makes its QR label.</span></button></div>'+
+   '<input id="addPhoto" type="file" accept="image/*" capture="environment" hidden>'+
+   '<div class="infobox"><b>No code to hand? Try a sample scan</b><div class="act-row"><button class="btn" type="button" data-add-sample="mfr">'+A.mfrLabel+'</button><button class="btn" type="button" data-add-sample="blank">Blank label '+blankSampleId(T)+'</button></div></div>'};
+  const note=p.note?'<div class="infobox"><div>'+p.note+'</div></div>':'';
+  const foot='<button class="btn" type="button" data-add-mode="back">Back</button><button class="btn primary" type="button" data-add-save="1">'+(p.confirm?"Add anyway":"Add to database")+'</button>';
+  const first='<div class="fsec" style="border-top:0;padding-top:0;margin-top:0">What it is</div>';
+  if(T==="sp")return{label:A.title,head,foot,body:note+'<div class="fgrid">'+first+
+   '<label>Type<select data-a="kind">'+opts(["Consumable","Connector Kit","Bulk Cable"],d.kind)+'</select></label>'+
+   '<label>Unit<select data-a="unit">'+opts(SP_UNITS,d.unit)+'</select></label>'+
+   '<label class="full"><span class="req">Description</span><input type="text" data-a="description" value="'+esc(d.description)+'" placeholder="e.g. Self-Amalgamating Tape 25 mm"></label>'+
+   '<div class="full" id="dupBox">'+dupHTML(d,"sp")+'</div>'+
+   '<div class="fsec">Stock</div>'+
+   '<label><span class="req">Quantity on hand</span><input type="number" min="0" step="1" data-a="qty" value="'+esc(d.qty)+'"></label>'+
+   '<label>Reorder when at or below<input type="number" min="0" step="1" data-a="min" value="'+esc(d.min)+'"></label>'+
+   '<div class="fsec">Where it is</div>'+
+   '<label>Location<select data-a="location">'+opts(LOCS,d.location)+'</select></label>'+
+   '<label>Box / bin<input type="text" data-a="box" value="'+esc(d.box)+'" placeholder="e.g. Consumables bin 2"></label></div>'};
+  if(T==="hd")return{label:A.title,head,foot,body:note+'<div class="fgrid">'+first+
+   '<label>Manufacturer<input type="text" data-a="manufacturer" list="hdMfr" value="'+esc(d.manufacturer)+'"><datalist id="hdMfr"><option value="Seagate"><option value="WD"><option value="Samsung"><option value="LaCie"></datalist></label>'+
+   '<label>Size<input type="text" data-a="size" list="hdSize" value="'+esc(d.size)+'"><datalist id="hdSize">'+HD_SIZES.map(z=>'<option value="'+z+'">').join("")+'</datalist></label>'+
+   '<label class="full"><span class="req">Serial number</span><input type="text" data-a="serial" class="mono" value="'+esc(d.serial)+'"></label>'+
+   '<div class="full" id="dupBox">'+dupHTML(d,"hd")+'</div>'+
+   '<div class="fsec">Contents and custody</div>'+
+   '<label>Status<select data-a="status">'+opts(["On Hand","Issued to Client"],d.status)+'</select></label>'+
+   '<label>Contents<input type="text" data-a="dataDesc" value="'+esc(d.dataDesc)+'" placeholder="Blank, or what is on it"></label>'+
+   '<label>Client<select data-a="client">'+opts(CLIENTS,d.client,"None yet")+'</select></label>'+
+   '<label>Job number<input type="text" data-a="job" class="mono" value="'+esc(d.job)+'"></label></div>'};
+  const cats=uniq(S.eq.map(e=>e.category));const mfrs=uniq(S.eq.map(e=>e.manufacturer));
+  const body=note+'<div class="fgrid">'+first+
+   '<label>Category<select data-a="category">'+cats.map(c=>'<option'+(c===d.category?' selected':'')+'>'+esc(c)+'</option>').join("")+'<option value="__new"'+(d.category==="__new"?' selected':'')+'>New category…</option></select></label>'+
+   (d.category==="__new"?'<label>New category name<input type="text" data-a="newCat" value="'+esc(d.newCat)+'" placeholder="e.g. ROV Tooling"></label>':'<label>Manufacturer<input type="text" data-a="manufacturer" list="mfrList" value="'+esc(d.manufacturer)+'" placeholder="e.g. Sonardyne"></label>')+
+   (d.category==="__new"?'<label>Manufacturer<input type="text" data-a="manufacturer" list="mfrList" value="'+esc(d.manufacturer)+'"></label>':'')+
+   '<datalist id="mfrList">'+mfrs.map(m=>'<option value="'+esc(m)+'">').join("")+'</datalist>'+
+   '<label class="full"><span class="req">Description</span><input type="text" data-a="description" value="'+esc(d.description)+'" placeholder="e.g. Wideband Mini Transponder"></label>'+
+   '<label><span class="req">Serial number</span><input type="text" data-a="serial" class="mono" value="'+esc(d.serial)+'"'+(d.noSN?' disabled':'')+'></label>'+
+   '<label>Asset tag<input type="text" data-a="assetTag" class="mono" value="'+esc(d.assetTag)+'" placeholder="DMS-…"></label>'+
+   '<label class="chk full"><input type="checkbox" data-a="noSN"'+(d.noSN?' checked':'')+'> This item has no serial number</label>'+
+   '<div class="full" id="dupBox">'+dupHTML(d,"eq")+'</div>'+
+   '<div class="fsec">Where it is</div>'+
+   '<label>Location<select data-a="location">'+opts(LOCS,d.location)+'</select></label>'+
+   '<label>Status<select data-a="status">'+opts(EQ_STATUS.filter(s=>s!=="Lost"),d.status)+'</select></label>'+
+   '<label>Case<input type="text" data-a="caseLoc" value="'+esc(d.caseLoc)+'"></label>'+
+   '<label>Owner<select data-a="owner">'+opts(["Company","Rental – SeaTech","Client owned"],d.owner)+'</select></label>'+
+   '<div class="fsec">Shipping and certificates (used on manifests)</div>'+
+   '<label>Calibration cert expires<input type="date" data-a="certExp" value="'+esc(d.certExp)+'"></label>'+
+   '<label>Value (USD)<input type="number" min="0" step="1" data-a="cost" value="'+esc(d.cost)+'"></label>'+
+   '<label>ECCN<input type="text" data-a="eccn" class="mono" value="'+esc(d.eccn)+'"></label>'+
+   '<label>Country of origin<input type="text" data-a="coo" value="'+esc(d.coo)+'"></label>'+
+   '<label>Schedule B number<input type="text" data-a="schedB" class="mono" value="'+esc(d.schedB)+'" placeholder="'+esc(SCHEDB[d.category]||"")+'"></label>'+
+   '<label>Weight (lbs)<input type="number" min="0" step="0.1" data-a="weightLb" value="'+esc(d.weightLb)+'"></label>'+
+   '<label class="full">Packed dimensions<input type="text" data-a="dims" value="'+esc(d.dims)+'" placeholder="'+esc((PACK[d.category]||[""])[0])+'"></label>'+
+   '<label class="full">Notes<textarea data-a="notes">'+esc(d.notes)+'</textarea></label></div>';
+  return{label:A.title,head,body,foot}}
+function parseMaker(text){const out={};String(text).split(/[;\n|]/).forEach(part=>{const m=part.match(/^\s*([A-Za-z\/ ]+)\s*[:=]\s*(.+?)\s*$/);if(!m)return;const k=m[1].toUpperCase().replace(/\s/g,"");
+  if(/^(SN|S\/N|SERIAL)/.test(k))out.serial=m[2];else if(/^(MFR|MAKE|MANUFACTURER|BRAND)/.test(k))out.manufacturer=m[2];else if(/^(MODEL|PRODUCT|DESC)/.test(k))out.description=m[2];else if(/^(PN|P\/N|PART)/.test(k))out.pn=m[2]});
+  if(!out.serial&&!out.manufacturer&&!out.description)out.raw=String(text).trim().slice(0,60);return out}
+function handleAddCode(text){const T=panel.addType,A=ADD[T];const id=idFromCode(text);
+  if(id&&id.indexOf(A.prefix)===0){if(byId(id)){closeSheet();toast(id+" is already in the database. Opening it.");openSheet(id);return}
+    panel.draft.assignId=id;panel.how="Scanned blank label";panel.note="Blank label <b class=\"mono\">"+id+"</b> scanned. The new record gets this ID, so the label already stuck on works straight away.";panel.step="form";renderPanel();return}
+  if(id){toast(id+" is "+({EQ:"an equipment",SP:"a supplies",HD:"a hard drive"})[id.slice(0,2)]+" label. Use the "+({EQ:"Equipment",SP:"Supplies",HD:"Hard drives"})[id.slice(0,2)]+" tab to add it.");return}
+  const m=parseMaker(text),d=panel.draft;
+  if(T==="eq"){if(m.manufacturer)d.manufacturer=m.manufacturer;if(m.description)d.description=m.description;d.serial=m.serial||m.raw||d.serial;
+    if(m.manufacturer){const hit=S.eq.find(e=>e.manufacturer===m.manufacturer&&(!m.description||e.description===m.description));
+      if(hit){d.category=hit.category;d.eccn=hit.eccn;d.coo=hit.coo;d.schedB=hit.schedB;d.dims=hit.dims;d.weightLb=hit.weightLb;d.cost=hit.cost}}}
+  else if(T==="sp"){d.description=[m.manufacturer,m.description].filter(Boolean).join(" ")||m.raw||d.description;
+    if(/cable|wire|coax|fibre|fiber/i.test(d.description)){d.kind="Bulk Cable";d.unit="M"}else if(/connector|plug|pigtail|crimp/i.test(d.description))d.kind="Connector Kit";
+    if(/tape/i.test(d.description))d.unit="RL"}
+  else{if(m.manufacturer)d.manufacturer=m.manufacturer;d.serial=m.serial||m.raw||d.serial;const z=String(m.description||text).match(/(\d+)\s*TB/i);if(z)d.size=z[1]+" TB "+(/SSD/i.test(text)?"SSD":"HDD")}
+  panel.how="Scanned "+(T==="sp"?"product code":"maker’s code");
+  panel.note="Read from the code: <span class=\"mono\">"+esc(text)+"</span>"+(T==="eq"&&m.manufacturer&&d.eccn?"<br>Shipping details were copied from a matching "+esc(m.manufacturer)+" item. Check them before saving.":"<br>Check the details, then add it.");
+  panel.step="form";renderPanel()}
+function decodeFile(file,cb){if(typeof window.jsQR!=="function"){toast("The scanner couldn't load. Enter the details manually.");return}
+  const url=URL.createObjectURL(file);const img=new Image();
+  img.onload=()=>{const max=1400,k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);const r=decodeCanvas(c);if(r)cb(r);else toast("No QR code found. Fill the frame with the code and try again.")};
+  img.onerror=()=>{URL.revokeObjectURL(url);toast("Couldn't read that photo. Try again.")};img.src=url}
+function addSave(){const p=panel,d=p.draft,T=p.addType;
+  if(T==="sp"){if(!d.description.trim()){toast("Enter a description.");return}if(d.qty===""||isNaN(+d.qty)||+d.qty<0){toast("Enter the quantity on hand.");return}}
+  if(T==="hd"&&!d.serial.trim()){toast("Enter the drive's serial number.");return}
+  if(T==="eq"){const cat=d.category==="__new"?(d.newCat||"").trim():d.category;
+    if(!cat){toast("Enter a name for the new category.");return}
+    if(!d.description.trim()){toast("Enter a description.");return}
+    if(!d.noSN&&!d.serial.trim()){toast("Enter the serial number, or tick ‘no serial number’.");return}}
+  if(T!=="hd"&&dupInfo(d,T).length&&!p.confirm){p.confirm=true;renderPanel();toast("This looks like a duplicate. Check it, then tap Add anyway.");return}
+  const id=d.assignId&&!byId(d.assignId)?d.assignId:nextIdFor(T);let it;
+  if(T==="sp"){it={type:"sp",id,kind:d.kind,description:d.description.trim(),unit:d.unit,min:+d.min||0,qty:+d.qty||0,location:d.location,box:d.box.trim()||"—"};S.sp.push(it);S.fs={q:"",kind:""}}
+  else if(T==="hd"){it={type:"hd",id,manufacturer:d.manufacturer.trim()||"Unknown",size:d.size.trim()||"—",serial:d.serial.trim(),status:d.status,job:d.job.trim(),client:d.client,dataDesc:d.dataDesc.trim()||"Blank",issued:d.status==="Issued to Client"?iso(TODAY):""};S.hd.push(it);S.fh={q:"",st:""};
+    if(d.closeOld)dupInfo(d,"hd").map(x=>x[1]).filter(h=>h.id!==id&&h.status!=="Reformatted").forEach(h=>{h.status="Reformatted";h.reusedAs=id;record(h,"Reformatted","Reused as "+id)})}
+  else{const cat=d.category==="__new"?d.newCat.trim():d.category;
+    it={type:"eq",id,category:cat,manufacturer:d.manufacturer.trim()||"Unknown",description:d.description.trim(),serial:d.noSN?"No S/N":d.serial.trim(),assetTag:d.assetTag.trim(),status:d.status,location:d.location,caseLoc:d.caseLoc||"No case",owner:d.owner,verified:iso(TODAY),certExp:d.certExp,
+    cost:+d.cost||0,eccn:d.eccn.trim(),coo:d.coo.trim()||COO[d.manufacturer]||"",schedB:d.schedB.trim()||SCHEDB[cat]||"",dims:d.dims.trim()||(PACK[cat]||[""])[0],weightLb:+d.weightLb||(PACK[cat]||["",""])[1]||"",notes:d.notes.trim()};S.eq.push(it);S.f={q:"",cat:"",st:"",loc:""}}
+  record(it,"Added to database",p.how+(it.location?" · "+it.location:""));save();closeSheet();render();openSheet(id);toast(id+" added. Its QR label is ready to print.")}
+
+/* ---------- report builder ---------- */
+function newDraft(type,itemId){const today=iso(TODAY);
+  if(type==="om")return{no:nextNo("om"),date:today,consignee:"Demo Marine Services – Shore Base\n1200 Harbor Point Dr\nHouston, TX 77041\nAttn: Workshop",agent:"Gulf Coast Freight Agents",notify:"A. Rivera\nWorkshop Supervisor",client:CLIENTS[0],vessel:VESSEL,project:"J-2631",invRef:"",pol:"Port Fourchon, LA",pod:"Houston, TX",signName:"You",signTitle:"Survey Engineer",notes:"",ids:itemId?[itemId]:[],update:true};
+  if(type==="fr"){const def=itemId||(S.eq.find(e=>e.status==="Defective")||S.eq[0]).id;
+    return{no:nextNo("fr"),date:today,vessel:VESSEL,job:"J-2631",itemId:def,model:"",when:today+"T08:00",fault:"",usage:"",action:"",completedBy:"You",checkedBy:"J. Chen",mark:true}}
+  const cl=CLIENTS[0];return{no:nextNo("tr",today,"J-2631"),date:today,client:cl,toName:"Onboard "+cl+" Representative",recipient:"",toAddr:"",contact:"A. Rivera",job:"J-2631",subject:"Survey Video",signName:"You",contents:"",autoContents:true,ids:itemId?[itemId]:[],mark:true}}
+function syncTr(){const d=panel&&panel.draft;if(!d||panel.type!=="tr"||!d.autoContents)return;d.contents=trAutoContents(d);const el=document.querySelector('[data-f="contents"]');if(el)el.value=d.contents}
+function trAutoContents(d){const L=(d.ids||[]).map(byId).filter(Boolean);if(!L.length)return"";const sizes=uniq(L.map(h=>h.size.replace(/ (HDD|SSD)$/,"")+" "+h.manufacturer+(/SSD/.test(h.size)?" SSD":"")));
+  return L.length+"x "+sizes.join(" and ")+" client hard drive"+(L.length>1?"s":"")+", containing video and stills recorded during the "+d.client+" "+(d.subject||"project")+". ROV DVR and dive logs are also included."}
+function openReport(type,itemId){if(!editor()){toast("Only editors can create reports.");return}openPanel({kind:"report",type,draft:newDraft(type,itemId),view:"form"})}
+const F=(label,f,val,o)=>{o=o||{};const v=esc(val==null?"":val);const inp=o.ta?'<textarea data-f="'+f+'"'+(o.ph?' placeholder="'+esc(o.ph)+'"':'')+'>'+v+'</textarea>':o.sel?'<select data-f="'+f+'">'+o.sel.map(x=>'<option'+(x===val?' selected':'')+'>'+esc(x)+'</option>').join("")+'</select>':'<input type="'+(o.type||"text")+'" data-f="'+f+'" value="'+v+'"'+(o.ph?' placeholder="'+esc(o.ph)+'"':'')+(o.mono?' class="mono"':'')+'>';
+  return'<label'+(o.full?' class="full"':'')+'><span'+(o.req?' class="req"':'')+'>'+label+'</span>'+inp+'</label>'};
+function picker(list,ids,sub){return'<div class="full lab"><span class="req">Items on this report</span><input type="search" data-pickq="1" placeholder="Filter by ID, serial, description, location" aria-label="Filter items">'+
+  '<div class="pick-list" id="pickList">'+list.map(e=>'<label class="pick-row" data-txt="'+esc((e.id+" "+(e.description||"")+" "+(e.manufacturer||"")+" "+e.serial+" "+(e.location||"")+" "+(e.client||"")+" "+e.status).toLowerCase())+'"><input type="checkbox" data-pick="'+e.id+'"'+(ids.indexOf(e.id)>-1?' checked':'')+'><span class="mono" style="color:var(--accent);font-weight:600">'+e.id+'</span><span class="d">'+esc(sub(e))+'</span></label>').join("")+'</div>'+
+  '<span id="pickCount" style="color:var(--ink)">'+ids.length+' selected</span></div>'}
+function builderForm(){const p=panel,d=p.draft,t=p.type;let h='<div class="fgrid">';
+  if(t==="om"){h+=F("Manifest number","no",d.no,{mono:1})+F("Date","date",d.date,{type:"date"})+
+    '<div class="fsec">Shipment</div>'+F("Consignee","consignee",d.consignee,{ta:1,full:1,req:1})+F("Notify","notify",d.notify,{ta:1})+F("Handling agent","agent",d.agent)+
+    F("Client","client",d.client,{sel:CLIENTS})+F("Project number","project",d.project)+F("Port of loading","pol",d.pol)+F("Port of discharge","pod",d.pod)+F("Invoice ref","invRef",d.invRef)+F("Vessel","vessel",d.vessel)+
+    '<div class="fsec">Equipment</div>'+picker(S.eq.filter(e=>e.status!=="Lost"&&e.status!=="Sent Back"),d.ids,e=>e.manufacturer+" "+e.description+" · SN "+e.serial+" · "+e.location)+
+    '<label class="chk full"><input type="checkbox" data-f="update"'+(d.update?' checked':'')+'> When saved, mark these items <b>Sent Back</b> and <b>In transit</b></label>'+
+    '<div class="fsec">Sign-off</div>'+F("Shipped by","signName",d.signName)+F("Title","signTitle",d.signTitle)+F("Notes","notes",d.notes,{ta:1,full:1})}
+  else if(t==="fr"){const e=byId(d.itemId);h+=F("Report number","no",d.no,{mono:1})+F("Date","date",d.date,{type:"date"})+F("Vessel","vessel",d.vessel)+F("Job number","job",d.job)+
+    '<div class="fsec">Equipment</div><label class="full"><span class="req">Item</span><select data-f="itemId">'+S.eq.map(x=>'<option value="'+x.id+'"'+(x.id===d.itemId?' selected':'')+'>'+x.id+' · '+esc(x.manufacturer+" "+x.description)+' · SN '+esc(x.serial)+'</option>').join("")+'</select></label>'+
+    (e?'<div class="full note" id="frItem">Serial <span class="mono">'+esc(e.serial)+'</span> · Asset '+esc(e.assetTag||"—")+' · Owner '+esc(e.owner)+' · now '+esc(e.status)+' at '+esc(e.location)+'</div>':'')+
+    F("Model number","model",d.model,{ph:"Optional"})+F("Date / time fault occurred","when",d.when,{type:"datetime-local"})+
+    '<div class="fsec">The fault</div>'+F("Fault description","fault",d.fault,{ta:1,full:1,req:1,ph:"What went wrong?"})+F("How the equipment was being used","usage",d.usage,{ta:1,full:1})+F("Action taken since","action",d.action,{ta:1,full:1})+
+    '<label class="chk full"><input type="checkbox" data-f="mark"'+(d.mark?' checked':'')+'> When saved, mark this item <b>Defective</b></label>'+
+    '<div class="fsec">Sign-off</div>'+F("Completed by","completedBy",d.completedBy)+F("Checked by","checkedBy",d.checkedBy)}
+  else{h+=F("Delivery note reference","no",d.no,{mono:1})+F("Date","date",d.date,{type:"date"})+F("Job number","job",d.job)+F("Subject","subject",d.subject,{ph:"e.g. TT Inspections Video"})+
+    '<div class="fsec">To</div>'+F("Client","client",d.client,{sel:CLIENTS,req:1})+F("Recipient name","recipient",d.recipient,{ph:"Client rep who signs for it"})+F("Delivery to","toName",d.toName,{full:1})+F("Address (if shipping ashore)","toAddr",d.toAddr,{ta:1,full:1,ph:"Leave blank when handed over on board"})+
+    '<div class="fsec">Drives</div>'+picker(S.hd.filter(h=>h.status==="On Hand"),d.ids,h=>h.manufacturer+" "+h.size+" · SN "+h.serial+" · "+h.dataDesc)+
+    F("Description","contents",d.contents,{ta:1,full:1,ph:"Written for you from the drives you pick"})+'<div class="full note">Each drive’s serial number is added under the description automatically.</div>'+
+    '<label class="chk full"><input type="checkbox" data-f="mark"'+(d.mark?' checked':'')+'> When saved, mark these drives <b>Issued to Client</b></label>'+
+    '<div class="fsec">Sign-off</div>'+F("Contact name","contact",d.contact)+F("Sent by","signName",d.signName)}
+  return h+'</div>'}
+function draftDoc(){const p=panel;return DOCS[p.type](snapshot(p.type,p.draft))}
+function pReport(){const p=panel;
+  const head='<div class="eyebrow">New '+RT[p.type].label.toLowerCase()+'</div><h3>'+esc(p.draft.no)+'</h3><div class="muted" style="font-size:13px;margin-top:3px">Files to <span class="mono">Reports › '+RT[p.type].folder+' › '+String(p.draft.date||iso(TODAY)).slice(0,4)+(p.type==="tr"?' › '+esc(p.draft.client):'')+'</span></div>'+
+   '<div class="bseg bview" role="group" aria-label="Show" style="margin-top:10px"><button type="button" data-bview="form" aria-pressed="'+(p.view==="form")+'">Details</button><button type="button" data-bview="preview" aria-pressed="'+(p.view==="preview")+'">Preview</button></div>';
+  return{label:"New report",wide:true,head,body:'<div class="builder"><div class="pane'+(p.view==="form"?'':' off')+'">'+builderForm()+'</div><div class="pane'+(p.view==="preview"?'':' off')+'"><div class="paper-scroll" id="paperLive">'+draftDoc()+'</div></div></div>',
+   foot:'<button class="btn" type="button" data-close="1">Cancel</button><button class="btn primary" type="button" data-save-report="1">Save and file report</button>'}}
+let pvT;function updatePreview(){clearTimeout(pvT);pvT=setTimeout(()=>{const el=document.getElementById("paperLive");if(el&&panel&&panel.kind==="report"){el.innerHTML=draftDoc();fitPapers()}},120)}
+function saveDraft(){const p=panel,d=p.draft,t=p.type;
+  if(t==="om"){if(!d.ids.length){toast("Pick at least one item for the manifest.");p.view="form";renderPanel();return}if(!d.consignee.trim()){toast("Enter the consignee.");return}}
+  if(t==="fr"&&!d.fault.trim()){toast("Describe the fault before saving.");p.view="form";renderPanel();return}
+  if(t==="tr"&&!d.ids.length){toast("Pick at least one drive.");p.view="form";renderPanel();return}
+  if(S.reports.some(r=>r.type===t&&r.no===d.no)){toast("Number "+d.no+" is already used. Change it before saving.");return}
+  const rep=saveReport(t,d,{});
+  if(t==="om"&&d.update)d.ids.forEach(id=>{const e=byId(id);if(!e)return;const from=e.location;e.status="Sent Back";e.location="In transit – "+(d.pod||"shore");record(e,"Shipped on "+rep.no,from+" → "+e.location)});
+  if(t==="fr"){const e=byId(d.itemId);if(e){if(d.mark&&e.status!=="Defective"){const from=e.status;e.status="Defective";e.notes=d.fault;record(e,"Fault reported "+rep.no,from+" → Defective")}else record(e,"Fault reported "+rep.no,d.fault.slice(0,80))}}
+  if(t==="tr")d.ids.forEach(id=>{const h=byId(id);if(!h)return;if(d.mark){h.status="Issued to Client";h.client=d.client;h.job=d.job;h.issued=d.date}record(h,"Sent on "+rep.no,d.client+" · "+d.job)});
+  save();render();openPanel({kind:"doc",fileId:rep.fileId,justSaved:true})}
+
+/* ---------- document viewer ---------- */
+function openFile(fid){openPanel({kind:"doc",fileId:fid})}
+function pDoc(){const f=S.files.find(x=>x.id===panel.fileId);if(!f){return{label:"Missing",head:"<h3>File not found</h3>",body:""}}
+  const crumbs='<div class="crumbs" style="margin-top:6px">'+pathOf(f.folder).map((x,i,a)=>(i?'<span class="sep">›</span>':'')+'<button type="button" data-goto-folder="'+x.id+'">'+esc(x.name)+'</button>').join("")+'</div>';
+  if(f.kind==="file")return{label:f.name,head:'<div class="eyebrow">Document</div><h3>'+esc(f.name)+'</h3>'+crumbs,body:'<div class="infobox"><b>Placeholder file</b><div>In the finished app this opens the scanned PDF certificate. People can upload certificates, photos and manuals into any folder.</div></div>'};
+  let title,body,type=f.type;
+  if(f.kind==="template"){title=f.name;body=blankDoc(type)}
+  else{const r=S.reports.find(x=>x.id===f.repId);title=r.no+" "+RT[r.type].label+" – "+r.title;body=DOCS[r.type](r.data)}
+  panel.print={title,type,body};
+  const head='<div class="eyebrow">'+(f.kind==="template"?"Blank template":RT[type].label)+'</div><h3>'+esc(f.name)+'</h3>'+crumbs+
+   (panel.justSaved?'<div class="chip c-ok" style="margin-top:8px">Saved and filed</div>':'');
+  return{label:title,wide:true,head,body:(f.kind==="template"?'<div class="infobox"><b>'+RT[type].src+'</b><div>The app fills this form in from the database. An Excel/Word version of the same blank template sits in the <span class="mono">Templates › '+RT[type].tpl+'</span> folder.</div></div>':'')+'<div class="paper-scroll">'+body+'</div>',
+   foot:'<span class="note" style="margin-right:auto;align-self:center">Opens a print-ready page with the print window, where you can also save as PDF.</span><button class="btn primary" type="button" data-print="1">Print</button>'}}
+
+const VIEWS={overview:vOverview,equipment:vEquipment,supplies:vSupplies,drives:vDrives,scan:vScan,labels:vLabels,reports:vReports,documents:vDocuments,activity:vActivity};
+function render(){renderTabs();renderSync();const v=document.getElementById("view");v.innerHTML=VIEWS[tab]();
+  if(tab==="equipment")eqRows();if(tab==="supplies")spRows();if(tab==="drives")hdRows();}
+function refreshList(){if(tab==="equipment")eqRows();else if(tab==="supplies")spRows();else if(tab==="drives")hdRows();else if(tab!=="scan"&&tab!=="labels")render()}
+
+/* ---------- detail sheet ---------- */
+let openId=null;
+function openSheet(id){if(!byId(id)){toast("No item found with ID "+id);return}panel=null;openId=id;refreshSheet();}
+function closeSheet(){openId=null;panel=null;document.getElementById("sheetRoot").innerHTML=""}
+function kv(pairs){return'<dl class="kv">'+pairs.map(p=>'<div'+(p[3]?' style="grid-column:1/-1"':'')+'><dt>'+p[0]+'</dt><dd'+(p[2]?' class="mono"':'')+'>'+(p[1]===""||p[1]==null?'<span class="muted">—</span>':p[1])+'</dd></div>').join("")+'</dl>'}
+function refreshSheet(){if(!openId)return;const it=byId(openId);const root=document.getElementById("sheetRoot");
+  const hist=S.log.filter(e=>e.ref===it.id).slice(0,12);
+  const reps=S.reports.filter(r=>(r.data.itemId===it.id)||((r.data.lines||[]).some(l=>l.id===it.id)));let title,sub,fields,acts="";
+  if(it.type==="eq"){const cd=it.certExp?daysTo(it.certExp):null;
+    title=it.description;sub=esc(it.manufacturer)+" · "+esc(it.category);
+    fields=kv([["Serial",esc(it.serial),1],["Asset tag",esc(it.assetTag),1],["Location",esc(it.location)],["Case",esc(it.caseLoc)],["Owner",esc(it.owner)],["Last verified",fmtD(it.verified)+' <span class="muted">('+(-daysTo(it.verified))+' d)</span>'],
+      ["Calibration cert",it.certExp?fmtD(it.certExp)+(cd<0?' <span class="chip c-bad">Expired</span>':cd<=60?' <span class="chip c-warn">'+cd+' d</span>':''):""],["Cost","$"+Number(it.cost).toLocaleString(),1],["Export class (ECCN)",esc(it.eccn),1],["Notes",esc(it.notes)]]);
+    if(editor())acts='<div class="actions"><h3>Update</h3>'+
+      '<div class="act-row"><select id="aLoc" aria-label="New location">'+opts(LOCS,it.location)+'</select><button class="btn primary" type="button" data-act="move">Move here</button></div>'+
+      '<div class="act-row"><select id="aSt" aria-label="New status">'+opts(EQ_STATUS,it.status)+'</select><button class="btn" type="button" data-act="status">Set status</button></div>'+
+      '<div class="act-row"><button class="btn" type="button" data-act="verify">✓ Mark verified today</button></div>'+
+      '<div class="act-row"><input type="text" id="aNote" placeholder="Add a note (e.g. sent for repair)" aria-label="Note"><button class="btn" type="button" data-act="note">Add note</button></div>'+
+      '<div class="act-row" style="border-top:1px solid var(--line);padding-top:10px"><button class="btn" type="button" data-new-report="fr" data-item="'+it.id+'">Create fault report</button><button class="btn" type="button" data-new-report="om" data-item="'+it.id+'">Ship on a manifest</button></div></div>';
+  }else if(it.type==="sp"){title=it.description;sub=esc(it.kind);
+    fields=kv([["On hand",'<b>'+it.qty+'</b> '+esc(it.unit)+(it.qty<=it.min?' <span class="chip c-'+(it.qty?'warn':'bad')+'">'+(it.qty?'Low':'Out')+'</span>':'')],["Reorder at",it.min+" "+esc(it.unit)],["Location",esc(it.location)],["Box / bin",esc(it.box)]]);
+    if(editor())acts='<div class="actions"><h3>Update</h3><div class="act-row" style="align-items:center"><span class="qty'+(it.qty<=it.min?' low':'')+'"><button type="button" data-q="-1" data-id="'+it.id+'" aria-label="Use one">−</button><span>'+it.qty+' '+esc(it.unit)+'</span><button type="button" data-q="1" data-id="'+it.id+'" aria-label="Add one">+</button></span><span class="note">Use or restock</span></div>'+
+      '<div class="act-row"><select id="aLoc" aria-label="New location">'+opts(LOCS,it.location)+'</select><button class="btn primary" type="button" data-act="move">Move here</button></div></div>';
+  }else{title=it.manufacturer+" "+it.size;sub="Data drive";
+    const same=S.hd.filter(h=>h.id!==it.id&&h.serial.toUpperCase()===it.serial.toUpperCase());
+    fields=kv([["Serial",esc(it.serial),1],["Contents",esc(it.dataDesc)],["Client",esc(it.client)],["Job number",esc(it.job),1],["Date issued",it.issued?fmtD(it.issued):""],["Status",chip(it.status)]].concat(same.length?[["Same drive, other uses",same.map(h=>'<button class="linkish" type="button" data-open="'+h.id+'">'+h.id+'</button> <span class="muted">'+esc(h.status+" · "+h.dataDesc+(h.client?" · "+h.client:""))+'</span>').join("<br>"),0,1]]:[]));
+    if(editor()&&it.status==="Reformatted")acts='<div class="infobox"><div>This record is closed. The drive was reformatted and reused'+(it.reusedAs?' as <button class="linkish" type="button" data-open="'+it.reusedAs+'">'+it.reusedAs+'</button>':'')+'. Its job and client history stay here.</div></div>';
+    else if(editor())acts='<div class="actions"><h3>Update</h3>'+(it.status==="On Hand"?
+      '<div class="act-row"><select id="aCl" aria-label="Client">'+opts(CLIENTS,it.client||CLIENTS[0])+'</select><button class="btn primary" type="button" data-act="issue">Issue to client</button></div>':
+      it.status==="Issued to Client"?'<div class="act-row"><button class="btn primary" type="button" data-act="return">Mark returned</button></div>':
+      '<div class="act-row"><button class="btn primary" type="button" data-act="found">Mark found</button></div>')+
+      (it.status==="On Hand"?'<div class="act-row"><button class="btn" type="button" data-new-report="tr" data-item="'+it.id+'">Create transmittal</button><button class="btn" type="button" data-act="reuse">Reformat for reuse</button></div>':'')+
+      (it.status!=="Missing"?'<div class="act-row"><button class="btn" type="button" data-act="missing">Report missing</button></div>':'')+'</div>';}
+  if(!editor())acts='<div class="locked">You have view-only access. Ask an editor to change this item.</div>';
+  root.innerHTML='<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="'+esc(it.id)+'">'+
+   '<div class="sheet-h"><div style="min-width:0"><div class="idbig">'+it.id+'</div><h3>'+esc(title)+'</h3><div class="muted" style="font-size:13px;margin-top:3px">'+sub+'</div>'+(it.status?'<div style="margin-top:8px">'+chip(it.status)+'</div>':'')+'</div><button class="x" type="button" data-close="1" aria-label="Close">×</button></div>'+
+   '<div class="sheet-b">'+acts+fields+
+   '<div class="qrbox"><span class="q">'+qrSvg(it.id,96)+'</span><div><b>QR label</b><div class="note">Stick this on the item. Scanning it opens this page.</div></div></div>'+
+   (reps.length?'<section><h3 style="margin-bottom:6px">Reports</h3><div class="list">'+reps.map(r=>'<button class="frow" type="button" data-open-file="'+r.fileId+'">'+IC.doc(RT[r.type].c)+'<span style="min-width:0"><div class="nm">'+esc(r.no)+' '+RT[r.type].label+'</div><div class="meta">'+fmtD(r.date)+' · '+esc(r.title)+'</div></span><span class="chip c-idle">Open</span></button>').join("")+'</div></section>':'')+
+   '<section><h3 style="margin-bottom:6px">History</h3><div class="hist">'+(hist.length?hist.map(e=>'<div><span class="mono muted" style="font-size:12px;white-space:nowrap">'+ago(e.at)+'</span><span><b>'+esc(e.what)+'</b> · '+esc(e.detail)+' <span class="muted">· '+esc(e.who)+'</span> '+(e.synced?'':'<span class="chip c-warn">Waiting to sync</span>')+'</span></div>').join(""):'<div><span></span><span class="muted">No changes recorded yet.</span></div>')+'</div></section>'+
+   '</div></aside>';}
+
+function act(kind){const it=byId(openId);if(!it||!editor())return;const val=id=>{const el=document.getElementById(id);return el?el.value:""};
+  if(kind==="move"){const to=val("aLoc");if(to===it.location){toast("It's already in "+to);return}const from=it.location;it.location=to;record(it,"Moved",from+" → "+to);if(S.online)toast("Moved "+it.id+" to "+to)}
+  else if(kind==="status"){const to=val("aSt");if(to===it.status)return;const from=it.status;it.status=to;record(it,"Status changed",from+" → "+to)}
+  else if(kind==="verify"){it.verified=iso(TODAY);if(it.status==="Needs Verification")it.status="In Service";record(it,"Verified on board","Seen at "+it.location)}
+  else if(kind==="note"){const t=val("aNote").trim();if(!t)return;it.notes=t;record(it,"Note added",t)}
+  else if(kind==="issue"){const c=val("aCl");it.status="Issued to Client";it.client=c;it.issued=iso(TODAY);if(!it.job)it.job="J-26"+String(50+S.log.length%40);record(it,"Issued to client",c+" · "+it.job)}
+  else if(kind==="return"){it.status="On Hand";it.issued="";record(it,"Returned","Back on board from "+it.client)}
+  else if(kind==="missing"){const from=it.status;it.status="Missing";record(it,"Reported missing","Was "+from)}
+  else if(kind==="found"){it.status="On Hand";record(it,"Found","Located on board")}
+  else if(kind==="reuse"){const nid=nextIdFor("hd");const n={type:"hd",id:nid,manufacturer:it.manufacturer,size:it.size,serial:it.serial,status:"On Hand",job:"",client:"",dataDesc:"Blank",issued:""};
+    S.hd.push(n);it.status="Reformatted";it.reusedAs=nid;record(it,"Reformatted",it.dataDesc+" wiped · reused as "+nid);record(n,"Reformatted for reuse","Same drive as "+it.id);
+    save();refreshList();openSheet(nid);toast(it.id+" closed. The drive is now "+nid+". Stick its new label on the drive.");return}
+  save();refreshSheet();refreshList();}
+function bumpQty(id,d){const s=byId(id);if(!s||!editor())return;const from=s.qty;s.qty=Math.max(0,s.qty+d);if(s.qty===from)return;
+  record(s,"Quantity changed",from+" → "+s.qty+" "+s.unit+(d<0?" (used)":" (restocked)"));save();refreshList();refreshSheet();}
+
+/* ---------- scanning ---------- */
+function handleScan(code,how){const id=idFromCode(code);if(!id){toast(editor()?"That code isn't one of our labels. Use the + button on Equipment, Supplies or Hard drives to add a new item.":"That QR code isn't one of our labels.");return}
+  if(!byId(id)){if(editor()){openAdd({form:true,how:"Scanned blank label",draft:{assignId:id},note:"Label <b class=\"mono\">"+id+"</b> isn't in the database yet. Fill in the details to add it."},{EQ:"eq",SP:"sp",HD:"hd"}[id.slice(0,2)]);return}toast("Label "+id+" isn't in the database.");return}toast((how||"Scanned")+" "+id);openSheet(id)}
+function scanPhoto(file){if(typeof window.jsQR!=="function"){toast("The scanner couldn't load. Type the ID instead.");return}
+  const url=URL.createObjectURL(file);const img=new Image();
+  img.onload=()=>{const max=1400,k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);const r=decodeCanvas(c);
+    if(r)handleScan(r,"Scanned");else toast("No QR code found. Fill the frame with the label and try again.")};
+  img.onerror=()=>{URL.revokeObjectURL(url);toast("Couldn't read that photo. Try again.")};img.src=url}
+
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{const t=e.target;
+  const nr=t.closest("[data-new-report]");if(nr){openReport(nr.dataset.newReport,nr.dataset.item);return}
+  const tp=t.closest("[data-tpl]");if(tp){const f=S.files.find(x=>x.kind==="template"&&x.type===tp.dataset.tpl);if(f)openFile(f.id);return}
+  const of=t.closest("[data-open-file]");if(of){openFile(of.dataset.openFile);return}
+  const fo=t.closest("[data-folder]");if(fo){S.docFolder=fo.dataset.folder||null;newFolderOpen=false;save();render();return}
+  const gf=t.closest("[data-goto-folder]");if(gf){S.docFolder=gf.dataset.gotoFolder;save();closeSheet();if(tab!=="documents")location.hash="documents";else render();return}
+  const nf=t.closest("[data-newfolder]");if(nf){newFolderOpen=nf.dataset.newfolder==="1";render();const i=document.getElementById("nfName");if(i)i.focus();return}
+  const ae=t.closest("[data-add-eq]");if(ae){openAdd(null,ae.dataset.addEq==="1"?"eq":ae.dataset.addEq);return}
+  const am=t.closest("[data-add-mode]");if(am&&panel){if(am.dataset.addMode==="manual"){panel.step="form";panel.how="Manual entry";panel.note=""}else{panel.step="choose";panel.confirm=false}renderPanel();return}
+  const as=t.closest("[data-add-sample]");if(as&&panel){const txt=as.dataset.addSample==="mfr"?ADD[panel.addType].mfrSample:blankSampleId(panel.addType);const cv=qrCanvas(txt);const r=cv&&decodeCanvas(cv);handleAddCode(r||txt);return}
+  const asv=t.closest("[data-add-save]");if(asv){addSave();return}
+  const bv=t.closest("[data-bview]");if(bv&&panel){panel.view=bv.dataset.bview;renderPanel();return}
+  const sr=t.closest("[data-save-report]");if(sr){saveDraft();return}
+  const pr=t.closest("[data-print]");if(pr&&panel&&panel.print){downloadDoc(panel.print.title,panel.print.type,panel.print.body);return}
+  const q=t.closest("[data-q]");if(q){e.stopPropagation();bumpQty(q.dataset.id,+q.dataset.q);return}
+  const c=t.closest("[data-close]");if(c){closeSheet();return}
+  const a=t.closest("[data-act]");if(a){act(a.dataset.act);return}
+  const sc=t.closest("[data-scan]");if(sc){const cv=qrCanvas(sc.dataset.scan);const r=cv&&decodeCanvas(cv);if(r)handleScan(r,"Scanned");else{toast("Scanner library unavailable here, opening by ID.");openSheet(sc.dataset.scan)}return}
+  const o=t.closest("[data-open]");if(o){openSheet(o.dataset.open);return}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&(openId||panel))closeSheet();
+  if((e.key==="Enter"||e.key===" ")&&e.target.matches&&e.target.matches(".row[role=button]")){e.preventDefault();openSheet(e.target.dataset.open)}});
+document.addEventListener("input",e=>{const id=e.target.id,tg=e.target;
+  if(panel&&panel.kind==="report"&&tg.dataset.f&&tg.type!=="checkbox"&&tg.tagName!=="SELECT"){const k=tg.dataset.f;panel.draft[k]=tg.value;
+    if(panel.type==="tr"){if(k==="contents")panel.draft.autoContents=!tg.value.trim();if(k==="subject")syncTr()}updatePreview();return}
+  if(tg.dataset.pickq!=null){const q=tg.value.toLowerCase().trim();document.querySelectorAll("#pickList .pick-row").forEach(r=>r.hidden=!!q&&r.dataset.txt.indexOf(q)<0);return}
+  if(panel&&panel.kind==="add"&&tg.dataset.a&&tg.type!=="checkbox"&&tg.tagName!=="SELECT"){panel.draft[tg.dataset.a]=tg.value;if(["serial","assetTag","description"].indexOf(tg.dataset.a)>-1){panel.confirm=false;const b=document.getElementById("dupBox");if(b)b.innerHTML=dupHTML(panel.draft,panel.addType)}return}
+  if(id==="q"){if(tab==="equipment")S.f.q=e.target.value;else if(tab==="supplies")S.fs.q=e.target.value;else if(tab==="drives")S.fh.q=e.target.value;refreshList();save()}});
+document.addEventListener("change",e=>{const id=e.target.id,v=e.target.value,tg=e.target;
+  if(panel&&panel.kind==="report"&&tg.dataset.f){const k=tg.dataset.f;panel.draft[k]=tg.type==="checkbox"?tg.checked:v;
+    if(k==="client"&&panel.type==="tr"){panel.draft.toName="Onboard "+v+" Representative";syncTr()}
+    if(k==="job"&&panel.type==="tr"){panel.draft.no=nextNo("tr",panel.draft.date,v);const n=document.querySelector('[data-f="no"]');if(n)n.value=panel.draft.no}
+    if(k==="itemId"||k==="client"||k==="date"||k==="job"){const keep=document.querySelector(".sheet-b");const st=keep?keep.scrollTop:0;renderPanel();const nb=document.querySelector(".sheet-b");if(nb)nb.scrollTop=st}else updatePreview();return}
+  if(panel&&panel.kind==="report"&&tg.dataset.pick){const ids=panel.draft.ids,i=ids.indexOf(tg.dataset.pick);if(tg.checked&&i<0)ids.push(tg.dataset.pick);if(!tg.checked&&i>-1)ids.splice(i,1);
+    const c=document.getElementById("pickCount");if(c)c.textContent=ids.length+" selected";if(panel.type==="tr")syncTr();updatePreview();return}
+  if(panel&&panel.kind==="add"&&tg.dataset.a){const k=tg.dataset.a;panel.draft[k]=tg.type==="checkbox"?tg.checked:v;
+    if(k==="category"||k==="noSN"){const sb=document.querySelector(".sheet-b");const st=sb?sb.scrollTop:0;renderPanel();const nb=document.querySelector(".sheet-b");if(nb)nb.scrollTop=st}return}
+  if(id==="addPhoto"){if(tg.files&&tg.files[0])decodeFile(tg.files[0],handleAddCode);tg.value="";return}
+  if(id==="fcat")S.f.cat=v;else if(id==="fst")S.f.st=v;else if(id==="floc")S.f.loc=v;else if(id==="fkind")S.fs.kind=v;else if(id==="fhst")S.fh.st=v;
+  else if(id==="labCat"){S.lab.cat=v;save();render();return}
+  else if(id==="photo"){if(e.target.files&&e.target.files[0])scanPhoto(e.target.files[0]);e.target.value="";return}
+  else return;save();refreshList()});
+document.addEventListener("submit",e=>{if(e.target.id==="nfForm"){e.preventDefault();const n=(document.getElementById("nfName").value||"").trim().replace(/[\\/]/g,"-");
+    if(!n){toast("Type a folder name.");return}if(kidsOf(S.docFolder).some(f=>f.name.toLowerCase()===n.toLowerCase())){toast("There's already a folder called "+n+" here.");return}
+    const f={id:"F"+(S.seq++),name:n,parent:S.docFolder,created:Date.now(),by:"You"};S.folders.push(f);newFolderOpen=false;save();render();toast("Folder “"+n+"” created.");return}
+  if(e.target.id==="idForm"){e.preventDefault();const v=document.getElementById("idIn").value.trim().toUpperCase();
+  const id=idFromCode(v)||idFromCode(v.replace(/^(EQ|SP|HD)-?(\d+)$/,(m,a,b)=>a+"-"+b.padStart(4,"0")));if(id)handleScan(id,"Opened");else toast("Enter an ID like EQ-0003, SP-0005 or HD-0017.")}});
+document.getElementById("syncBtn").addEventListener("click",()=>{S.online=!S.online;save();
+  if(S.online){toast("Back online.");doSync()}else toast("Offline mode (simulated). Keep working; changes wait on this device.");renderSync()});
+document.getElementById("roleEditor").addEventListener("click",()=>{S.role="editor";save();render();refreshSheet()});
+document.getElementById("roleViewer").addEventListener("click",()=>{S.role="viewer";save();if(panel&&panel.kind!=="doc")closeSheet();render();refreshSheet();toast("Viewing as read-only staff")});
+const resetBtn=document.getElementById("resetBtn");let resetArm=false;
+resetBtn.addEventListener("click",()=>{if(!resetArm){resetArm=true;resetBtn.textContent="Tap again to reset";setTimeout(()=>{resetArm=false;resetBtn.textContent="Reset demo data"},3000);return}
+  resetArm=false;resetBtn.textContent="Reset demo data";S=build();seedDocs();save();closeSheet();render();toast("Demo data reset.")});
+window.addEventListener("hashchange",()=>{readHash();render();window.scrollTo(0,0)});
+setInterval(renderSync,30000);
+
+(function(){const st=document.createElement("style");st.textContent=DOC_CSS;document.head.appendChild(st)})();
+if(!S.folders||!S.folders.length){seedDocs();save()}
+readHash();render();
+if(S.online&&pending())scheduleSync();
+})();
+</script>
+</body></html>
