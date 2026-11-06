@@ -292,6 +292,8 @@ select{padding-right:28px}
 .newfolder{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--sunk)}
 .newfolder input{flex:1 1 200px}
 
+.scard .meta{font-size:12.5px;color:var(--muted);margin-top:4px}
+.scard.retired{opacity:.75}
 /* fleet */
 .fleet{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 @media (max-width:1000px){.fleet{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -405,7 +407,7 @@ footer .wrap{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-con
 <script>
 (function(){
 "use strict";
-const KEY="vet-demo-v7";
+const KEY="vet-demo-v8";
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
 const DAY=864e5;
 const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10)};
@@ -435,7 +437,10 @@ const RT={om:{label:"Outgoing Manifest",folder:"Outgoing Manifests",tpl:"Outgoin
           tr:{label:"Transmittal Report",folder:"Transmittals",tpl:"Transmittal Report",c:"--ok",src:"Based on your DSUS transmittal (TR) delivery note",blurb:"Delivery note for data drives handed to a client. Pick the drives; their serial numbers go on the note, the drives are marked Issued to Client, and the note is filed under that client."}};
 const STATUS_VAR={"In Service":"--ok","Spare / Storage":"--info","Needs Verification":"--warn","Sent Back":"--idle","Defective":"--bad","Lost":"--bad"};
 
-const SITES=[{id:"NP",name:"MV Northern Plover",short:"Northern Plover",kind:"vessel"},{id:"SK",name:"MV Sea Kestrel",short:"Sea Kestrel",kind:"vessel"},{id:"GT",name:"DSV Gulf Tern",short:"Gulf Tern",kind:"vessel"},{id:"HOU",name:"Shore Base – Houston",short:"Houston base",kind:"shore"}];
+const DEFAULT_SITES=[{id:"NP",name:"MV Northern Plover",short:"Northern Plover",kind:"vessel",locs:["Survey Desk","Online Room","Bridge","Workshop Below Deck","Crawl Space","Container on Deck","ROV-1 Hangar","ROV-2 Hangar","File Cabinet"]},{id:"SK",name:"MV Sea Kestrel",short:"Sea Kestrel",kind:"vessel",locs:["Survey Desk","Online Room","Bridge","Workshop Below Deck","Crawl Space","Container on Deck","ROV-1 Hangar","ROV-2 Hangar","File Cabinet"]},{id:"GT",name:"DSV Gulf Tern",short:"Gulf Tern",kind:"vessel",locs:["Survey Desk","Online Room","Bridge","Workshop Below Deck","Crawl Space","Container on Deck","ROV-1 Hangar","ROV-2 Hangar","File Cabinet"]},{id:"HOU",name:"Shore Base – Houston",short:"Houston base",kind:"shore",locs:["Warehouse","Workshop","Calibration Lab","Shipping Bay"]}];
+const SITES=DEFAULT_SITES.map(x=>Object.assign({},x,{locs:x.locs.slice()}));
+const ACTIVE=()=>SITES.filter(x=>!x.retired);
+function bindSites(){if(!Array.isArray(S.sites)||!S.sites.length)S.sites=DEFAULT_SITES.map(x=>Object.assign({},x,{locs:x.locs.slice()}));SITES.length=0;S.sites.forEach(x=>SITES.push(x));S.sites=SITES}
 const SHORE_LOCS=["Warehouse","Workshop","Calibration Lab","Shipping Bay"];
 const CERT_TYPES=["Calibration","Pressure test","Load test"];
 const CERT_IV={"Calibration":12,"Pressure test":24,"Load test":6};
@@ -551,16 +556,16 @@ function build(){
 let S;
 function load(){try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);if(o&&o.eq&&o.sp&&o.hd)return o}}catch(e){}return build()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-S=load();
+S=load();bindSites();
 const byId=id=>S.eq.find(x=>x.id===id)||S.sp.find(x=>x.id===id)||S.hd.find(x=>x.id===id);
 const siteById=id=>SITES.find(s=>s.id===id)||SITES[0];
 const siteName=id=>siteById(id).name;
 const VLOCS=LOCS.filter(l=>l!=="Shore Base – Houston");
-const locsFor=site=>site==="HOU"?SHORE_LOCS:VLOCS;
+const locsFor=site=>{const x=SITES.find(y=>y.id===site);return x&&x.locs&&x.locs.length?x.locs:(site==="HOU"?SHORE_LOCS:VLOCS)};
 const fleet=()=>S.site==="ALL";
 const inSite=it=>!!it&&(S.site==="ALL"||it.site===S.site);
 const EQ=()=>S.eq.filter(inSite),SP=()=>S.sp.filter(inSite),HD=()=>S.hd.filter(inSite);
-const curSite=()=>S.site==="ALL"?"NP":S.site;
+const curSite=()=>S.site==="ALL"||!ACTIVE().some(x=>x.id===S.site)?((ACTIVE().find(x=>x.kind==="vessel")||ACTIVE()[0]||SITES[0]).id):S.site;
 const curVessel=()=>{const s=siteById(curSite());return s.kind==="vessel"?s.name:VESSEL};
 const certsOf=id=>S.certs.filter(c=>c.itemId===id);
 function syncCertExp(it){if(!it||it.type!=="eq")return;const c=certsOf(it.id).map(x=>x.expires).sort();it.certExp=c[0]||""}
@@ -583,10 +588,10 @@ function decodeCanvas(c){if(typeof window.jsQR!=="function")return null;const g=
 function idFromCode(s){const m=String(s||"").toUpperCase().match(/(EQ|SP|HD)-\d{4}/);return m?m[0]:null}
 
 /* ---------- chrome ---------- */
-const TABS=[["overview","Overview"],["equipment","Equipment"],["supplies","Supplies"],["drives","Hard drives"],["certs","Certificates"],["scan","Scan"],["labels","Labels"],["reports","Reports"],["documents","Documents"],["import","Import"],["activity","Activity"]];
+const TABS=[["overview","Overview"],["equipment","Equipment"],["supplies","Supplies"],["drives","Hard drives"],["certs","Certificates"],["scan","Scan"],["labels","Labels"],["reports","Reports"],["documents","Documents"],["import","Import"],["activity","Activity"],["sites","Vessels"]];
 let tab="overview";
 function readHash(){const h=(location.hash||"").slice(1);tab=TABS.some(t=>t[0]===h)?h:"overview"}
-function renderSite(){const el=document.getElementById("siteSel");if(!el)return;el.innerHTML='<option value="ALL"'+(fleet()?" selected":"")+'>All vessels · fleet view</option>'+SITES.map(x=>'<option value="'+x.id+'"'+(S.site===x.id?" selected":"")+'>'+esc(x.name)+'</option>').join("")}
+function renderSite(){const el=document.getElementById("siteSel");if(!el)return;el.innerHTML='<option value="ALL"'+(fleet()?" selected":"")+'>All vessels · fleet view</option>'+ACTIVE().map(x=>'<option value="'+x.id+'"'+(S.site===x.id?" selected":"")+'>'+esc(x.name)+'</option>').join("")}
 function renderTabs(){renderSite();const due=CERTS().filter(c=>daysTo(c.expires)<=30).length;const cnt={equipment:EQ().length,supplies:SP().length,drives:HD().length,certs:due};
   document.getElementById("tabs").innerHTML=TABS.map(t=>'<a href="#'+t[0]+'"'+(t[0]===tab?' aria-current="page"':'')+'>'+t[1]+(cnt[t[0]]?'<span class="count">'+cnt[t[0]]+'</span>':'')+'</a>').join("")}
 let syncing=false;
@@ -633,7 +638,7 @@ function vOverview(){
   const value=E.filter(e=>e.status!=="Lost").reduce((a,e)=>a+(e.cost||0),0);
   return'<div class="stack">'+
   '<div class="guide"><b>Try the demo</b><span class="muted">Everything here is made-up sample data.</span><ol class="x">'+
-   '<li>Pick a vessel in the box at the top, or <b>All vessels</b> for the fleet view the office would see.</li>'+
+   '<li>Pick a vessel in the box at the top, or <b>All vessels</b> for the fleet view the office would see. Add a new vessel under <a href="#sites">Vessels</a>.</li>'+
    '<li>Open <a href="#equipment">Equipment</a> and move an item. Tap the <b>Online</b> pill to go offline, change something, then tap it again to watch it sync.</li>'+
    '<li>Open <a href="#scan">Scan</a> and scan a sample label, or take a photo of a printed label.</li>'+
    '<li>Tap <b>+</b> on Equipment, Supplies or Hard drives to add something by scanning or typing.</li>'+
@@ -1095,12 +1100,12 @@ function picker(list,ids,sub){return'<div class="full lab"><span class="req">Ite
 function builderForm(){const p=panel,d=p.draft,t=p.type;let h='<div class="fgrid">';
   if(t==="om"){h+=F("Manifest number","no",d.no,{mono:1})+F("Date","date",d.date,{type:"date"})+
     '<div class="fsec">Shipment</div>'+F("Consignee","consignee",d.consignee,{ta:1,full:1,req:1})+F("Notify","notify",d.notify,{ta:1})+F("Handling agent","agent",d.agent)+
-    F("Client","client",d.client,{sel:CLIENTS})+F("Project number","project",d.project)+F("Port of loading","pol",d.pol)+F("Port of discharge","pod",d.pod)+F("Invoice ref","invRef",d.invRef)+F("Vessel","vessel",d.vessel,{sel:VESSEL_NAMES})+
+    F("Client","client",d.client,{sel:CLIENTS})+F("Project number","project",d.project)+F("Port of loading","pol",d.pol)+F("Port of discharge","pod",d.pod)+F("Invoice ref","invRef",d.invRef)+F("Vessel","vessel",d.vessel,{sel:vesselNames()})+
     '<div class="fsec">Equipment</div>'+picker(EQ().filter(e=>e.status!=="Lost"&&e.status!=="Sent Back"),d.ids,e=>e.manufacturer+" "+e.description+" · SN "+e.serial+" · "+e.location)+
-    '<label class="full"><span>Destination</span><select data-f="dest">'+SITES.map(x=>'<option value="'+x.id+'"'+(x.id===d.dest?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label>'+
+    '<label class="full"><span>Destination</span><select data-f="dest">'+ACTIVE().map(x=>'<option value="'+x.id+'"'+(x.id===d.dest?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label>'+
     '<label class="chk full"><input type="checkbox" data-f="update"'+(d.update?' checked':'')+'> When saved, move these items to <b>'+esc(siteName(d.dest||"HOU"))+'</b> (In transit)'+((d.dest||"HOU")==="HOU"?' and mark them <b>Sent Back</b>':'')+'</label>'+
     '<div class="fsec">Sign-off</div>'+F("Shipped by","signName",d.signName)+F("Title","signTitle",d.signTitle)+F("Notes","notes",d.notes,{ta:1,full:1})}
-  else if(t==="fr"){const e=byId(d.itemId);h+=F("Report number","no",d.no,{mono:1})+F("Date","date",d.date,{type:"date"})+F("Vessel","vessel",d.vessel,{sel:VESSEL_NAMES})+F("Job number","job",d.job)+
+  else if(t==="fr"){const e=byId(d.itemId);h+=F("Report number","no",d.no,{mono:1})+F("Date","date",d.date,{type:"date"})+F("Vessel","vessel",d.vessel,{sel:vesselNames()})+F("Job number","job",d.job)+
     '<div class="fsec">Equipment</div><label class="full"><span class="req">Item</span><select data-f="itemId">'+EQ().map(x=>'<option value="'+x.id+'"'+(x.id===d.itemId?' selected':'')+'>'+x.id+' · '+esc(x.manufacturer+" "+x.description)+' · SN '+esc(x.serial)+'</option>').join("")+'</select></label>'+
     (e?'<div class="full note" id="frItem">Serial <span class="mono">'+esc(e.serial)+'</span> · Asset '+esc(e.assetTag||"—")+' · Owner '+esc(e.owner)+' · now '+esc(e.status)+' at '+esc(e.location)+'</div>':'')+
     F("Model number","model",d.model,{ph:"Optional"})+F("Date / time fault occurred","when",d.when,{type:"datetime-local"})+
@@ -1149,17 +1154,64 @@ function pDoc(){const f=S.files.find(x=>x.id===panel.fileId);if(!f){return{label
 /* =====================================================================
    MULTI-VESSEL helpers
    ===================================================================== */
-const VESSEL_NAMES=SITES.filter(x=>x.kind==="vessel").map(x=>x.name);
+
+/* =====================================================================
+   VESSELS & SITES (settings)
+   ===================================================================== */
+const KIND_TXT={vessel:"Vessel",shore:"Shore base",warehouse:"Warehouse"};
+let siteAddOpen=false,siteRenaming=null,siteRetiring=null,siteJustAdded=null;
+function siteCounts(id){return{eq:S.eq.filter(x=>x.site===id).length,sp:S.sp.filter(x=>x.site===id).length,hd:S.hd.filter(x=>x.site===id).length,certs:S.certs.filter(c=>{const it=byId(c.itemId);return it&&it.site===id}).length}}
+function itemsAt(id,loc){return[...S.eq,...S.sp,...S.hd].filter(x=>x.site===id&&(loc==null||x.location===loc))}
+function vSites(){const ed=editor();const act=ACTIVE(),ret=SITES.filter(x=>x.retired);
+  const head='<div class="page-head"><div><div class="eyebrow">Settings · in the real app only admins see this page</div><h2>Vessels & sites</h2></div>'+(ed?'<button class="btn primary" type="button" data-site-addopen="1"><span style="font-size:18px;line-height:1">+</span> Add vessel or site</button>':'')+'</div>';
+  const just=siteJustAdded&&siteById(siteJustAdded);
+  const done=just&&just.id===siteJustAdded?'<div class="infobox"><div><b>'+esc(just.name)+' added.</b> It now shows in the vessel picker, the fleet view, transfers, manifests, imports and report folders.</div><div class="act-row"><button class="btn primary" type="button" data-site-import="'+just.id+'">Import its equipment from Excel</button><button class="btn" type="button" data-site="'+just.id+'">Open '+esc(just.short)+'</button></div></div>':'';
+  const form=ed&&siteAddOpen?'<form id="siteForm" class="panel"><div class="panel-h"><h3>New vessel or site</h3></div><div class="panel-b"><div class="fgrid">'+
+    '<label class="full"><span class="req">Name</span><input type="text" id="sfName" placeholder="e.g. MV Coral Petrel" autocomplete="off"></label>'+
+    '<label>Short name<input type="text" id="sfShort" placeholder="e.g. Coral Petrel (optional)" autocomplete="off"></label>'+
+    '<label>Type<select id="sfKind">'+Object.keys(KIND_TXT).map(k=>'<option value="'+k+'">'+KIND_TXT[k]+'</option>').join("")+'</select></label>'+
+    '<label class="full">Locations on board<select id="sfCopy">'+act.map(x=>'<option value="'+x.id+'">Copy the list from '+esc(x.name)+' ('+(x.locs||[]).length+')</option>').join("")+'<option value="">Start with an empty list</option></select></label>'+
+    '<label class="chk full"><input type="checkbox" id="sfGroup" checked> Create an email group for this site’s team (add people later under Certificates › Who gets emails)</label></div>'+
+    '<div class="act-row" style="margin-top:12px"><button class="btn primary" type="submit">Add</button><button class="btn" type="button" data-site-addopen="0">Cancel</button></div></div></form>':'';
+  const card=x=>{const c=siteCounts(x.id);const n=c.eq+c.sp+c.hd;
+    return'<section class="panel scard'+(x.retired?' retired':'')+'"><div class="panel-h"><div style="min-width:0">'+
+     (siteRenaming===x.id?'<form class="chips" data-rename="'+x.id+'"><input type="text" value="'+esc(x.name)+'" aria-label="New name" style="flex:1 1 220px"><button class="btn primary" type="submit">Save</button><button class="btn" type="button" data-site-rename="">Cancel</button></form>':
+      '<h3>'+esc(x.name)+'</h3>')+'<div class="meta"><span class="chip c-'+(x.retired?'idle':x.kind==="vessel"?'info':'ok')+'">'+(x.retired?'Retired':KIND_TXT[x.kind]||x.kind)+'</span> &nbsp;'+c.eq+' equipment · '+c.sp+' supply lines · '+c.hd+' drives · '+c.certs+' certificates</div></div>'+
+     (x.retired?'':'<button class="btn" type="button" data-site="'+x.id+'">Open</button>')+'</div>'+
+     '<div class="panel-b stack" style="gap:10px">'+
+     (x.retired?'<div class="note">Retired '+(x.retiredOn?fmtD(x.retiredOn):'')+'. Its history, reports and certificates are kept.</div>'+(ed?'<div class="act-row"><button class="btn" type="button" data-site-restore="'+x.id+'">Bring back into service</button></div>':''):
+     '<div class="lab muted" style="font-size:12.5px">Locations</div><div class="chips">'+(x.locs||[]).map(l=>{const k=itemsAt(x.id,l).length;return'<span class="pill">'+esc(l)+(k?' <span class="muted mono" style="font-size:11px">'+k+'</span>':'')+(ed?'<button type="button" data-loc-rm="'+x.id+'|'+esc(l)+'" aria-label="Remove '+esc(l)+'">×</button>':'')+'</span>'}).join("")+'</div>'+
+     (ed?'<form class="chips" data-locadd="'+x.id+'" style="gap:6px"><input type="text" placeholder="Add a location, e.g. Moon Pool" aria-label="Add location to '+esc(x.name)+'" style="flex:1 1 200px"><button class="btn" type="submit">Add location</button></form>':'')+
+     (ed?(siteRetiring===x.id?'<div class="warnbox"><b>Retire '+esc(x.name)+'</b>'+(n?'<div>'+n+' item'+(n===1?'':'s')+' are still here. Choose where to move them first:</div><div class="act-row"><select id="rtTo" aria-label="Move items to">'+ACTIVE().filter(y=>y.id!==x.id).map(y=>'<option value="'+y.id+'">'+esc(y.name)+'</option>').join("")+'</select><button class="btn primary" type="button" data-site-retire-go="'+x.id+'">Move '+n+' and retire</button><button class="btn" type="button" data-site-retire="">Cancel</button></div>':'<div>No items are here. Its history and reports are kept.</div><div class="act-row"><button class="btn primary" type="button" data-site-retire-go="'+x.id+'">Retire</button><button class="btn" type="button" data-site-retire="">Cancel</button></div>')+'</div>':
+       '<div class="act-row" style="border-top:1px solid var(--line);padding-top:10px"><button class="btn" type="button" data-site-rename="'+x.id+'">Rename</button><button class="btn" type="button" data-site-retire="'+x.id+'"'+(ACTIVE().length<2?' disabled':'')+'>Retire…</button></div>'):''))+
+     '</div></section>'};
+  return'<div class="stack">'+head+done+form+'<div class="groups">'+act.map(card).join("")+'</div>'+
+   (ret.length?'<h3 style="margin-top:8px">Retired</h3><div class="groups">'+ret.map(card).join("")+'</div>':'')+
+   '<p class="note" style="margin:0">Each vessel or site has its own list of locations. In the real app you also choose who can edit or view each vessel here.</p></div>'}
+function siteAdd(){const name=(document.getElementById("sfName").value||"").trim().replace(/\s+/g," ");if(!name){toast("Give the vessel or site a name.");return}
+  if(SITES.some(x=>x.name.toLowerCase()===name.toLowerCase())){toast("There’s already a site called "+name+".");return}
+  const kind=document.getElementById("sfKind").value;const short=(document.getElementById("sfShort").value||"").trim()||name.replace(/^(MV|MSV|DSV|RV|M\/V|FPSO|OSV)\s+/i,"");
+  const from=document.getElementById("sfCopy").value;const locs=from?(siteById(from).locs||[]).slice():[];
+  const x={id:"S"+(S.seq++),name,short,kind,locs:locs.length?locs:(kind==="vessel"?["Survey Desk"]:["Warehouse"])};SITES.push(x);
+  if(kind==="vessel")["Outgoing Manifests","Fault Reports","Transmittals"].forEach(f=>ensurePath(["Reports",name,f]));
+  if(document.getElementById("sfGroup").checked)S.groups.push({id:"G"+(S.seq++),name:(kind==="vessel"?"Survey Team – ":"Team – ")+name,members:[],site:x.id,type:"ALL",when:"all"});
+  S.log.unshift({id:"L"+Date.now(),at:Date.now(),who:"You",ref:"",what:"Site added",detail:name+" ("+KIND_TXT[kind]+")",synced:false});
+  siteAddOpen=false;siteJustAdded=x.id;save();if(S.online)scheduleSync();render();toast(name+" added.")}
+function siteRetire(id){const x=siteById(id);const to=(document.getElementById("rtTo")||{}).value;const items=itemsAt(id);
+  if(items.length){if(!to){toast("Choose where to move the items.");return}items.forEach(it=>{it.site=to;it.location=locsFor(to)[0];record(it,"Transferred",x.name+" → "+siteName(to)+" (site retired)")})}
+  x.retired=true;x.retiredOn=iso(TODAY);siteRetiring=null;if(S.site===id)S.site="ALL";save();render();toast(x.name+" retired"+(items.length?". "+items.length+" items moved to "+siteName(to)+".":"."))}
+
+const vesselNames=()=>ACTIVE().filter(x=>x.kind==="vessel").map(x=>x.name);
 function setSite(id){S.site=id;S.f={q:"",cat:"",st:"",loc:""};save();closeSheet();render();toast(id==="ALL"?"Fleet view: all vessels and the shore base":"Showing "+siteName(id))}
 function fleetCards(){if(!fleet())return"";
-  return'<section class="stack" style="gap:10px"><div class="page-head"><div><div class="eyebrow">Fleet overview</div><h2>All vessels</h2></div><span class="note">Tap a vessel to open it. In the real app people only see the vessels they have access to.</span></div><div class="fleet">'+
-  SITES.map(x=>{const e=S.eq.filter(i=>i.site===x.id);const cs=S.certs.filter(c=>{const it=byId(c.itemId);return it&&it.site===x.id&&it.status!=="Lost"});
+  return'<section class="stack" style="gap:10px"><div class="page-head"><div><div class="eyebrow">Fleet overview</div><h2>All vessels</h2></div><span class="note">Tap a vessel to open it. Add or retire vessels under <a href="#sites">Vessels</a>. In the real app people only see the vessels they have access to.</span></div><div class="fleet">'+
+  ACTIVE().map(x=>{const e=S.eq.filter(i=>i.site===x.id);const cs=S.certs.filter(c=>{const it=byId(c.itemId);return it&&it.site===x.id&&it.status!=="Lost"});
     const exp=cs.filter(c=>daysTo(c.expires)<0).length,due=cs.filter(c=>{const d=daysTo(c.expires);return d>=0&&d<=30}).length;
     const bad=e.filter(i=>i.status==="Defective"||i.status==="Lost").length,low=S.sp.filter(i=>i.site===x.id&&i.qty<=i.min).length,drv=S.hd.filter(h=>h.site===x.id&&h.status==="Issued to Client").length;
     return'<button class="fcard" type="button" data-site="'+x.id+'"><span class="eyebrow">'+(x.kind==="vessel"?"Vessel":"Shore base")+'</span><b>'+esc(x.name)+'</b><span class="fn">'+e.length+'<small> equipment</small></span>'+
      '<span class="fstats"><span class="'+(exp?'c-bad':'')+'">'+exp+' cert'+(exp===1?'':'s')+' expired</span><span class="'+(due?'c-warn':'')+'">'+due+' due in 30 d</span><span class="'+(bad?'c-bad':'')+'">'+bad+' defective / lost</span><span class="'+(low?'c-warn':'')+'">'+low+' low stock</span><span>'+drv+' drive'+(drv===1?'':'s')+' with clients</span></span></button>'}).join("")+'</div></section>'}
 function transferRow(it){if(it.type==="sp")return"";return'<div class="act-row"><select id="aSite" aria-label="Transfer to">'+SITES.filter(x=>x.id!==it.site).map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join("")+'</select><button class="btn" type="button" data-act="transfer">Transfer to vessel</button></div>'}
-function siteField(d){return'<label>Vessel / site<select data-a="site">'+SITES.map(x=>'<option value="'+x.id+'"'+(x.id===d.site?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label>'}
+function siteField(d){return'<label>Vessel / site<select data-a="site">'+ACTIVE().map(x=>'<option value="'+x.id+'"'+(x.id===d.site?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label>'}
 
 /* =====================================================================
    CERTIFICATES
@@ -1217,7 +1269,7 @@ function certGroups(){const ed=editor();
   '<div class="groups">'+S.groups.map(g=>'<section class="panel gcard"><div class="panel-h"><h3>'+esc(g.name)+'</h3>'+(ed?'<button class="linkish" type="button" data-g-del="'+g.id+'">Remove</button>':'')+'</div><div class="panel-b stack" style="gap:10px">'+
     '<div class="fgrid">'+
      '<label>Gets<select data-g="when" data-gid="'+g.id+'"'+(ed?'':' disabled')+'>'+Object.keys(WHEN_TXT).map(k=>'<option value="'+k+'"'+(g.when===k?' selected':'')+'>'+WHEN_TXT[k]+'</option>').join("")+'</select></label>'+
-     '<label>Vessels<select data-g="site" data-gid="'+g.id+'"'+(ed?'':' disabled')+'><option value="ALL"'+(g.site==="ALL"?' selected':'')+'>All vessels and sites</option>'+SITES.map(x=>'<option value="'+x.id+'"'+(g.site===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label>'+
+     '<label>Vessels<select data-g="site" data-gid="'+g.id+'"'+(ed?'':' disabled')+'><option value="ALL"'+(g.site==="ALL"?' selected':'')+'>All vessels and sites</option>'+ACTIVE().map(x=>'<option value="'+x.id+'"'+(g.site===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label>'+
      '<label class="full">Certificate types<select data-g="type" data-gid="'+g.id+'"'+(ed?'':' disabled')+'><option value="ALL"'+(g.type==="ALL"?' selected':'')+'>All types</option>'+CERT_TYPES.map(t=>'<option'+(g.type===t?' selected':'')+'>'+t+'</option>').join("")+'</select></label></div>'+
     '<div class="chips">'+g.members.map(m=>'<span class="pill mono">'+esc(m)+(ed?'<button type="button" data-g-rm="'+g.id+'|'+esc(m)+'" aria-label="Remove '+esc(m)+'">×</button>':'')+'</span>').join("")+'</div>'+
     (ed?'<form class="chips gadd" data-gadd="'+g.id+'" style="gap:6px"><input type="email" placeholder="Add email address" aria-label="Add email to '+esc(g.name)+'" style="flex:1 1 200px"><button class="btn" type="submit">Add</button></form>':'')+
@@ -1226,7 +1278,7 @@ function certGroups(){const ed=editor();
 function emailShell(o){return'<div class="mail"><div class="mail-h"><div><span class="muted">From</span> Equipment Tracker &lt;no-reply@'+MAILDOM+'&gt;</div><div><span class="muted">To</span> '+(o.to.length?o.to.map(esc).join(", "):'<i>nobody</i>')+'</div><div><span class="muted">Sent</span> '+esc(o.when)+'</div><div class="mail-subj">'+esc(o.subject)+'</div></div><div class="mail-b">'+o.body+'</div>'+
   '<div class="mail-f">'+o.foot+'</div></div>'}
 function pEmail(){const p=panel;const R=S.remind;const dd=R.days.filter(d=>d>0).sort((a,b)=>b-a);const ruleTxt=(dd.length?dd.join(", ")+" days before expiry":"")+(R.days.indexOf(0)>-1?(dd.length?", ":"")+"on the day it expires":"")+(R.overdue?", then weekly while overdue":"");
-  if(p.summary){const sites=SITES.map(x=>{const cs=S.certs.filter(c=>{const it=byId(c.itemId);return it&&it.site===x.id&&it.status!=="Lost"});return[x,cs.filter(c=>daysTo(c.expires)<0).length,cs.filter(c=>{const d=daysTo(c.expires);return d>=0&&d<=30}).length,cs.filter(c=>{const d=daysTo(c.expires);return d>30&&d<=90}).length]});
+  if(p.summary){const sites=ACTIVE().map(x=>{const cs=S.certs.filter(c=>{const it=byId(c.itemId);return it&&it.site===x.id&&it.status!=="Lost"});return[x,cs.filter(c=>daysTo(c.expires)<0).length,cs.filter(c=>{const d=daysTo(c.expires);return d>=0&&d<=30}).length,cs.filter(c=>{const d=daysTo(c.expires);return d>30&&d<=90}).length]});
     const hot=S.certs.filter(c=>{const it=byId(c.itemId);return it&&it.status!=="Lost"&&daysTo(c.expires)<=30}).sort((a,b)=>a.expires<b.expires?-1:1);
     const gs=S.groups.filter(g=>g.when==="summary");
     const body='<p>Good morning,</p><p>Here is this week’s certificate summary for the fleet.</p><table class="mtab"><tr><th>Vessel / site</th><th>Expired</th><th>Due in 30 days</th><th>Due in 31–90 days</th></tr>'+sites.map(r=>'<tr><td>'+esc(r[0].name)+'</td><td class="'+(r[1]?'mbad':'')+'">'+r[1]+'</td><td class="'+(r[2]?'mwarn':'')+'">'+r[2]+'</td><td>'+r[3]+'</td></tr>').join("")+'</table>'+
@@ -1364,7 +1416,7 @@ function vImport(){if(!imp.site)imp.site=curSite();const ed=editor();
   if(!ed)body='<div class="locked">Only editors can import. Viewers can still export below.</div>';
   else if(imp.step===1)body='<section class="panel"><div class="panel-b stack" style="gap:14px"><div class="fgrid">'+
     '<label>What are you importing?<select id="impType">'+Object.keys(TYPE_TXT).map(k=>'<option value="'+k+'"'+(imp.type===k?' selected':'')+'>'+TYPE_TXT[k]+'</option>').join("")+'</select></label>'+
-    '<label>Into which vessel / site?<select id="impSite">'+SITES.map(x=>'<option value="'+x.id+'"'+(imp.site===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label></div>'+
+    '<label>Into which vessel / site?<select id="impSite">'+ACTIVE().map(x=>'<option value="'+x.id+'"'+(imp.site===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label></div>'+
     '<label class="dropzone" for="impFile"><b>Drop a CSV or Excel file here</b><span class="muted">or tap to choose one · .csv, .xlsx, .xls</span></label><input id="impFile" type="file" accept=".csv,.txt,.xlsx,.xls,.xlsm,text/csv" hidden>'+
     '<div class="act-row"><button class="btn primary" type="button" data-imp-sample="1">Try a sample file with problems in it</button><button class="btn" type="button" data-imp-template="1">Download a blank template (CSV)</button></div>'+
     '<div class="note">Nothing is saved until the last step. Your file is read on this device only.</div></div></section>';
@@ -1418,7 +1470,7 @@ function exportCSV(kind){const stamp=iso(TODAY);const sn=fleet()?"All vessels":s
   const csv="﻿"+[head].concat(rows).map(r=>r.map(csvCell).join(",")).join("\r\n");
   saveFile(((kind==="certs"?"Certificates":TYPE_TXT[kind])+" - "+sn+" - "+stamp).replace(/[^A-Za-z0-9 ._-]/g,"")+".csv",csv,"text/csv")}
 
-const VIEWS={overview:vOverview,equipment:vEquipment,supplies:vSupplies,drives:vDrives,certs:vCerts,scan:vScan,labels:vLabels,reports:vReports,documents:vDocuments,import:vImport,activity:vActivity};
+const VIEWS={overview:vOverview,equipment:vEquipment,supplies:vSupplies,drives:vDrives,certs:vCerts,scan:vScan,labels:vLabels,reports:vReports,documents:vDocuments,import:vImport,activity:vActivity,sites:vSites};
 function render(){renderTabs();renderSync();const v=document.getElementById("view");v.innerHTML=VIEWS[tab]();
   if(tab==="certs"&&(S.certView||"list")==="list")certRows();if(tab==="equipment")eqRows();if(tab==="supplies")spRows();if(tab==="drives")hdRows();}
 function refreshList(){if(tab==="certs"&&(S.certView||"list")==="list"){certRows();return}if(tab==="equipment")eqRows();else if(tab==="supplies")spRows();else if(tab==="drives")hdRows();else if(tab!=="scan"&&tab!=="labels")render()}
@@ -1495,6 +1547,16 @@ function scanPhoto(file){if(typeof window.jsQR!=="function"){toast("The scanner 
 
 /* ---------- events ---------- */
 document.addEventListener("click",e=>{const t=e.target;
+  {
+  const sa=t.closest("[data-site-addopen]");if(sa){siteAddOpen=sa.dataset.siteAddopen==="1";siteJustAdded=null;render();const i=document.getElementById("sfName");if(i)i.focus();return}
+  const sr=t.closest("[data-site-rename]");if(sr){siteRenaming=sr.dataset.siteRename||null;render();return}
+  const st=t.closest("[data-site-retire]");if(st){siteRetiring=st.dataset.siteRetire||null;render();return}
+  const sg=t.closest("[data-site-retire-go]");if(sg&&editor()){siteRetire(sg.dataset.siteRetireGo);return}
+  const so=t.closest("[data-site-restore]");if(so&&editor()){const x=siteById(so.dataset.siteRestore);x.retired=false;delete x.retiredOn;save();render();toast(x.name+" is back in service.");return}
+  const si=t.closest("[data-site-import]");if(si){imp={step:1,type:"eq",site:si.dataset.siteImport};siteJustAdded=null;location.hash="import";return}
+  const lr=t.closest("[data-loc-rm]");if(lr&&editor()){const [sid,l]=lr.dataset.locRm.split("|");const k=itemsAt(sid,l).length;const x=siteById(sid);
+    if(k){toast(k+" item"+(k===1?" is":"s are")+" in "+l+". Move "+(k===1?"it":"them")+" first.");return}if(x.locs.length<2){toast("A site needs at least one location.");return}x.locs=x.locs.filter(y=>y!==l);save();render();return}
+  }
   {
   const sc=t.closest("[data-site]");if(sc){setSite(sc.dataset.site);return}
   const cv=t.closest("[data-cview]");if(cv){S.certView=cv.dataset.cview;save();render();return}
@@ -1577,6 +1639,13 @@ document.addEventListener("change",e=>{const id=e.target.id,v=e.target.value,tg=
   else if(id==="photo"){if(e.target.files&&e.target.files[0])scanPhoto(e.target.files[0]);e.target.value="";return}
   else return;save();refreshList()});
 document.addEventListener("submit",e=>{
+  if(e.target.id==="siteForm"){e.preventDefault();siteAdd();return}
+  if(e.target.dataset&&e.target.dataset.locadd){e.preventDefault();const x=siteById(e.target.dataset.locadd);const v=(e.target.querySelector("input").value||"").trim();if(!v)return;
+    if(x.locs.some(l=>l.toLowerCase()===v.toLowerCase())){toast(v+" is already on the list.");return}x.locs.push(v);save();render();toast("Added "+v+" to "+x.short+".");return}
+  if(e.target.dataset&&e.target.dataset.rename){e.preventDefault();const x=siteById(e.target.dataset.rename);const v=(e.target.querySelector("input").value||"").trim().replace(/\s+/g," ");if(!v)return;
+    if(SITES.some(y=>y!==x&&y.name.toLowerCase()===v.toLowerCase())){toast("Another site already has that name.");return}const old=x.name;
+    const rf=S.folders.find(f=>f.parent===(S.folders.find(g=>g.parent===null&&g.name==="Reports")||{}).id&&f.name===old);if(rf)rf.name=v;
+    S.reports.forEach(r=>{if(r.data.vessel===old)r.data.vessel=v});S.groups.forEach(g=>{if(g.site===x.id&&g.name.indexOf(old)>-1)g.name=g.name.replace(old,v)});x.name=v;if(x.short===old||!x.short)x.short=v;siteRenaming=null;save();render();toast("Renamed to "+v+". Report folders follow the new name.");return}
   {
   if(e.target.id==="dayForm"){e.preventDefault();const d=parseInt(document.getElementById("dayIn").value,10);if(isNaN(d)||d<0||d>365){toast("Enter a number of days from 0 to 365.");return}if(S.remind.days.indexOf(d)<0)S.remind.days.push(d);save();render();toast("Reminders now also go "+(d===0?"on the day":d+" days before expiry")+".");return}
   if(e.target.id==="grpForm"){e.preventDefault();const n=document.getElementById("gName").value.trim(),m=document.getElementById("gMail").value.trim();if(!n){toast("Give the group a name.");return}
@@ -1596,7 +1665,7 @@ document.getElementById("roleEditor").addEventListener("click",()=>{S.role="edit
 document.getElementById("roleViewer").addEventListener("click",()=>{S.role="viewer";save();if(panel&&panel.kind!=="doc")closeSheet();render();refreshSheet();toast("Viewing as read-only staff")});
 const resetBtn=document.getElementById("resetBtn");let resetArm=false;
 resetBtn.addEventListener("click",()=>{if(!resetArm){resetArm=true;resetBtn.textContent="Tap again to reset";setTimeout(()=>{resetArm=false;resetBtn.textContent="Reset demo data"},3000);return}
-  resetArm=false;resetBtn.textContent="Reset demo data";S=build();seedDocs();save();closeSheet();render();toast("Demo data reset.")});
+  resetArm=false;resetBtn.textContent="Reset demo data";S=build();bindSites();seedDocs();save();closeSheet();render();toast("Demo data reset.")});
 document.addEventListener("dragover",e=>{const z=e.target.closest&&e.target.closest(".dropzone");if(z){e.preventDefault();z.classList.add("over")}});
 document.addEventListener("dragleave",e=>{const z=e.target.closest&&e.target.closest(".dropzone");if(z)z.classList.remove("over")});
 document.addEventListener("drop",e=>{const z=e.target.closest&&e.target.closest(".dropzone");if(z){e.preventDefault();z.classList.remove("over");const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(f)impFile(f)}});
