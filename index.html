@@ -47,6 +47,9 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;backgroun
 .brand svg{flex:none}
 .brand h1{font-family:var(--f-display);font-weight:700;font-size:21px;letter-spacing:.01em;margin:0;line-height:1.1}
 .brand .sub{font-size:12px;color:var(--navy-muted);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sitepick{position:relative;display:inline-flex}.sitepick .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+#siteSel{background:color-mix(in srgb,var(--navy-ink) 9%,transparent);color:var(--navy-ink);border:1px solid color-mix(in srgb,var(--navy-ink) 30%,transparent);border-radius:6px;padding:3px 26px 3px 8px;font-size:13px;font-weight:600;max-width:100%}
+#siteSel option{color:#0f1e2b;background:#fff}
 .demo-tag{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;background:var(--accent);color:var(--accent-ink);padding:1px 6px;border-radius:3px;font-weight:600}
 .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .sync{display:flex;align-items:center;gap:8px;border:1px solid color-mix(in srgb,var(--navy-ink) 25%,transparent);background:color-mix(in srgb,var(--navy-ink) 7%,transparent);color:var(--navy-ink);border-radius:999px;padding:6px 12px 6px 10px;font-size:12.5px}
@@ -289,6 +292,79 @@ select{padding-right:28px}
 .newfolder{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--sunk)}
 .newfolder input{flex:1 1 200px}
 
+/* fleet */
+.fleet{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:1000px){.fleet{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.fleet{grid-template-columns:minmax(0,1fr)}}
+.fcard{display:grid;gap:4px;align-content:start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;min-width:0}
+.fcard:hover{border-color:var(--accent)}
+.fcard b{font-family:var(--f-display);font-size:18px;font-weight:700}
+.fcard .fn{font-family:var(--f-display);font-size:30px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.fcard .fn small{font-family:var(--f-body);font-size:12.5px;font-weight:400;color:var(--muted)}
+.fstats{display:grid;gap:2px;font-size:12.5px;color:var(--muted);margin-top:4px}
+.fstats .c-bad{color:var(--bad);font-weight:600}.fstats .c-warn{color:var(--warn);font-weight:600}
+/* certs */
+.crow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:9px 12px;border-top:1px solid var(--line)}
+.crow:first-child{border-top:0}
+.crow .meta,.urow .meta{font-size:12.5px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 4px 3px 10px;border-radius:999px;background:var(--sunk);border:1px solid var(--line);font-size:12.5px;max-width:100%;overflow-wrap:anywhere}
+.pill:not(:has(button)){padding-right:10px}
+.pill button{border:0;background:none;width:22px;height:22px;border-radius:50%;color:var(--muted);font-size:15px;line-height:1}
+.pill button:hover{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
+.chk2{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13.5px}
+.chk2 input[type=time]{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px;color:var(--ink)}
+.urow{display:grid;grid-template-columns:120px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 16px;border-top:1px solid var(--line)}
+.urow:first-child{border-top:0}
+.urow .when{font-weight:600;font-size:13px;display:grid}
+.urow .when small{font-weight:400;color:var(--muted);font-size:11.5px}
+@media (max-width:640px){.urow{grid-template-columns:minmax(0,1fr) auto}.urow .when{grid-column:1/-1;grid-template-columns:auto 1fr;gap:8px;align-items:baseline}}
+.groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+@media (max-width:860px){.groups{grid-template-columns:minmax(0,1fr)}}
+.newgroup{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 14px}
+.newgroup input{flex:1 1 220px}
+input[type=email]{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-width:0;color:var(--ink)}
+/* email */
+.mail{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.mail-h{padding:14px 18px;border-bottom:1px solid var(--line);display:grid;gap:3px;font-size:13px;overflow-wrap:anywhere}
+.mail-h .muted{display:inline-block;width:42px}
+.mail-subj{font-family:var(--f-display);font-size:19px;font-weight:700;margin-top:6px;line-height:1.25}
+.mail-b{padding:16px 18px;font-size:14px;line-height:1.55;max-width:70ch}
+.mail-b p{margin:0 0 10px}
+.mail-f{padding:12px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);background:var(--sunk)}
+.mtab{border-collapse:collapse;width:100%;font-size:13px;margin:6px 0}
+.mtab th,.mtab td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+.mtab th{background:var(--sunk);font-weight:600}
+.kvm th{width:130px}
+.mbad{color:var(--bad);font-weight:600}.mwarn{color:var(--warn);font-weight:600}
+.mbtn{display:inline-block;background:var(--accent);color:var(--accent-ink);padding:8px 14px;border-radius:6px;font-weight:600;font-size:13px;margin:4px 6px 0 0}
+.mbtn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+/* import */
+.steps{display:flex;flex-wrap:wrap;gap:6px 18px;list-style:none;margin:0;padding:0;font-size:13px;color:var(--muted)}
+.steps li{display:flex;gap:7px;align-items:center}
+.steps li span{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);font-family:var(--f-mono);font-size:11px;background:var(--surface)}
+.steps li.on{color:var(--ink);font-weight:600}.steps li.on span{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.steps li.done span{background:var(--ok);color:var(--surface);border-color:var(--ok)}
+.dropzone{display:grid;gap:4px;justify-items:center;text-align:center;padding:28px 16px;border:2px dashed var(--line);border-radius:var(--r);background:var(--sunk);cursor:pointer}
+.dropzone:hover,.dropzone.over{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--sunk))}
+.dropzone b{font-family:var(--f-display);font-size:18px}
+.maptbl{border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.maptbl .mh,.maptbl .mr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr);gap:10px;align-items:center;padding:8px 12px;border-top:1px solid var(--line);font-size:13px}
+.maptbl .mh{border-top:0;background:var(--sunk);font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.maptbl .mr span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.maptbl .mr.skip{background:color-mix(in srgb,var(--warn) 6%,transparent)}
+.maptbl select{width:100%}
+@media (max-width:640px){.maptbl .mh{display:none}.maptbl .mr{grid-template-columns:minmax(0,1fr)}}
+.chktbl .cr{display:grid;grid-template-columns:auto 64px minmax(0,1fr);gap:10px;align-items:start;padding:10px 16px;border-top:1px solid var(--line)}
+.chktbl .cr:first-child{border-top:0}
+.chktbl .cr.bad{background:color-mix(in srgb,var(--bad) 6%,transparent)}
+.chktbl .cr input{margin-top:3px}
+.chktbl .t{font-weight:500;overflow-wrap:anywhere}
+.chktbl .iss{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.chktbl .iss .chip{white-space:normal}
+.chktbl .meta{font-size:12.5px;color:var(--muted)}
+.chktbl .mono{font-size:12px;padding-top:2px}
+
 footer{padding-block:0 32px;font-size:12.5px;color:var(--muted)}
 footer .wrap{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:14px}
 .note{font-size:12.5px;color:var(--muted)}
@@ -301,7 +377,7 @@ footer .wrap{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-con
         <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><rect x="7" y="7" width="8" height="8" fill="currentColor"/><rect x="19" y="7" width="8" height="8" fill="currentColor"/><rect x="7" y="19" width="8" height="8" fill="currentColor"/><rect x="20" y="20" width="3" height="3" fill="currentColor"/><rect x="24" y="24" width="3" height="3" fill="currentColor"/><rect x="20" y="24" width="2" height="2" fill="currentColor"/></svg>
         <div style="min-width:0">
           <h1>Vessel Equipment Tracker</h1>
-          <div class="sub"><span>MV Northern Plover · Survey Dept.</span><span class="demo-tag">DEMO · SAMPLE DATA</span></div>
+          <div class="sub"><label class="sitepick"><span class="sr">Vessel</span><select id="siteSel" aria-label="Vessel or site"></select></label><span class="demo-tag">DEMO · SAMPLE DATA</span></div>
         </div>
       </div>
       <div class="controls">
@@ -329,7 +405,7 @@ footer .wrap{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-con
 <script>
 (function(){
 "use strict";
-const KEY="vet-demo-v6";
+const KEY="vet-demo-v7";
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
 const DAY=864e5;
 const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10)};
@@ -351,13 +427,32 @@ const STATUS_C={"In Service":"ok","Spare / Storage":"info","Needs Verification":
 const VESSEL="MV Northern Plover";
 const CO={name:"Demo Marine Services USA Inc.",short:"DMS",addr:["1200 Harbor Point Dr","Suite 300","Houston, TX 77041"],tin:"TIN: 00-0000000",contact:"A. Rivera",phone:"713-555-0142",formRef:"DMS-OPS-0085-FR",formRev:"A1"};
 const CLIENT_ADDR={"Gulfline Energy":"Gulfline Energy LLC\n400 Louisiana St, Floor 12\nHouston, TX 77002\nAttn: Data Management","Bayou Subsea":"Bayou Subsea Inc.\n88 Canal Blvd\nThibodaux, LA 70301\nAttn: Survey Coordinator","Meridian Offshore":"Meridian Offshore Ltd\n15 Queens Wharf\nPort of Spain, Trinidad W.I.\nAttn: Project Engineer","Coral Basin Oil":"Coral Basin Oil Co.\n2100 Ocean Dr\nCorpus Christi, TX 78404\nAttn: Records","Pelican Pipeline Co.":"Pelican Pipeline Co.\n7 Industrial Pkwy\nGalliano, LA 70354\nAttn: Integrity Team"};
-const SCHEDB={"Subsea Sensors":"9015.80.8080","Surface Sensors":"9014.20.4080","Computers":"8471.50.0150","Monitors":"8528.52.0000","Video Equipment":"8525.89.4000","Network Equipment":"8517.62.0090","Serial Servers":"8517.62.0090","UPS":"8504.40.9580","Tools":"9030.33.3800"};
-const COO={Kongsberg:"Norway",Sonardyne:"UK",Teledyne:"USA",Paroscientific:"USA",Tritech:"UK",Trimble:"USA",iXblue:"France",Dell:"Malaysia",HP:"China",Imenco:"Norway",Blackmagic:"Australia",Cisco:"Mexico",Ubiquiti:"China",Moxa:"Taiwan",APC:"Philippines",Fluke:"USA",Megger:"UK"};
-const PACK={"Subsea Sensors":["24 x 16 x 10 in",28],"Surface Sensors":["20 x 14 x 9 in",18],"Computers":["22 x 9 x 18 in",24],"Monitors":["26 x 6 x 18 in",12],"Video Equipment":["18 x 14 x 8 in",14],"Network Equipment":["19 x 10 x 3 in",9],"Serial Servers":["10 x 7 x 3 in",3],"UPS":["18 x 8 x 10 in",45],"Tools":["12 x 9 x 5 in",4]};
+const SCHEDB={"Subsea Sensors":"9015.80.8080","Surface Sensors":"9014.20.4080","Computers":"8471.50.0150","Monitors":"8528.52.0000","Video Equipment":"8525.89.4000","Network Equipment":"8517.62.0090","Serial Servers":"8517.62.0090","UPS":"8504.40.9580","Tools":"9030.33.3800","Lifting Gear":"7326.19.0010"};
+const COO={Kongsberg:"Norway",Sonardyne:"UK",Teledyne:"USA",Paroscientific:"USA",Tritech:"UK",Trimble:"USA",iXblue:"France",Dell:"Malaysia",HP:"China",Imenco:"Norway",Blackmagic:"Australia",Cisco:"Mexico",Ubiquiti:"China",Moxa:"Taiwan",APC:"Philippines",Fluke:"USA",Megger:"UK",Crosby:"USA",Spanset:"UK"};
+const PACK={"Subsea Sensors":["24 x 16 x 10 in",28],"Surface Sensors":["20 x 14 x 9 in",18],"Computers":["22 x 9 x 18 in",24],"Monitors":["26 x 6 x 18 in",12],"Video Equipment":["18 x 14 x 8 in",14],"Network Equipment":["19 x 10 x 3 in",9],"Serial Servers":["10 x 7 x 3 in",3],"UPS":["18 x 8 x 10 in",45],"Tools":["12 x 9 x 5 in",4],"Lifting Gear":["14 x 10 x 6 in",14]};
 const RT={om:{label:"Outgoing Manifest",folder:"Outgoing Manifests",tpl:"Outgoing Manifest",c:"--info",src:"Based on your Commercial Invoice + Packing List master",blurb:"Commercial invoice and packing list for equipment leaving the vessel. Pick the items; values, ECCN, schedule B and weights fill in from the database."},
           fr:{label:"Fault Report",folder:"Fault Reports",tpl:"Fault Report",c:"--bad",src:"Based on your Equipment Fault Report form",blurb:"Record a fault on one item. Description, serial, asset number and owner come from the item, and the item can be marked Defective."},
           tr:{label:"Transmittal Report",folder:"Transmittals",tpl:"Transmittal Report",c:"--ok",src:"Based on your DSUS transmittal (TR) delivery note",blurb:"Delivery note for data drives handed to a client. Pick the drives; their serial numbers go on the note, the drives are marked Issued to Client, and the note is filed under that client."}};
 const STATUS_VAR={"In Service":"--ok","Spare / Storage":"--info","Needs Verification":"--warn","Sent Back":"--idle","Defective":"--bad","Lost":"--bad"};
+
+const SITES=[{id:"NP",name:"MV Northern Plover",short:"Northern Plover",kind:"vessel"},{id:"SK",name:"MV Sea Kestrel",short:"Sea Kestrel",kind:"vessel"},{id:"GT",name:"DSV Gulf Tern",short:"Gulf Tern",kind:"vessel"},{id:"HOU",name:"Shore Base – Houston",short:"Houston base",kind:"shore"}];
+const SHORE_LOCS=["Warehouse","Workshop","Calibration Lab","Shipping Bay"];
+const CERT_TYPES=["Calibration","Pressure test","Load test"];
+const CERT_IV={"Calibration":12,"Pressure test":24,"Load test":6};
+const CERT_PRE={"Calibration":"CAL","Pressure test":"PT","Load test":"LT"};
+const ISSUERS={"Calibration":["Sonardyne Service – Houston","Kongsberg Service Center","Gulf Calibration Lab","In-house workshop"],"Pressure test":["Gulf Hyperbaric Testing","In-house pressure pot"],"Load test":["Gulf Lifting & Rigging","Crosby Inspection Services"]};
+const MAILDOM="demo-marine.example";
+function addMonths(s,n){const d=new Date(s+"T00:00:00");d.setMonth(d.getMonth()+n);return iso(d)}
+const WD=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+function fmtIn(n){const d=new Date(TODAY.getTime()+n*DAY);return WD[d.getDay()]+" "+d.getDate()+" "+MON[d.getMonth()]}
+function defaultGroups(){const m=(a)=>a.map(x=>x+"@"+MAILDOM);return[
+ {id:"G1",name:"Survey Team – MV Northern Plover",members:m(["party.chief.plover","survey.plover"]),site:"NP",type:"ALL",when:"all"},
+ {id:"G2",name:"Survey Team – MV Sea Kestrel",members:m(["party.chief.kestrel","survey.kestrel"]),site:"SK",type:"ALL",when:"all"},
+ {id:"G3",name:"Survey Team – DSV Gulf Tern",members:m(["party.chief.tern","survey.tern"]),site:"GT",type:"ALL",when:"all"},
+ {id:"G4",name:"Workshop & Calibration Lab – Houston",members:m(["workshop.houston","cal.lab"]),site:"ALL",type:"Calibration",when:"30"},
+ {id:"G5",name:"QHSE – Lifting gear",members:m(["qhse","rigging.inspector"]),site:"ALL",type:"Load test",when:"all"},
+ {id:"G6",name:"QHSE – Overdue escalation",members:m(["qhse.manager"]),site:"ALL",type:"ALL",when:"overdue"},
+ {id:"G7",name:"Operations Manager",members:m(["ops.manager"]),site:"ALL",type:"ALL",when:"summary"}]}
 
 function build(){
   const r=rng(20261027), pick=a=>a[Math.floor(r()*a.length)], ri=(a,b)=>a+Math.floor(r()*(b-a+1));
@@ -381,20 +476,30 @@ function build(){
    ["Serial Servers","Moxa","NPort 5450 Serial Server",5,0,520,"5A992",["Online Room","Survey Desk"]],
    ["UPS","APC","Smart-UPS 1500VA",6,0,780,"EAR99",["Online Room","Survey Desk","Container on Deck"]],
    ["Tools","Fluke","Digital Multimeter",3,1,420,"EAR99",["Workshop Below Deck"]],
-   ["Tools","Megger","Insulation Tester",2,1,1650,"EAR99",["Workshop Below Deck"]]
+   ["Tools","Megger","Insulation Tester",2,1,1650,"EAR99",["Workshop Below Deck"]],
+   ["Lifting Gear","Crosby","Shackle 4.75 t",6,6,180,"EAR99",["Container on Deck","ROV-1 Hangar","ROV-2 Hangar"],"Load test"],
+   ["Lifting Gear","Spanset","Lifting Sling 2 t × 3 m",6,6,95,"EAR99",["Container on Deck","ROV-1 Hangar"],"Load test"]
   ];
-  const eq=[];let n=1;
-  T.forEach(t=>{for(let k=0;k<t[3];k++){
-    const x=r();const status=x<.60?"In Service":x<.84?"Spare / Storage":x<.91?"Needs Verification":x<.95?"Sent Back":x<.985?"Defective":"Lost";
-    let loc=pick(t[7]);if(status==="Sent Back")loc="Shore Base – Houston";if(status==="Lost")loc="Unknown";
+  const eq=[],certs=[];let n=1,cn=1;
+  const mkEq=(t,site,forceStatus,forceLoc)=>{
+    const x=r();const status=forceStatus||(x<.60?"In Service":x<.84?"Spare / Storage":x<.91?"Needs Verification":x<.95?"Sent Back":x<.985?"Defective":"Lost");
+    let s=site,loc=forceLoc||pick(t[7]);if(status==="Sent Back"){s="HOU";loc=pick(["Warehouse","Workshop","Calibration Lab"])}if(status==="Lost")loc="Unknown";
     const verified=status==="Needs Verification"?dOff(-ri(110,240)):dOff(-ri(2,104));
-    eq.push({type:"eq",id:"EQ-"+String(n).padStart(4,"0"),category:t[0],manufacturer:t[1],description:t[2],
+    const it={type:"eq",id:"EQ-"+String(n).padStart(4,"0"),site:s,category:t[0],manufacturer:t[1],description:t[2],
       serial:(t[1].slice(0,2).toUpperCase())+ri(10000,99999)+alnum(1),
       assetTag:r()<.94?"DMS-"+(10400+n*7):"",status,location:loc,
       caseLoc:t[0].indexOf("Sensors")>-1&&status==="Spare / Storage"?"Pelican Case "+ri(1,12):"No case",
-      owner:r()<.85?"Company":"Rental – SeaTech",verified,certExp:t[4]?dOff(ri(-25,420)):"",
-      cost:t[5],eccn:t[6],coo:COO[t[1]]||"",schedB:SCHEDB[t[0]]||"",dims:(PACK[t[0]]||["",""])[0],weightLb:(PACK[t[0]]||["",0])[1],notes:status==="Defective"?pick(["Intermittent comms on RS-232","Bad battery, will not hold charge","Cracked housing – do not deploy","Fails self-test at power-up"]):""});
-    n++;}});
+      owner:r()<.85?"Company":"Rental – SeaTech",verified,certExp:"",
+      cost:t[5],eccn:t[6],coo:COO[t[1]]||"",schedB:SCHEDB[t[0]]||"",dims:(PACK[t[0]]||["",""])[0],weightLb:(PACK[t[0]]||["",0])[1],
+      notes:status==="Defective"?pick(["Intermittent comms on RS-232","Bad battery, will not hold charge","Cracked housing – do not deploy","Fails self-test at power-up"]):""};
+    eq.push(it);
+    const addC=(type,iv)=>{const exp=dOff(ri(-25,iv*30+30));certs.push({id:"C-"+String(cn).padStart(4,"0"),itemId:it.id,type,certNo:CERT_PRE[type]+"-"+(2600+cn)+alnum(2),issued:addMonths(exp,-iv),expires:exp,issuer:pick(ISSUERS[type])});cn++};
+    if(t[4]){const type=t[8]||"Calibration";addC(type,CERT_IV[type]);if(t[0]==="Subsea Sensors"&&r()<.3)addC("Pressure test",24)}
+    it.certExp=certs.filter(c=>c.itemId===it.id).map(c=>c.expires).sort()[0]||"";
+    n++};
+  const SITE_F={NP:1,SK:.6,GT:.45};
+  ["NP","SK","GT"].forEach(site=>T.forEach(t=>{const c=site==="NP"?t[3]:Math.max(t[4]?1:0,Math.round(t[3]*SITE_F[site]));for(let k=0;k<c;k++)mkEq(t,site)}));
+  T.filter(t=>t[0].indexOf("Sensors")>-1||t[0]==="Tools").forEach(t=>{for(let k=0;k<2;k++)mkEq(t,"HOU","Spare / Storage",pick(["Warehouse","Calibration Lab"]))});
   const S=[
    ["Consumable","Black Printer Cartridge (934XL)","EA",2,"File Cabinet"],["Consumable","Colour Cartridge Set (935)","SET",2,"File Cabinet"],
    ["Consumable","Electrical Tape","RL",6,"Workshop Below Deck"],["Consumable","Self-Amalgamating Tape","RL",4,"Workshop Below Deck"],
@@ -412,15 +517,19 @@ function build(){
    ["Bulk Cable","4-Pair Instrumentation Cable","M",30,"Crawl Space"],["Bulk Cable","14 AWG Power Cable","M",30,"Crawl Space"],
    ["Bulk Cable","Single-Mode Fibre Patch 10 m","EA",4,"Crawl Space"]
   ];
-  const sp=S.map((s,i)=>{const x=r();const qty=x<.14?0:x<.3?ri(1,s[3]):ri(s[3]+1,s[3]*4);
-    return{type:"sp",id:"SP-"+String(i+1).padStart(4,"0"),kind:s[0],description:s[1],unit:s[2],min:s[3],qty,location:s[4],
-      box:s[0]==="Connector Kit"?"Connector drawer "+ri(1,6):s[0]==="Bulk Cable"?"Cable reel rack":"Consumables bin "+ri(1,4)}});
-  const hd=[];
-  for(let i=0;i<24;i++){const x=r();const status=i<15?"On Hand":i<22?"Issued to Client":"Missing";
-    const used=status!=="On Hand"||r()<.4;const client=used?pick(CLIENTS):"";const job=used?"J-"+ri(2601,2648):"";
-    hd.push({type:"hd",id:"HD-"+String(i+1).padStart(4,"0"),manufacturer:x<.6?"Seagate":"WD",size:pick(["4 TB HDD","4 TB HDD","8 TB HDD","2 TB SSD"]),
+  const sp=[];let sn=1;
+  [["NP",S.length],["SK",18],["GT",14],["HOU",12]].forEach(([site,cnt])=>S.slice(0,cnt).forEach(s=>{const x=r();const mult=site==="HOU"?3:1;const qty=x<.14?0:x<.3?ri(1,s[3]):ri(s[3]+1,s[3]*4)*mult;
+    sp.push({type:"sp",id:"SP-"+String(sn++).padStart(4,"0"),site,kind:s[0],description:s[1],unit:s[2],min:s[3],qty,location:site==="HOU"?"Warehouse":s[4],
+      box:s[0]==="Connector Kit"?"Connector drawer "+ri(1,6):s[0]==="Bulk Cable"?"Cable reel rack":"Consumables bin "+ri(1,4)})}));
+  const hd=[];let hn=1;
+  const mkHd=(site,status)=>{const x=r();const used=status!=="On Hand"||r()<.4;const client=used?pick(CLIENTS):"";const job=used?"J-"+ri(2601,2648):"";
+    hd.push({type:"hd",id:"HD-"+String(hn++).padStart(4,"0"),site,manufacturer:x<.6?"Seagate":"WD",size:pick(["4 TB HDD","4 TB HDD","8 TB HDD","2 TB SSD"]),
       serial:(x<.6?"NA":"WX")+alnum(6),status,job,client,dataDesc:used?pick(["Client copy – survey video","Office copy – project data","Client copy – as-built report data","Backup – raw sensor logs"]):"Blank",
-      issued:status==="Issued to Client"?dOff(-ri(5,80)):""})}
+      issued:status==="Issued to Client"?dOff(-ri(5,80)):""})};
+  for(let i=0;i<24;i++)mkHd("NP",i<15?"On Hand":i<22?"Issued to Client":"Missing");
+  for(let i=0;i<10;i++)mkHd("SK",i<7?"On Hand":"Issued to Client");
+  for(let i=0;i<8;i++)mkHd("GT",i<5?"On Hand":"Issued to Client");
+  for(let i=0;i<4;i++){mkHd("HOU","On Hand");const h=hd[hd.length-1];h.dataDesc="Blank";h.client="";h.job=""}
   {const a=hd[6],b2=hd[7];a.status="Reformatted";a.dataDesc="Office copy – project data";a.client=a.client||CLIENTS[0];a.job=a.job||"J-2604";a.reusedAs=b2.id;
    b2.serial=a.serial;b2.manufacturer=a.manufacturer;b2.size=a.size;b2.status="On Hand";b2.dataDesc="Blank";b2.client="";b2.job="";b2.issued=""}
   const log=[];const all=[...eq,...sp,...hd];
@@ -435,7 +544,8 @@ function build(){
     log.push({id:"L"+i,at:Date.now()-ri(30,60*24*12)*6e4,who:pick(PEOPLE),ref:it.id,what:a[0],detail:a[1],synced:true})}
   log.sort((a,b)=>b.at-a.at);
   return{eq,sp,hd,log,online:true,role:"editor",lastSync:Date.now()-14*6e4,f:{q:"",cat:"",st:"",loc:""},fs:{q:"",kind:""},fh:{q:"",st:""},lab:{cat:"Subsea Sensors"},
-    folders:[],files:[],reports:[],seq:1,docFolder:null};
+    folders:[],files:[],reports:[],seq:1,docFolder:null,
+    site:"NP",certs,certView:"list",fc:{q:"",st:"",type:""},remind:{days:[90,60,30,7,0],overdue:true,weekly:true,weekDay:"Monday",weekTime:"07:00"},groups:defaultGroups(),imports:[]};
 }
 
 let S;
@@ -443,6 +553,22 @@ function load(){try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.par
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 S=load();
 const byId=id=>S.eq.find(x=>x.id===id)||S.sp.find(x=>x.id===id)||S.hd.find(x=>x.id===id);
+const siteById=id=>SITES.find(s=>s.id===id)||SITES[0];
+const siteName=id=>siteById(id).name;
+const VLOCS=LOCS.filter(l=>l!=="Shore Base – Houston");
+const locsFor=site=>site==="HOU"?SHORE_LOCS:VLOCS;
+const fleet=()=>S.site==="ALL";
+const inSite=it=>!!it&&(S.site==="ALL"||it.site===S.site);
+const EQ=()=>S.eq.filter(inSite),SP=()=>S.sp.filter(inSite),HD=()=>S.hd.filter(inSite);
+const curSite=()=>S.site==="ALL"?"NP":S.site;
+const curVessel=()=>{const s=siteById(curSite());return s.kind==="vessel"?s.name:VESSEL};
+const certsOf=id=>S.certs.filter(c=>c.itemId===id);
+function syncCertExp(it){if(!it||it.type!=="eq")return;const c=certsOf(it.id).map(x=>x.expires).sort();it.certExp=c[0]||""}
+const CERTS=()=>S.certs.filter(c=>{const it=byId(c.itemId);return inSite(it)&&it.status!=="Lost"});
+function certState(c){const d=daysTo(c.expires);return d<0?["Expired","bad",d]:d<=30?["Due in 30 days","warn",d]:d<=90?["Due in 31–90 days","info",d]:["Valid","ok",d]}
+const certWhen=d=>d<0?"expired "+(-d)+" d ago":d===0?"expires today":"expires in "+d+" d";
+function newCert(item,type,expires,issuer){const n=S.certs.length+1;const c={id:"C-"+String(Date.now()%1e6).padStart(6,"0")+n,itemId:item.id,type,certNo:CERT_PRE[type]+"-"+(2700+n),issued:addMonths(expires,-CERT_IV[type]),expires,issuer:issuer||ISSUERS[type][0]};S.certs.push(c);syncCertExp(item);return c}
+
 const pending=()=>S.log.filter(e=>!e.synced).length;
 const editor=()=>S.role==="editor";
 
@@ -457,10 +583,11 @@ function decodeCanvas(c){if(typeof window.jsQR!=="function")return null;const g=
 function idFromCode(s){const m=String(s||"").toUpperCase().match(/(EQ|SP|HD)-\d{4}/);return m?m[0]:null}
 
 /* ---------- chrome ---------- */
-const TABS=[["overview","Overview"],["equipment","Equipment"],["supplies","Supplies"],["drives","Hard drives"],["scan","Scan"],["labels","Labels"],["reports","Reports"],["documents","Documents"],["activity","Activity"]];
+const TABS=[["overview","Overview"],["equipment","Equipment"],["supplies","Supplies"],["drives","Hard drives"],["certs","Certificates"],["scan","Scan"],["labels","Labels"],["reports","Reports"],["documents","Documents"],["import","Import"],["activity","Activity"]];
 let tab="overview";
 function readHash(){const h=(location.hash||"").slice(1);tab=TABS.some(t=>t[0]===h)?h:"overview"}
-function renderTabs(){const cnt={equipment:S.eq.length,supplies:S.sp.length,drives:S.hd.length};
+function renderSite(){const el=document.getElementById("siteSel");if(!el)return;el.innerHTML='<option value="ALL"'+(fleet()?" selected":"")+'>All vessels · fleet view</option>'+SITES.map(x=>'<option value="'+x.id+'"'+(S.site===x.id?" selected":"")+'>'+esc(x.name)+'</option>').join("")}
+function renderTabs(){renderSite();const due=CERTS().filter(c=>daysTo(c.expires)<=30).length;const cnt={equipment:EQ().length,supplies:SP().length,drives:HD().length,certs:due};
   document.getElementById("tabs").innerHTML=TABS.map(t=>'<a href="#'+t[0]+'"'+(t[0]===tab?' aria-current="page"':'')+'>'+t[1]+(cnt[t[0]]?'<span class="count">'+cnt[t[0]]+'</span>':'')+'</a>').join("")}
 let syncing=false;
 function renderSync(){const b=document.getElementById("syncBtn");const p=pending();
@@ -489,35 +616,36 @@ function match(it,q){if(!q)return true;q=q.toLowerCase();return Object.values(it
 
 /* ---------- attention ---------- */
 function attention(){
-  const live=S.eq.filter(e=>e.status!=="Sent Back"&&e.status!=="Lost");
-  const cert=live.filter(e=>e.certExp&&daysTo(e.certExp)<=60).sort((a,b)=>a.certExp<b.certExp?-1:1)
-    .map(e=>{const d=daysTo(e.certExp);return[e,d<0?"expired "+(-d)+" d ago":"expires in "+d+" d",d<0?"bad":"warn"]});
+  const live=EQ().filter(e=>e.status!=="Sent Back"&&e.status!=="Lost");
+  const cert=CERTS().filter(c=>daysTo(c.expires)<=60).sort((a,b)=>a.expires<b.expires?-1:1).map(c=>{const d=daysTo(c.expires);return[byId(c.itemId),c.type+" "+certWhen(d),d<0?"bad":"warn"]});
   const ver=live.filter(e=>e.status==="Needs Verification"||-daysTo(e.verified)>90).sort((a,b)=>a.verified<b.verified?-1:1)
     .map(e=>[e,"last checked "+(-daysTo(e.verified))+" d ago","warn"]);
-  const bad=S.eq.filter(e=>e.status==="Defective"||e.status==="Lost").map(e=>[e,e.status,"bad"]);
-  const low=S.sp.filter(s=>s.qty<=s.min).sort((a,b)=>a.qty-b.qty).map(s=>[s,s.qty===0?"out of stock":s.qty+" left · reorder at "+s.min,s.qty===0?"bad":"warn"]);
-  const drv=S.hd.filter(h=>h.status==="Issued to Client"||h.status==="Missing").map(h=>[h,h.status==="Missing"?"missing":"with "+h.client,h.status==="Missing"?"bad":"info"]);
-  return[["Calibration certificates due or expired",cert,"--bad"],["Not verified in 90+ days",ver,"--warn"],["Defective or lost",bad,"--bad"],["Supplies at or below reorder level",low,"--warn"],["Hard drives off the vessel",drv,"--info"]]}
+  const bad=EQ().filter(e=>e.status==="Defective"||e.status==="Lost").map(e=>[e,e.status,"bad"]);
+  const low=SP().filter(s=>s.qty<=s.min).sort((a,b)=>a.qty-b.qty).map(s=>[s,s.qty===0?"out of stock":s.qty+" left · reorder at "+s.min,s.qty===0?"bad":"warn"]);
+  const drv=HD().filter(h=>h.status==="Issued to Client"||h.status==="Missing").map(h=>[h,h.status==="Missing"?"missing":"with "+h.client,h.status==="Missing"?"bad":"info"]);
+  return[["Certificates due in 60 days or expired",cert,"--bad"],["Not verified in 90+ days",ver,"--warn"],["Defective or lost",bad,"--bad"],["Supplies at or below reorder level",low,"--warn"],["Hard drives off the vessel",drv,"--info"]]}
 
 /* ---------- views ---------- */
 function vOverview(){
   const att=attention();const attCount=att[0][1].length+att[1][1].length+att[2][1].length+att[3][1].length;
-  const counts=EQ_STATUS.map(s=>[s,S.eq.filter(e=>e.status===s).length]);const tot=S.eq.length;
-  const locs={};S.eq.forEach(e=>locs[e.location]=(locs[e.location]||0)+1);const locArr=Object.entries(locs).sort((a,b)=>b[1]-a[1]);const lmax=locArr[0]?locArr[0][1]:1;
-  const value=S.eq.filter(e=>e.status!=="Lost").reduce((a,e)=>a+(e.cost||0),0);
+  const E=EQ();const counts=EQ_STATUS.map(s=>[s,E.filter(e=>e.status===s).length]);const tot=E.length;
+  const locs={};E.forEach(e=>{const k=fleet()?siteName(e.site):e.location;locs[k]=(locs[k]||0)+1});const locArr=Object.entries(locs).sort((a,b)=>b[1]-a[1]);const lmax=locArr[0]?locArr[0][1]:1;
+  const value=E.filter(e=>e.status!=="Lost").reduce((a,e)=>a+(e.cost||0),0);
   return'<div class="stack">'+
   '<div class="guide"><b>Try the demo</b><span class="muted">Everything here is made-up sample data.</span><ol class="x">'+
-   '<li>Open <a href="#equipment">Equipment</a>, tap any item, and move it to a new location.</li>'+
-   '<li>Tap the <b>Online</b> pill at the top to go offline, make a change, then tap it again to watch it sync.</li>'+
+   '<li>Pick a vessel in the box at the top, or <b>All vessels</b> for the fleet view the office would see.</li>'+
+   '<li>Open <a href="#equipment">Equipment</a> and move an item. Tap the <b>Online</b> pill to go offline, change something, then tap it again to watch it sync.</li>'+
    '<li>Open <a href="#scan">Scan</a> and scan a sample label, or take a photo of a printed label.</li>'+
    '<li>Tap <b>+</b> on Equipment, Supplies or Hard drives to add something by scanning or typing.</li>'+
    '<li>Open <a href="#reports">Reports</a>, create a fault report, then find it filed under <a href="#documents">Documents</a>.</li>'+
-   '<li>Switch to <b>Viewer</b> to see what read-only staff can do.</li></ol></div>'+
+   '<li>Open <a href="#certs">Certificates</a> to see what is expiring, the reminder rules, who gets which email, and a preview of the email.</li>'+
+   '<li>Open <a href="#import">Import</a> and try the sample file to see how a spreadsheet is checked before anything is saved.</li>'+
+   '<li>Switch to <b>Viewer</b> to see what read-only staff can do.</li></ol></div>'+fleetCards()+
   '<div class="kpis">'+
-   '<div class="kpi"><div class="n">'+tot+'</div><div class="l">Equipment items tracked</div></div>'+
+   '<div class="kpi"><div class="n">'+tot+'</div><div class="l">Equipment items '+(fleet()?'across the fleet':'on '+esc(siteById(S.site).short))+'</div></div>'+
    '<div class="kpi"><div class="n">'+counts[0][1]+'</div><div class="l">In service right now</div></div>'+
    '<div class="kpi alert"><div class="n">'+attCount+'</div><div class="l">Need attention</div></div>'+
-   '<div class="kpi"><div class="n">$'+(value/1000).toFixed(0)+'k</div><div class="l">Equipment value on record</div></div>'+
+   '<div class="kpi"><div class="n">$'+(value>=1e6?(value/1e6).toFixed(1)+'M':(value/1000).toFixed(0)+'k')+'</div><div class="l">Equipment value on record</div></div>'+
   '</div>'+
   '<div class="grid2">'+
    '<section class="panel"><div class="panel-h"><h3>Needs attention</h3><span class="eyebrow">Tap a group to expand</span></div>'+
@@ -528,27 +656,27 @@ function vOverview(){
     '<section class="panel"><div class="panel-h"><h3>Equipment by status</h3><span class="eyebrow">'+tot+' items</span></div><div class="panel-b">'+
      '<div class="stackbar" role="img" aria-label="Equipment by status">'+counts.filter(c=>c[1]).map(c=>'<span style="width:'+(c[1]/tot*100)+'%;background:var('+STATUS_VAR[c[0]]+')" title="'+esc(c[0])+': '+c[1]+'"></span>').join("")+'</div>'+
      '<div class="legend">'+counts.map(c=>'<div><i style="background:var('+STATUS_VAR[c[0]]+')"></i>'+esc(c[0])+'<span class="mono">'+c[1]+'</span></div>').join("")+'</div></div></section>'+
-    '<section class="panel"><div class="panel-h"><h3>Where it is</h3><span class="eyebrow">Items per location</span></div><div class="panel-b bars">'+
+    '<section class="panel"><div class="panel-h"><h3>Where it is</h3><span class="eyebrow">'+(fleet()?'Items per vessel / site':'Items per location')+'</span></div><div class="panel-b bars">'+
      locArr.map(l=>'<div class="bar-row"><span class="nm" title="'+esc(l[0])+'">'+esc(l[0])+'</span><span class="t"><span style="width:'+(l[1]/lmax*100)+'%"></span></span><span class="mono">'+l[1]+'</span></div>').join("")+'</div></section>'+
    '</div>'+
   '</div></div>'}
 
-function eqRows(){const f=S.f;const list=S.eq.filter(e=>(!f.cat||e.category===f.cat)&&(!f.st||e.status===f.st)&&(!f.loc||e.location===f.loc)&&match(e,f.q));
-  document.getElementById("rc").textContent=list.length+" of "+S.eq.length;
-  document.getElementById("lst").innerHTML=list.length?list.map(e=>'<button class="row" type="button" data-open="'+e.id+'"><span class="id">'+e.id+'</span><span class="main"><div class="t">'+esc(e.description)+'</div><div class="s">'+esc(e.manufacturer)+' · SN <span class="mono">'+esc(e.serial)+'</span>'+(e.assetTag?' · '+esc(e.assetTag):'')+'</div></span><span class="loc">'+esc(e.location)+'</span><span class="end">'+chip(e.status)+'</span></button>').join(""):'<div class="empty">No equipment matches these filters.</div>'}
+function eqRows(){const f=S.f;const list=EQ().filter(e=>(!f.cat||e.category===f.cat)&&(!f.st||e.status===f.st)&&(!f.loc||e.location===f.loc)&&match(e,f.q));
+  document.getElementById("rc").textContent=list.length+" of "+EQ().length;
+  document.getElementById("lst").innerHTML=list.length?list.map(e=>'<button class="row" type="button" data-open="'+e.id+'"><span class="id">'+e.id+'</span><span class="main"><div class="t">'+esc(e.description)+'</div><div class="s">'+esc(e.manufacturer)+' · SN <span class="mono">'+esc(e.serial)+'</span>'+(e.assetTag?' · '+esc(e.assetTag):'')+'</div></span><span class="loc">'+(fleet()?'<b>'+esc(siteById(e.site).short)+'</b> · ':'')+esc(e.location)+'</span><span class="end">'+chip(e.status)+'</span></button>').join(""):'<div class="empty">No equipment matches these filters.</div>'}
 function vEquipment(){const f=S.f;
   return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Serialised assets</div><h2>Equipment</h2></div>'+
   (editor()?'<button class="btn primary" type="button" data-add-eq="1"><span style="font-size:18px;line-height:1">+</span> Add equipment</button>':'')+'</div>'+
   (editor()?'<button class="fab" type="button" data-add-eq="1" aria-label="Add equipment">+</button>':'')+
   '<div class="toolbar"><label class="search">'+searchIcon+'<input type="search" id="q" placeholder="Search description, serial, asset tag…" value="'+esc(f.q)+'" aria-label="Search equipment"></label>'+
-  '<select id="fcat" aria-label="Category">'+opts(uniq(S.eq.map(e=>e.category)),f.cat,"All categories")+'</select>'+
+  '<select id="fcat" aria-label="Category">'+opts(uniq(EQ().map(e=>e.category)),f.cat,"All categories")+'</select>'+
   '<select id="fst" aria-label="Status">'+opts(EQ_STATUS,f.st,"All statuses")+'</select>'+
-  '<select id="floc" aria-label="Location">'+opts(uniq(S.eq.map(e=>e.location)),f.loc,"All locations")+'</select>'+
+  '<select id="floc" aria-label="Location">'+opts(uniq(EQ().map(e=>e.location)),f.loc,"All locations")+'</select>'+
   '<span class="result-count" id="rc"></span></div><div class="list" id="lst"></div></div>'}
 
-function spRows(){const f=S.fs;const list=S.sp.filter(s=>(!f.kind||s.kind===f.kind)&&match(s,f.q));
-  document.getElementById("rc").textContent=list.length+" of "+S.sp.length;
-  document.getElementById("lst").innerHTML=list.length?list.map(s=>{const low=s.qty<=s.min;return'<div class="row sp" role="button" tabindex="0" data-open="'+s.id+'"><span class="id">'+s.id+'</span><span class="main"><div class="t">'+esc(s.description)+'</div><div class="s">'+esc(s.kind)+' · reorder at '+s.min+' '+esc(s.unit)+'</div></span><span class="loc">'+esc(s.location)+' · '+esc(s.box)+'</span><span class="end">'+
+function spRows(){const f=S.fs;const list=SP().filter(s=>(!f.kind||s.kind===f.kind)&&match(s,f.q));
+  document.getElementById("rc").textContent=list.length+" of "+SP().length;
+  document.getElementById("lst").innerHTML=list.length?list.map(s=>{const low=s.qty<=s.min;return'<div class="row sp" role="button" tabindex="0" data-open="'+s.id+'"><span class="id">'+s.id+'</span><span class="main"><div class="t">'+esc(s.description)+'</div><div class="s">'+esc(s.kind)+' · reorder at '+s.min+' '+esc(s.unit)+'</div></span><span class="loc">'+(fleet()?'<b>'+esc(siteById(s.site).short)+'</b> · ':'')+esc(s.location)+' · '+esc(s.box)+'</span><span class="end">'+
    (editor()?'<span class="qty'+(low?' low':'')+'"><button type="button" data-q="-1" data-id="'+s.id+'" aria-label="Use one">−</button><span>'+s.qty+' '+esc(s.unit)+'</span><button type="button" data-q="1" data-id="'+s.id+'" aria-label="Add one">+</button></span>':'<span class="mono" style="'+(low?'color:var(--bad);font-weight:600':'')+'">'+s.qty+' '+esc(s.unit)+'</span>')+
    (s.qty===0?'<span class="chip c-bad">Out</span>':low?'<span class="chip c-warn">Low</span>':'')+'</span></div>'}).join(""):'<div class="empty">No supplies match.</div>'}
 function vSupplies(){const f=S.fs;
@@ -559,9 +687,9 @@ function vSupplies(){const f=S.fs;
   '<select id="fkind" aria-label="Type">'+opts(["Consumable","Connector Kit","Bulk Cable"],f.kind,"All types")+'</select><span class="result-count" id="rc"></span></div>'+
   '<div class="list" id="lst"></div>'+(editor()?'<p class="note">Tap − when you use something and + when stock arrives. Items at or below their reorder level turn red.</p>':'')+'</div>'}
 
-function hdRows(){const f=S.fh;const list=S.hd.filter(h=>(!f.st||h.status===f.st)&&match(h,f.q));
-  document.getElementById("rc").textContent=list.length+" of "+S.hd.length;
-  document.getElementById("lst").innerHTML=list.length?list.map(h=>'<button class="row" type="button" data-open="'+h.id+'"><span class="id">'+h.id+'</span><span class="main"><div class="t">'+esc(h.manufacturer)+' '+esc(h.size)+' · <span class="mono">'+esc(h.serial)+'</span></div><div class="s">'+esc(h.dataDesc)+'</div></span><span class="loc">'+(h.client?esc(h.client)+' · <span class="mono">'+esc(h.job)+'</span>':'<span class="muted">Not assigned</span>')+'</span><span class="end">'+chip(h.status)+'</span></button>').join(""):'<div class="empty">No drives match.</div>'}
+function hdRows(){const f=S.fh;const list=HD().filter(h=>(!f.st||h.status===f.st)&&match(h,f.q));
+  document.getElementById("rc").textContent=list.length+" of "+HD().length;
+  document.getElementById("lst").innerHTML=list.length?list.map(h=>'<button class="row" type="button" data-open="'+h.id+'"><span class="id">'+h.id+'</span><span class="main"><div class="t">'+esc(h.manufacturer)+' '+esc(h.size)+' · <span class="mono">'+esc(h.serial)+'</span></div><div class="s">'+esc(h.dataDesc)+'</div></span><span class="loc">'+(fleet()?'<b>'+esc(siteById(h.site).short)+'</b> · ':'')+(h.client?esc(h.client)+' · <span class="mono">'+esc(h.job)+'</span>':'<span class="muted">Not assigned</span>')+'</span><span class="end">'+chip(h.status)+'</span></button>').join(""):'<div class="empty">No drives match.</div>'}
 function vDrives(){const f=S.fh;
   return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Data custody</div><h2>Hard drives</h2></div>'+
   (editor()?'<button class="btn primary" type="button" data-add-eq="hd"><span style="font-size:18px;line-height:1">+</span> Add hard drive</button>':'')+'</div>'+
@@ -569,7 +697,7 @@ function vDrives(){const f=S.fh;
   '<div class="toolbar"><label class="search">'+searchIcon+'<input type="search" id="q" placeholder="Search serial, client, job…" value="'+esc(f.q)+'" aria-label="Search hard drives"></label>'+
   '<select id="fhst" aria-label="Status">'+opts(HD_STATUS,f.st,"All statuses")+'</select><span class="result-count" id="rc"></span></div><div class="list" id="lst"></div></div>'}
 
-function vScan(){const samples=[S.eq[2],S.sp[4],S.hd[16]].filter(Boolean);
+function vScan(){const samples=[EQ()[2]||S.eq[2],SP()[4]||S.sp[4],HD().find(h=>h.status==="Issued to Client")||S.hd[16]].filter(Boolean);
   return'<div class="stack"><div class="page-head"><div><div class="eyebrow">QR labels</div><h2>Scan an item</h2></div></div>'+
   '<div class="scan-hero"><div class="viewfinder"><div class="scanline"></div><div class="inner">'+
    '<label class="btn primary big" for="photo">Scan with camera</label><input id="photo" type="file" accept="image/*" capture="environment" hidden>'+
@@ -581,8 +709,8 @@ function vScan(){const samples=[S.eq[2],S.sp[4],S.hd[16]].filter(Boolean);
    samples.map(s=>'<div class="sample"><span class="q">'+qrSvg(s.id,108)+'</span><span class="mono" style="font-weight:600">'+s.id+'</span><button class="btn" type="button" data-scan="'+s.id+'">Scan this label</button></div>').join("")+
   '</div></section></div>'}
 
-function vLabels(){const cats=uniq(S.eq.map(e=>e.category));const c=S.lab.cat;
-  const items=c==="__sp"?S.sp:c==="__hd"?S.hd:S.eq.filter(e=>e.category===c);
+function vLabels(){const cats=uniq(EQ().map(e=>e.category));const c=S.lab.cat;
+  const items=c==="__sp"?SP():c==="__hd"?HD():EQ().filter(e=>e.category===c);
   return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Print preview · 2 × 1 in labels</div><h2>Labels</h2></div>'+
   '<select id="labCat" aria-label="Which labels">'+cats.map(x=>'<option value="'+esc(x)+'"'+(x===c?' selected':'')+'>Equipment – '+esc(x)+'</option>').join("")+'<option value="__sp"'+(c==="__sp"?' selected':'')+'>All supplies</option><option value="__hd"'+(c==="__hd"?' selected':'')+'>All hard drives</option></select></div>'+
   '<p class="note" style="margin:0">'+items.length+' labels. The finished app sends these straight to a label printer.</p>'+
@@ -590,7 +718,7 @@ function vLabels(){const cats=uniq(S.eq.map(e=>e.category));const c=S.lab.cat;
 
 function vActivity(){const p=pending();
   return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Audit trail</div><h2>Activity</h2></div><span class="note">'+(p?p+" change"+(p===1?"":"s")+" waiting to sync":"All changes synced")+'</span></div>'+
-  '<div class="list">'+S.log.slice(0,80).map(e=>{const it=byId(e.ref);return'<div class="log-row"><span class="when mono muted" style="font-size:12px">'+ago(e.at)+'</span><span style="min-width:0"><div><b>'+esc(e.what)+'</b> · <button class="linkish" type="button" data-open="'+e.ref+'">'+e.ref+'</button> <span class="muted">'+esc(it?(it.description||""):"")+'</span></div><div class="who">'+esc(e.detail)+' · by '+esc(e.who)+'</div></span>'+(e.synced?'<span class="chip c-ok">Synced</span>':'<span class="chip c-warn">Waiting</span>')+'</div>'}).join("")+'</div>'+
+  '<div class="list">'+S.log.filter(e=>fleet()||inSite(byId(e.ref))).slice(0,80).map(e=>{const it=byId(e.ref);return'<div class="log-row"><span class="when mono muted" style="font-size:12px">'+ago(e.at)+'</span><span style="min-width:0"><div><b>'+esc(e.what)+'</b> · <button class="linkish" type="button" data-open="'+e.ref+'">'+e.ref+'</button> <span class="muted">'+esc(it?(it.description||""):"")+'</span></div><div class="who">'+esc(e.detail)+' · by '+esc(e.who)+(fleet()&&it?' · '+esc(siteById(it.site).short):'')+'</div></span>'+(e.synced?'<span class="chip c-ok">Synced</span>':'<span class="chip c-warn">Waiting</span>')+'</div>'}).join("")+'</div>'+
   '<p class="note" style="margin:0">Every change is recorded with who made it and when. Changes made offline are kept on the device until it can reach the server.</p></div>'}
 
 /* =====================================================================
@@ -610,7 +738,7 @@ const pathText=fid=>pathOf(fid).map(f=>f.name).join(" › ");
 const kidsOf=fid=>S.folders.filter(f=>f.parent===fid).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
 const filesIn=fid=>S.files.filter(f=>f.folder===fid).sort((a,b)=>b.created-a.created);
 function countDeep(fid){return filesIn(fid).length+kidsOf(fid).reduce((a,k)=>a+countDeep(k.id),0)}
-const repFolder=(type,date,client)=>{const y=(date||iso(TODAY)).slice(0,4);const p=["Reports",RT[type].folder,y];if(type==="tr")p.push(client||"Unassigned client");return ensurePath(p)};
+const repFolder=(type,date,client,vessel)=>{const y=(date||iso(TODAY)).slice(0,4);const p=["Reports",vessel||VESSEL,RT[type].folder,y];if(type==="tr")p.push(client||"Unassigned client");return ensurePath(p)};
 
 /* =====================================================================
    REPORT DOCUMENTS (shared by preview and print file)
@@ -754,23 +882,23 @@ function snapshot(type,d){if(type==="om")return Object.assign({},d,{lines:omLine
 function saveReport(type,draft,opt){opt=opt||{};const data=snapshot(type,draft);delete data.ids;
   const rep={id:"R"+(S.seq++),type,no:draft.no,date:draft.date||iso(TODAY),created:opt.at||Date.now(),by:opt.by||"You",data};
   rep.title=repTitle(type,data);
-  const folder=repFolder(type,rep.date,data.client);
+  const folder=repFolder(type,rep.date,data.client,data.vessel);
   const file={id:"D"+(S.seq++),name:type==="tr"?rep.no+" ("+rep.title+")":rep.no+" "+RT[type].label+" – "+rep.title,folder,kind:"report",type,repId:rep.id,created:rep.created,by:rep.by};
   rep.fileId=file.id;S.reports.unshift(rep);S.files.push(file);return rep}
 
 function seedDocs(){S.folders=[];S.files=[];S.reports=[];S.seq=1;
   ["om","fr","tr"].forEach(t=>{const fid=ensurePath(["Templates",RT[t].tpl]);
     S.files.push({id:"D"+(S.seq++),name:RT[t].tpl+" Template",folder:fid,kind:"template",type:t,created:Date.now()-40*DAY,by:"System"})});
-  ensurePath(["Reports","Outgoing Manifests"]);ensurePath(["Reports","Fault Reports"]);ensurePath(["Reports","Transmittals"]);
+  SITES.filter(x=>x.kind==="vessel").forEach(v=>["Outgoing Manifests","Fault Reports","Transmittals"].forEach(f=>ensurePath(["Reports",v.name,f])));
   const cal=ensurePath(["Certificates","Calibration"]);ensurePath(["Certificates","Export Licences"]);ensurePath(["Equipment Photos"]);ensurePath(["Manuals & Datasheets"]);
   S.eq.filter(e=>e.certExp).slice(0,4).forEach((e,i)=>S.files.push({id:"D"+(S.seq++),name:e.id+" "+e.description+" – Calibration Certificate.pdf",folder:cal,kind:"file",created:Date.now()-(20+i*9)*DAY,by:"J. Chen"}));
   const sent=S.eq.filter(e=>e.status==="Sent Back").slice(0,5);
   if(sent.length)saveReport("om",{no:"OM-"+iso(TODAY).slice(0,4)+"-001",date:dOff(-21),consignee:"Demo Marine Services – Shore Base\n1200 Harbor Point Dr\nHouston, TX 77041\nAttn: Workshop",agent:"Gulf Coast Freight Agents",notify:"A. Rivera\nWorkshop Supervisor",client:"Gulfline Energy",vessel:VESSEL,project:"J-2611",invRef:"",pol:"Port Fourchon, LA",pod:"Houston, TX",signName:"A. Rivera",signTitle:"Logistics Coordinator",notes:"Returned for service after project completion.",ids:sent.map(e=>e.id)},{at:Date.now()-21*DAY,by:"A. Rivera"});
-  const bad=S.eq.find(e=>e.status==="Defective");
+  const bad=S.eq.find(e=>e.status==="Defective"&&e.site==="NP");
   if(bad)saveReport("fr",{no:"FR-046",date:dOff(-9),vessel:VESSEL,job:"J-2624",itemId:bad.id,model:"",when:dOff(-10)+"T14:30",fault:bad.notes||"Unit fails to respond",usage:"Mounted on ROV during pipeline survey.",action:"Swapped to spare unit. Faulty unit tagged and moved to workshop.",completedBy:"M. Okafor",checkedBy:"J. Chen"},{at:Date.now()-9*DAY,by:"M. Okafor"});
-  const iss=S.hd.filter(h=>h.status==="Issued to Client");
+  const iss=S.hd.filter(h=>h.status==="Issued to Client"&&h.site==="NP");
   if(iss.length){const cl=iss[0].client;const grp=iss.filter(h=>h.client===cl);
-    const job=grp[0].job;saveReport("tr",{no:CO.short+"_"+job+"-TR-001",date:grp[0].issued||dOff(-12),client:cl,toName:"Onboard "+cl+" Representative",recipient:"R. Delgado",toAddr:"",contact:"J. Chen",job,subject:"Pipeline Survey Video",signName:"J. Chen",contents:grp.length+"x hard drive"+(grp.length>1?"s":"")+" containing video and stills recorded during the "+cl+" pipeline survey. ROV DVR and dive logs are also included.",ids:grp.map(h=>h.id)},{at:Date.now()-12*DAY,by:"J. Chen"})}
+    const job=grp[0].job;saveReport("tr",{vessel:VESSEL,no:CO.short+"_"+job+"-TR-001",date:grp[0].issued||dOff(-12),client:cl,toName:"Onboard "+cl+" Representative",recipient:"R. Delgado",toAddr:"",contact:"J. Chen",job,subject:"Pipeline Survey Video",signName:"J. Chen",contents:grp.length+"x hard drive"+(grp.length>1?"s":"")+" containing video and stills recorded during the "+cl+" pipeline survey. ROV DVR and dive logs are also included.",ids:grp.map(h=>h.id)},{at:Date.now()-12*DAY,by:"J. Chen"})}
 }
 
 /* =====================================================================
@@ -791,7 +919,7 @@ function vDocuments(){if(S.docFolder&&!folderById(S.docFolder))S.docFolder=null;
   const crumbs='<div class="crumbs"><button type="button" data-folder="">All documents</button>'+path.map((f,i)=>'<span class="sep">›</span>'+(i===path.length-1?'<span class="here">'+esc(f.name)+'</span>':'<button type="button" data-folder="'+f.id+'">'+esc(f.name)+'</button>')).join("")+'</div>';
   const fileIcon=f=>f.kind==="report"||f.kind==="template"?IC.doc(f.kind==="template"?"--idle":RT[f.type].c):IC.doc("--muted");
   const fileMeta=f=>(f.kind==="template"?"Blank template · "+RT[f.type].src:f.kind==="report"?RT[f.type].label+" · "+fmtD(iso(new Date(f.created)))+" · by "+esc(f.by):"PDF · added "+ago(f.created)+" by "+esc(f.by));
-  return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Filed automatically by type, year and client</div><h2>Documents</h2></div>'+
+  return'<div class="stack"><div class="page-head"><div><div class="eyebrow">Filed automatically by vessel, type, year and client</div><h2>Documents</h2></div>'+
    (editor()?'<button class="btn" type="button" data-newfolder="1">'+IC.folder+' New folder</button>':'')+'</div>'+
   '<div class="docs"><nav class="tree" aria-label="Folders"><button type="button" data-folder="" aria-current="'+(cur===null)+'"><span style="font-weight:600">All documents</span><span class="mono muted" style="margin-left:auto;font-size:11px">'+S.files.length+'</span></button>'+treeHTML(null,0)+'</nav>'+
   '<div class="stack" style="gap:10px;min-width:0">'+crumbs+'<div class="list">'+
@@ -799,7 +927,7 @@ function vDocuments(){if(S.docFolder&&!folderById(S.docFolder))S.docFolder=null;
    kids.map(f=>'<button class="frow" type="button" data-folder="'+f.id+'">'+IC.folder+'<span style="min-width:0"><div class="nm">'+esc(f.name)+'</div><div class="meta">'+kidsOf(f.id).length+' folder'+(kidsOf(f.id).length===1?'':'s')+' · '+countDeep(f.id)+' file'+(countDeep(f.id)===1?'':'s')+(f.by!=="System"?' · created by '+esc(f.by):'')+'</div></span><span class="muted">›</span></button>').join("")+
    files.map(f=>'<button class="frow" type="button" data-open-file="'+f.id+'">'+fileIcon(f)+'<span style="min-width:0"><div class="nm">'+esc(f.name)+'</div><div class="meta">'+fileMeta(f)+'</div></span><span class="chip c-idle">Open</span></button>').join("")+
    (!kids.length&&!files.length&&!(newFolderOpen&&editor())?'<div class="empty">This folder is empty.'+(editor()?' Reports are filed here automatically when you save them.':'')+'</div>':'')+
-  '</div><p class="note" style="margin:0">Saved reports are filed automatically: <span class="mono">Reports › type › year</span>, and transmittals one level deeper by client. Missing folders are created as needed.</p></div></div></div>'}
+  '</div><p class="note" style="margin:0">Saved reports are filed automatically: <span class="mono">Reports › vessel › type › year</span>, and transmittals one level deeper by client. Missing folders are created as needed.</p></div></div></div>'}
 
 /* =====================================================================
    PANELS: add equipment, report builder, document viewer
@@ -807,7 +935,7 @@ function vDocuments(){if(S.docFolder&&!folderById(S.docFolder))S.docFolder=null;
 let panel=null;
 function openPanel(p){openId=null;panel=p;renderPanel()}
 function renderPanel(){if(!panel)return;const root=document.getElementById("sheetRoot");
-  const r=panel.kind==="add"?pAdd():panel.kind==="report"?pReport():pDoc();
+  const r=panel.kind==="add"?pAdd():panel.kind==="report"?pReport():panel.kind==="email"?pEmail():pDoc();
   root.innerHTML='<div class="scrim" data-close="1"></div><aside class="sheet'+(r.wide?' wide':'')+'" role="dialog" aria-modal="true" aria-label="'+esc(r.label)+'">'+
    '<div class="sheet-h"><div style="min-width:0;flex:1">'+r.head+'</div><button class="x" type="button" data-close="1" aria-label="Close">×</button></div>'+
    '<div class="sheet-b">'+r.body+'</div>'+(r.foot?'<div class="sheet-f">'+r.foot+'</div>':'')+'</aside>';
@@ -829,9 +957,10 @@ const ADD={
 const SP_UNITS=["EA","RL","M","BG","KT","PK","SET","BT","TU","BX"];
 const HD_SIZES=["2 TB SSD","4 TB HDD","5 TB HDD","8 TB HDD","12 TB HDD"];
 function openAdd(seed,type){type=type||"eq";if(!editor()){toast("Only editors can add "+ADD[type].noun+".");return}
-  const base={eq:{category:"Subsea Sensors",newCat:"",manufacturer:"",description:"",serial:"",noSN:false,assetTag:"",location:"Survey Desk",caseLoc:"No case",status:"In Service",owner:"Company",certExp:"",cost:"",eccn:"EAR99",coo:"",schedB:"",dims:"",weightLb:"",notes:"",assignId:""},
-    sp:{kind:"Consumable",description:"",unit:"EA",qty:"1",min:"2",location:"Workshop Below Deck",box:"",assignId:""},
-    hd:{manufacturer:"Seagate",size:"4 TB HDD",serial:"",status:"On Hand",dataDesc:"Blank",client:"",job:"",assignId:"",closeOld:true}}[type];
+  const st=curSite(),L0=locsFor(st);
+  const base={eq:{site:st,category:"Subsea Sensors",newCat:"",manufacturer:"",description:"",serial:"",noSN:false,assetTag:"",location:L0[0],caseLoc:"No case",status:"In Service",owner:"Company",certExp:"",cost:"",eccn:"EAR99",coo:"",schedB:"",dims:"",weightLb:"",notes:"",assignId:""},
+    sp:{site:st,kind:"Consumable",description:"",unit:"EA",qty:"1",min:"2",location:L0[Math.min(3,L0.length-1)],box:"",assignId:""},
+    hd:{site:st,manufacturer:"Seagate",size:"4 TB HDD",serial:"",status:"On Hand",dataDesc:"Blank",client:"",job:"",assignId:"",closeOld:true}}[type];
   openPanel({kind:"add",addType:type,step:seed&&seed.form?"form":"choose",how:seed&&seed.how||"Manual entry",note:seed&&seed.note||"",confirm:false,draft:Object.assign(base,seed&&seed.draft||{})})}
 function nextIdFor(type){const P=ADD[type].prefix;const n=ADD[type].list().map(e=>parseInt(e.id.slice(3),10)||0);return P+"-"+String(Math.max(0,...n)+1).padStart(4,"0")}
 function nextEqId(){return nextIdFor("eq")}
@@ -870,7 +999,7 @@ function pAdd(){const p=panel,d=p.draft,T=p.addType,A=ADD[T];
    '<label><span class="req">Quantity on hand</span><input type="number" min="0" step="1" data-a="qty" value="'+esc(d.qty)+'"></label>'+
    '<label>Reorder when at or below<input type="number" min="0" step="1" data-a="min" value="'+esc(d.min)+'"></label>'+
    '<div class="fsec">Where it is</div>'+
-   '<label>Location<select data-a="location">'+opts(LOCS,d.location)+'</select></label>'+
+   siteField(d)+'<label>Location<select data-a="location">'+opts(locsFor(d.site),d.location)+'</select></label>'+
    '<label>Box / bin<input type="text" data-a="box" value="'+esc(d.box)+'" placeholder="e.g. Consumables bin 2"></label></div>'};
   if(T==="hd")return{label:A.title,head,foot,body:note+'<div class="fgrid">'+first+
    '<label>Manufacturer<input type="text" data-a="manufacturer" list="hdMfr" value="'+esc(d.manufacturer)+'"><datalist id="hdMfr"><option value="Seagate"><option value="WD"><option value="Samsung"><option value="LaCie"></datalist></label>'+
@@ -878,7 +1007,7 @@ function pAdd(){const p=panel,d=p.draft,T=p.addType,A=ADD[T];
    '<label class="full"><span class="req">Serial number</span><input type="text" data-a="serial" class="mono" value="'+esc(d.serial)+'"></label>'+
    '<div class="full" id="dupBox">'+dupHTML(d,"hd")+'</div>'+
    '<div class="fsec">Contents and custody</div>'+
-   '<label>Status<select data-a="status">'+opts(["On Hand","Issued to Client"],d.status)+'</select></label>'+
+   siteField(d)+'<label>Status<select data-a="status">'+opts(["On Hand","Issued to Client"],d.status)+'</select></label>'+
    '<label>Contents<input type="text" data-a="dataDesc" value="'+esc(d.dataDesc)+'" placeholder="Blank, or what is on it"></label>'+
    '<label>Client<select data-a="client">'+opts(CLIENTS,d.client,"None yet")+'</select></label>'+
    '<label>Job number<input type="text" data-a="job" class="mono" value="'+esc(d.job)+'"></label></div>'};
@@ -894,7 +1023,7 @@ function pAdd(){const p=panel,d=p.draft,T=p.addType,A=ADD[T];
    '<label class="chk full"><input type="checkbox" data-a="noSN"'+(d.noSN?' checked':'')+'> This item has no serial number</label>'+
    '<div class="full" id="dupBox">'+dupHTML(d,"eq")+'</div>'+
    '<div class="fsec">Where it is</div>'+
-   '<label>Location<select data-a="location">'+opts(LOCS,d.location)+'</select></label>'+
+   siteField(d)+'<label>Location<select data-a="location">'+opts(locsFor(d.site),d.location)+'</select></label>'+
    '<label>Status<select data-a="status">'+opts(EQ_STATUS.filter(s=>s!=="Lost"),d.status)+'</select></label>'+
    '<label>Case<input type="text" data-a="caseLoc" value="'+esc(d.caseLoc)+'"></label>'+
    '<label>Owner<select data-a="owner">'+opts(["Company","Rental – SeaTech","Client owned"],d.owner)+'</select></label>'+
@@ -940,20 +1069,20 @@ function addSave(){const p=panel,d=p.draft,T=p.addType;
     if(!d.noSN&&!d.serial.trim()){toast("Enter the serial number, or tick ‘no serial number’.");return}}
   if(T!=="hd"&&dupInfo(d,T).length&&!p.confirm){p.confirm=true;renderPanel();toast("This looks like a duplicate. Check it, then tap Add anyway.");return}
   const id=d.assignId&&!byId(d.assignId)?d.assignId:nextIdFor(T);let it;
-  if(T==="sp"){it={type:"sp",id,kind:d.kind,description:d.description.trim(),unit:d.unit,min:+d.min||0,qty:+d.qty||0,location:d.location,box:d.box.trim()||"—"};S.sp.push(it);S.fs={q:"",kind:""}}
-  else if(T==="hd"){it={type:"hd",id,manufacturer:d.manufacturer.trim()||"Unknown",size:d.size.trim()||"—",serial:d.serial.trim(),status:d.status,job:d.job.trim(),client:d.client,dataDesc:d.dataDesc.trim()||"Blank",issued:d.status==="Issued to Client"?iso(TODAY):""};S.hd.push(it);S.fh={q:"",st:""};
+  if(T==="sp"){it={type:"sp",id,site:d.site,kind:d.kind,description:d.description.trim(),unit:d.unit,min:+d.min||0,qty:+d.qty||0,location:d.location,box:d.box.trim()||"—"};S.sp.push(it);S.fs={q:"",kind:""}}
+  else if(T==="hd"){it={type:"hd",id,site:d.site,manufacturer:d.manufacturer.trim()||"Unknown",size:d.size.trim()||"—",serial:d.serial.trim(),status:d.status,job:d.job.trim(),client:d.client,dataDesc:d.dataDesc.trim()||"Blank",issued:d.status==="Issued to Client"?iso(TODAY):""};S.hd.push(it);S.fh={q:"",st:""};
     if(d.closeOld)dupInfo(d,"hd").map(x=>x[1]).filter(h=>h.id!==id&&h.status!=="Reformatted").forEach(h=>{h.status="Reformatted";h.reusedAs=id;record(h,"Reformatted","Reused as "+id)})}
   else{const cat=d.category==="__new"?d.newCat.trim():d.category;
-    it={type:"eq",id,category:cat,manufacturer:d.manufacturer.trim()||"Unknown",description:d.description.trim(),serial:d.noSN?"No S/N":d.serial.trim(),assetTag:d.assetTag.trim(),status:d.status,location:d.location,caseLoc:d.caseLoc||"No case",owner:d.owner,verified:iso(TODAY),certExp:d.certExp,
-    cost:+d.cost||0,eccn:d.eccn.trim(),coo:d.coo.trim()||COO[d.manufacturer]||"",schedB:d.schedB.trim()||SCHEDB[cat]||"",dims:d.dims.trim()||(PACK[cat]||[""])[0],weightLb:+d.weightLb||(PACK[cat]||["",""])[1]||"",notes:d.notes.trim()};S.eq.push(it);S.f={q:"",cat:"",st:"",loc:""}}
-  record(it,"Added to database",p.how+(it.location?" · "+it.location:""));save();closeSheet();render();openSheet(id);toast(id+" added. Its QR label is ready to print.")}
+    it={type:"eq",id,site:d.site,category:cat,manufacturer:d.manufacturer.trim()||"Unknown",description:d.description.trim(),serial:d.noSN?"No S/N":d.serial.trim(),assetTag:d.assetTag.trim(),status:d.status,location:d.location,caseLoc:d.caseLoc||"No case",owner:d.owner,verified:iso(TODAY),certExp:d.certExp,
+    cost:+d.cost||0,eccn:d.eccn.trim(),coo:d.coo.trim()||COO[d.manufacturer]||"",schedB:d.schedB.trim()||SCHEDB[cat]||"",dims:d.dims.trim()||(PACK[cat]||[""])[0],weightLb:+d.weightLb||(PACK[cat]||["",""])[1]||"",notes:d.notes.trim()};it.certExp="";S.eq.push(it);if(d.certExp)newCert(it,cat==="Lifting Gear"?"Load test":"Calibration",d.certExp);S.f={q:"",cat:"",st:"",loc:""}}
+  record(it,"Added to database",p.how+" · "+siteById(it.site).short+(it.location?" · "+it.location:""));if(!inSite(it))S.site=it.site;save();closeSheet();render();openSheet(id);toast(id+" added. Its QR label is ready to print.")}
 
 /* ---------- report builder ---------- */
 function newDraft(type,itemId){const today=iso(TODAY);
-  if(type==="om")return{no:nextNo("om"),date:today,consignee:"Demo Marine Services – Shore Base\n1200 Harbor Point Dr\nHouston, TX 77041\nAttn: Workshop",agent:"Gulf Coast Freight Agents",notify:"A. Rivera\nWorkshop Supervisor",client:CLIENTS[0],vessel:VESSEL,project:"J-2631",invRef:"",pol:"Port Fourchon, LA",pod:"Houston, TX",signName:"You",signTitle:"Survey Engineer",notes:"",ids:itemId?[itemId]:[],update:true};
-  if(type==="fr"){const def=itemId||(S.eq.find(e=>e.status==="Defective")||S.eq[0]).id;
-    return{no:nextNo("fr"),date:today,vessel:VESSEL,job:"J-2631",itemId:def,model:"",when:today+"T08:00",fault:"",usage:"",action:"",completedBy:"You",checkedBy:"J. Chen",mark:true}}
-  const cl=CLIENTS[0];return{no:nextNo("tr",today,"J-2631"),date:today,client:cl,toName:"Onboard "+cl+" Representative",recipient:"",toAddr:"",contact:"A. Rivera",job:"J-2631",subject:"Survey Video",signName:"You",contents:"",autoContents:true,ids:itemId?[itemId]:[],mark:true}}
+  if(type==="om")return{no:nextNo("om"),date:today,consignee:"Demo Marine Services – Shore Base\n1200 Harbor Point Dr\nHouston, TX 77041\nAttn: Workshop",agent:"Gulf Coast Freight Agents",notify:"A. Rivera\nWorkshop Supervisor",client:CLIENTS[0],vessel:curVessel(),project:"J-2631",invRef:"",pol:"Port Fourchon, LA",pod:"Houston, TX",signName:"You",signTitle:"Survey Engineer",notes:"",ids:itemId?[itemId]:[],update:true,dest:"HOU"};
+  if(type==="fr"){const def=itemId||(EQ().find(e=>e.status==="Defective")||EQ()[0]||S.eq[0]).id;
+    return{no:nextNo("fr"),date:today,vessel:curVessel(),job:"J-2631",itemId:def,model:"",when:today+"T08:00",fault:"",usage:"",action:"",completedBy:"You",checkedBy:"J. Chen",mark:true}}
+  const cl=CLIENTS[0];return{no:nextNo("tr",today,"J-2631"),date:today,client:cl,toName:"Onboard "+cl+" Representative",recipient:"",toAddr:"",contact:"A. Rivera",job:"J-2631",subject:"Survey Video",signName:"You",contents:"",autoContents:true,vessel:curVessel(),ids:itemId?[itemId]:[],mark:true}}
 function syncTr(){const d=panel&&panel.draft;if(!d||panel.type!=="tr"||!d.autoContents)return;d.contents=trAutoContents(d);const el=document.querySelector('[data-f="contents"]');if(el)el.value=d.contents}
 function trAutoContents(d){const L=(d.ids||[]).map(byId).filter(Boolean);if(!L.length)return"";const sizes=uniq(L.map(h=>h.size.replace(/ (HDD|SSD)$/,"")+" "+h.manufacturer+(/SSD/.test(h.size)?" SSD":"")));
   return L.length+"x "+sizes.join(" and ")+" client hard drive"+(L.length>1?"s":"")+", containing video and stills recorded during the "+d.client+" "+(d.subject||"project")+". ROV DVR and dive logs are also included."}
@@ -966,12 +1095,13 @@ function picker(list,ids,sub){return'<div class="full lab"><span class="req">Ite
 function builderForm(){const p=panel,d=p.draft,t=p.type;let h='<div class="fgrid">';
   if(t==="om"){h+=F("Manifest number","no",d.no,{mono:1})+F("Date","date",d.date,{type:"date"})+
     '<div class="fsec">Shipment</div>'+F("Consignee","consignee",d.consignee,{ta:1,full:1,req:1})+F("Notify","notify",d.notify,{ta:1})+F("Handling agent","agent",d.agent)+
-    F("Client","client",d.client,{sel:CLIENTS})+F("Project number","project",d.project)+F("Port of loading","pol",d.pol)+F("Port of discharge","pod",d.pod)+F("Invoice ref","invRef",d.invRef)+F("Vessel","vessel",d.vessel)+
-    '<div class="fsec">Equipment</div>'+picker(S.eq.filter(e=>e.status!=="Lost"&&e.status!=="Sent Back"),d.ids,e=>e.manufacturer+" "+e.description+" · SN "+e.serial+" · "+e.location)+
-    '<label class="chk full"><input type="checkbox" data-f="update"'+(d.update?' checked':'')+'> When saved, mark these items <b>Sent Back</b> and <b>In transit</b></label>'+
+    F("Client","client",d.client,{sel:CLIENTS})+F("Project number","project",d.project)+F("Port of loading","pol",d.pol)+F("Port of discharge","pod",d.pod)+F("Invoice ref","invRef",d.invRef)+F("Vessel","vessel",d.vessel,{sel:VESSEL_NAMES})+
+    '<div class="fsec">Equipment</div>'+picker(EQ().filter(e=>e.status!=="Lost"&&e.status!=="Sent Back"),d.ids,e=>e.manufacturer+" "+e.description+" · SN "+e.serial+" · "+e.location)+
+    '<label class="full"><span>Destination</span><select data-f="dest">'+SITES.map(x=>'<option value="'+x.id+'"'+(x.id===d.dest?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label>'+
+    '<label class="chk full"><input type="checkbox" data-f="update"'+(d.update?' checked':'')+'> When saved, move these items to <b>'+esc(siteName(d.dest||"HOU"))+'</b> (In transit)'+((d.dest||"HOU")==="HOU"?' and mark them <b>Sent Back</b>':'')+'</label>'+
     '<div class="fsec">Sign-off</div>'+F("Shipped by","signName",d.signName)+F("Title","signTitle",d.signTitle)+F("Notes","notes",d.notes,{ta:1,full:1})}
-  else if(t==="fr"){const e=byId(d.itemId);h+=F("Report number","no",d.no,{mono:1})+F("Date","date",d.date,{type:"date"})+F("Vessel","vessel",d.vessel)+F("Job number","job",d.job)+
-    '<div class="fsec">Equipment</div><label class="full"><span class="req">Item</span><select data-f="itemId">'+S.eq.map(x=>'<option value="'+x.id+'"'+(x.id===d.itemId?' selected':'')+'>'+x.id+' · '+esc(x.manufacturer+" "+x.description)+' · SN '+esc(x.serial)+'</option>').join("")+'</select></label>'+
+  else if(t==="fr"){const e=byId(d.itemId);h+=F("Report number","no",d.no,{mono:1})+F("Date","date",d.date,{type:"date"})+F("Vessel","vessel",d.vessel,{sel:VESSEL_NAMES})+F("Job number","job",d.job)+
+    '<div class="fsec">Equipment</div><label class="full"><span class="req">Item</span><select data-f="itemId">'+EQ().map(x=>'<option value="'+x.id+'"'+(x.id===d.itemId?' selected':'')+'>'+x.id+' · '+esc(x.manufacturer+" "+x.description)+' · SN '+esc(x.serial)+'</option>').join("")+'</select></label>'+
     (e?'<div class="full note" id="frItem">Serial <span class="mono">'+esc(e.serial)+'</span> · Asset '+esc(e.assetTag||"—")+' · Owner '+esc(e.owner)+' · now '+esc(e.status)+' at '+esc(e.location)+'</div>':'')+
     F("Model number","model",d.model,{ph:"Optional"})+F("Date / time fault occurred","when",d.when,{type:"datetime-local"})+
     '<div class="fsec">The fault</div>'+F("Fault description","fault",d.fault,{ta:1,full:1,req:1,ph:"What went wrong?"})+F("How the equipment was being used","usage",d.usage,{ta:1,full:1})+F("Action taken since","action",d.action,{ta:1,full:1})+
@@ -979,14 +1109,14 @@ function builderForm(){const p=panel,d=p.draft,t=p.type;let h='<div class="fgrid
     '<div class="fsec">Sign-off</div>'+F("Completed by","completedBy",d.completedBy)+F("Checked by","checkedBy",d.checkedBy)}
   else{h+=F("Delivery note reference","no",d.no,{mono:1})+F("Date","date",d.date,{type:"date"})+F("Job number","job",d.job)+F("Subject","subject",d.subject,{ph:"e.g. TT Inspections Video"})+
     '<div class="fsec">To</div>'+F("Client","client",d.client,{sel:CLIENTS,req:1})+F("Recipient name","recipient",d.recipient,{ph:"Client rep who signs for it"})+F("Delivery to","toName",d.toName,{full:1})+F("Address (if shipping ashore)","toAddr",d.toAddr,{ta:1,full:1,ph:"Leave blank when handed over on board"})+
-    '<div class="fsec">Drives</div>'+picker(S.hd.filter(h=>h.status==="On Hand"),d.ids,h=>h.manufacturer+" "+h.size+" · SN "+h.serial+" · "+h.dataDesc)+
+    '<div class="fsec">Drives</div>'+picker(HD().filter(h=>h.status==="On Hand"),d.ids,h=>h.manufacturer+" "+h.size+" · SN "+h.serial+" · "+h.dataDesc)+
     F("Description","contents",d.contents,{ta:1,full:1,ph:"Written for you from the drives you pick"})+'<div class="full note">Each drive’s serial number is added under the description automatically.</div>'+
     '<label class="chk full"><input type="checkbox" data-f="mark"'+(d.mark?' checked':'')+'> When saved, mark these drives <b>Issued to Client</b></label>'+
     '<div class="fsec">Sign-off</div>'+F("Contact name","contact",d.contact)+F("Sent by","signName",d.signName)}
   return h+'</div>'}
 function draftDoc(){const p=panel;return DOCS[p.type](snapshot(p.type,p.draft))}
 function pReport(){const p=panel;
-  const head='<div class="eyebrow">New '+RT[p.type].label.toLowerCase()+'</div><h3>'+esc(p.draft.no)+'</h3><div class="muted" style="font-size:13px;margin-top:3px">Files to <span class="mono">Reports › '+RT[p.type].folder+' › '+String(p.draft.date||iso(TODAY)).slice(0,4)+(p.type==="tr"?' › '+esc(p.draft.client):'')+'</span></div>'+
+  const head='<div class="eyebrow">New '+RT[p.type].label.toLowerCase()+'</div><h3>'+esc(p.draft.no)+'</h3><div class="muted" style="font-size:13px;margin-top:3px">Files to <span class="mono">Reports › '+esc(p.draft.vessel||VESSEL)+' › '+RT[p.type].folder+' › '+String(p.draft.date||iso(TODAY)).slice(0,4)+(p.type==="tr"?' › '+esc(p.draft.client):'')+'</span></div>'+
    '<div class="bseg bview" role="group" aria-label="Show" style="margin-top:10px"><button type="button" data-bview="form" aria-pressed="'+(p.view==="form")+'">Details</button><button type="button" data-bview="preview" aria-pressed="'+(p.view==="preview")+'">Preview</button></div>';
   return{label:"New report",wide:true,head,body:'<div class="builder"><div class="pane'+(p.view==="form"?'':' off')+'">'+builderForm()+'</div><div class="pane'+(p.view==="preview"?'':' off')+'"><div class="paper-scroll" id="paperLive">'+draftDoc()+'</div></div></div>',
    foot:'<button class="btn" type="button" data-close="1">Cancel</button><button class="btn primary" type="button" data-save-report="1">Save and file report</button>'}}
@@ -997,7 +1127,7 @@ function saveDraft(){const p=panel,d=p.draft,t=p.type;
   if(t==="tr"&&!d.ids.length){toast("Pick at least one drive.");p.view="form";renderPanel();return}
   if(S.reports.some(r=>r.type===t&&r.no===d.no)){toast("Number "+d.no+" is already used. Change it before saving.");return}
   const rep=saveReport(t,d,{});
-  if(t==="om"&&d.update)d.ids.forEach(id=>{const e=byId(id);if(!e)return;const from=e.location;e.status="Sent Back";e.location="In transit – "+(d.pod||"shore");record(e,"Shipped on "+rep.no,from+" → "+e.location)});
+  if(t==="om"&&d.update)d.ids.forEach(id=>{const e=byId(id);if(!e)return;const dest=d.dest||"HOU";const from=siteById(e.site).short+" · "+e.location;if(dest==="HOU")e.status="Sent Back";e.site=dest;e.location="In transit";record(e,"Shipped on "+rep.no,from+" → "+siteName(dest)+" (in transit)")});
   if(t==="fr"){const e=byId(d.itemId);if(e){if(d.mark&&e.status!=="Defective"){const from=e.status;e.status="Defective";e.notes=d.fault;record(e,"Fault reported "+rep.no,from+" → Defective")}else record(e,"Fault reported "+rep.no,d.fault.slice(0,80))}}
   if(t==="tr")d.ids.forEach(id=>{const h=byId(id);if(!h)return;if(d.mark){h.status="Issued to Client";h.client=d.client;h.job=d.job;h.issued=d.date}record(h,"Sent on "+rep.no,d.client+" · "+d.job)});
   save();render();openPanel({kind:"doc",fileId:rep.fileId,justSaved:true})}
@@ -1016,10 +1146,282 @@ function pDoc(){const f=S.files.find(x=>x.id===panel.fileId);if(!f){return{label
   return{label:title,wide:true,head,body:(f.kind==="template"?'<div class="infobox"><b>'+RT[type].src+'</b><div>The app fills this form in from the database. An Excel/Word version of the same blank template sits in the <span class="mono">Templates › '+RT[type].tpl+'</span> folder.</div></div>':'')+'<div class="paper-scroll">'+body+'</div>',
    foot:'<span class="note" style="margin-right:auto;align-self:center">Opens a print-ready page with the print window, where you can also save as PDF.</span><button class="btn primary" type="button" data-print="1">Print</button>'}}
 
-const VIEWS={overview:vOverview,equipment:vEquipment,supplies:vSupplies,drives:vDrives,scan:vScan,labels:vLabels,reports:vReports,documents:vDocuments,activity:vActivity};
+/* =====================================================================
+   MULTI-VESSEL helpers
+   ===================================================================== */
+const VESSEL_NAMES=SITES.filter(x=>x.kind==="vessel").map(x=>x.name);
+function setSite(id){S.site=id;S.f={q:"",cat:"",st:"",loc:""};save();closeSheet();render();toast(id==="ALL"?"Fleet view: all vessels and the shore base":"Showing "+siteName(id))}
+function fleetCards(){if(!fleet())return"";
+  return'<section class="stack" style="gap:10px"><div class="page-head"><div><div class="eyebrow">Fleet overview</div><h2>All vessels</h2></div><span class="note">Tap a vessel to open it. In the real app people only see the vessels they have access to.</span></div><div class="fleet">'+
+  SITES.map(x=>{const e=S.eq.filter(i=>i.site===x.id);const cs=S.certs.filter(c=>{const it=byId(c.itemId);return it&&it.site===x.id&&it.status!=="Lost"});
+    const exp=cs.filter(c=>daysTo(c.expires)<0).length,due=cs.filter(c=>{const d=daysTo(c.expires);return d>=0&&d<=30}).length;
+    const bad=e.filter(i=>i.status==="Defective"||i.status==="Lost").length,low=S.sp.filter(i=>i.site===x.id&&i.qty<=i.min).length,drv=S.hd.filter(h=>h.site===x.id&&h.status==="Issued to Client").length;
+    return'<button class="fcard" type="button" data-site="'+x.id+'"><span class="eyebrow">'+(x.kind==="vessel"?"Vessel":"Shore base")+'</span><b>'+esc(x.name)+'</b><span class="fn">'+e.length+'<small> equipment</small></span>'+
+     '<span class="fstats"><span class="'+(exp?'c-bad':'')+'">'+exp+' cert'+(exp===1?'':'s')+' expired</span><span class="'+(due?'c-warn':'')+'">'+due+' due in 30 d</span><span class="'+(bad?'c-bad':'')+'">'+bad+' defective / lost</span><span class="'+(low?'c-warn':'')+'">'+low+' low stock</span><span>'+drv+' drive'+(drv===1?'':'s')+' with clients</span></span></button>'}).join("")+'</div></section>'}
+function transferRow(it){if(it.type==="sp")return"";return'<div class="act-row"><select id="aSite" aria-label="Transfer to">'+SITES.filter(x=>x.id!==it.site).map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join("")+'</select><button class="btn" type="button" data-act="transfer">Transfer to vessel</button></div>'}
+function siteField(d){return'<label>Vessel / site<select data-a="site">'+SITES.map(x=>'<option value="'+x.id+'"'+(x.id===d.site?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label>'}
+
+/* =====================================================================
+   CERTIFICATES
+   ===================================================================== */
+function certSection(it){const cs=certsOf(it.id).sort((a,b)=>a.expires<b.expires?-1:1);
+  return'<section><h3 style="margin-bottom:6px">Certificates</h3>'+(cs.length?'<div class="list">'+cs.map(c=>{const st=certState(c);
+    return'<div class="crow"><span style="min-width:0"><div><b>'+esc(c.type)+'</b> · <span class="mono">'+esc(c.certNo)+'</span></div><div class="meta">Issued '+fmtD(c.issued)+' by '+esc(c.issuer)+' · expires '+fmtD(c.expires)+'</div></span>'+
+     '<span class="chip c-'+st[1]+'">'+esc(certWhen(st[2]))+'</span>'+(editor()?'<button class="btn" type="button" data-renew="'+c.id+'">Renew</button>':'')+'</div>'}).join("")+'</div>':'<div class="locked">No certificates on record for this item.</div>')+
+  (editor()?'<div class="act-row" style="margin-top:8px"><select id="ncType" aria-label="Certificate type">'+opts(CERT_TYPES,"Calibration")+'</select><input type="date" id="ncExp" aria-label="Expiry date" value="'+addMonths(iso(TODAY),12)+'"><button class="btn" type="button" data-addcert="'+it.id+'">Add certificate</button></div>':'')+'</section>'}
+function renewCert(id){const c=S.certs.find(x=>x.id===id);if(!c||!editor())return;const it=byId(c.itemId);const old=c.expires;
+  c.issued=iso(TODAY);c.expires=addMonths(c.issued,CERT_IV[c.type]);c.certNo=CERT_PRE[c.type]+"-"+(3000+Math.floor(Math.random()*900));syncCertExp(it);
+  record(it,"Certificate renewed",c.type+" · "+fmtD(old)+" → "+fmtD(c.expires));save();refreshSheet();if(tab==="certs"||tab==="overview")render();
+  toast(c.type+" renewed to "+fmtD(c.expires)+". In the real app you attach the new PDF here.")}
+function vCerts(){const v=S.certView||"list";
+  const seg='<div class="bseg" role="group" aria-label="Certificate views">'+[["list","Certificates"],["reminders","Reminders"],["groups","Who gets emails"]].map(x=>'<button type="button" data-cview="'+x[0]+'" aria-pressed="'+(v===x[0])+'">'+x[1]+'</button>').join("")+'</div>';
+  const all=CERTS();const k=[all.filter(c=>daysTo(c.expires)<0).length,all.filter(c=>{const d=daysTo(c.expires);return d>=0&&d<=30}).length,all.filter(c=>{const d=daysTo(c.expires);return d>30&&d<=90}).length,all.filter(c=>daysTo(c.expires)>90).length];
+  const head='<div class="page-head"><div><div class="eyebrow">Calibration, pressure and load tests'+(fleet()?' · all vessels':' · '+esc(siteName(S.site)))+'</div><h2>Certificates</h2></div>'+seg+'</div>'+
+   '<div class="kpis"><div class="kpi alert"><div class="n">'+k[0]+'</div><div class="l">Expired</div></div><div class="kpi pend"><div class="n">'+k[1]+'</div><div class="l">Due in 30 days</div></div><div class="kpi"><div class="n">'+k[2]+'</div><div class="l">Due in 31–90 days</div></div><div class="kpi"><div class="n">'+k[3]+'</div><div class="l">Valid</div></div></div>';
+  return'<div class="stack">'+head+(v==="list"?certList():v==="reminders"?certReminders():certGroups())+'</div>'}
+function certList(){const f=S.fc;
+  return'<div class="toolbar"><label class="search">'+searchIcon+'<input type="search" id="cq" placeholder="Search item, serial, certificate number…" value="'+esc(f.q)+'" aria-label="Search certificates"></label>'+
+  '<select id="cst" aria-label="Status">'+opts(["Expired","Due in 30 days","Due in 31–90 days","Valid"],f.st,"All statuses")+'</select><select id="ctype" aria-label="Type">'+opts(CERT_TYPES,f.type,"All types")+'</select><span class="result-count" id="rc"></span></div><div class="list" id="lst"></div>'+
+  '<p class="note" style="margin:0">Each item can have several certificates. Tap one to open the item, renew it or add another certificate. In the real app the PDF is attached to each certificate.</p>'}
+function certRows(){const f=S.fc,q=(f.q||"").toLowerCase();const list=CERTS().filter(c=>{const it=byId(c.itemId);const st=certState(c)[0];
+    return(!f.st||st===f.st)&&(!f.type||c.type===f.type)&&(!q||(c.certNo+" "+c.type+" "+it.id+" "+it.description+" "+it.manufacturer+" "+it.serial+" "+c.issuer).toLowerCase().indexOf(q)>-1)}).sort((a,b)=>a.expires<b.expires?-1:1);
+  document.getElementById("rc").textContent=list.length+" of "+CERTS().length;
+  document.getElementById("lst").innerHTML=list.length?list.slice(0,200).map(c=>{const it=byId(c.itemId),st=certState(c);
+    return'<button class="row" type="button" data-open="'+it.id+'"><span class="id">'+it.id+'</span><span class="main"><div class="t">'+esc(c.type)+' · '+esc(it.manufacturer+" "+it.description)+'</div><div class="s"><span class="mono">'+esc(c.certNo)+'</span> · SN <span class="mono">'+esc(it.serial)+'</span> · '+esc(c.issuer)+'</div></span><span class="loc">'+(fleet()?'<b>'+esc(siteById(it.site).short)+'</b> · ':'')+'Expires '+fmtD(c.expires)+'</span><span class="end"><span class="chip c-'+st[1]+'">'+esc(certWhen(st[2]))+'</span></span></button>'}).join(""):'<div class="empty">No certificates match.</div>'}
+
+function groupsFor(c,ruleDay,overdue){const it=byId(c.itemId);return S.groups.filter(g=>(g.site==="ALL"||g.site===it.site)&&(g.type==="ALL"||g.type===c.type)&&
+  (g.when==="all"||(g.when==="30"&&(overdue||ruleDay<=30))||(g.when==="overdue"&&overdue)))}
+function upcoming(days){const out=[];const R=S.remind;
+  CERTS().forEach(c=>{const d0=daysTo(c.expires);
+    R.days.forEach(rd=>{const sendIn=d0-rd;if(sendIn>=0&&sendIn<=days)out.push({in:sendIn,c,rd,overdue:false,reason:rd===0?"Expires that day":rd+" days before expiry"})});
+    if(R.overdue&&d0<0){let k=(7-((-d0)%7))%7;for(;k<=days;k+=7)out.push({in:k,c,rd:-1,overdue:true,reason:"Overdue "+(k-d0)+" days · weekly"})}});
+  return out.sort((a,b)=>a.in-b.in||(a.c.expires<b.c.expires?-1:1))}
+function nextWeekday(name){const i=WD.indexOf(name.slice(0,3));let k=(i-TODAY.getDay()+7)%7;return k}
+function certReminders(){const R=S.remind;const up=upcoming(30);const ed=editor();
+  const days=R.days.slice().sort((a,b)=>b-a);
+  const rules='<section class="panel"><div class="panel-h"><h3>Reminder rules</h3><span class="eyebrow">Apply to every certificate</span></div><div class="panel-b stack" style="gap:12px">'+
+   '<div>Send a reminder this many days before a certificate expires:</div><div class="chips">'+days.map(d=>'<span class="pill">'+(d===0?'On the day':d+' days')+(ed?'<button type="button" data-rm-day="'+d+'" aria-label="Remove">×</button>':'')+'</span>').join("")+
+   (ed?'<form id="dayForm" class="chips" style="gap:6px"><input type="number" id="dayIn" min="0" max="365" placeholder="Days" aria-label="Days before expiry" style="width:90px"><button class="btn" type="submit">Add</button></form>':'')+'</div>'+
+   '<label class="chk2"><input type="checkbox" id="rmOverdue"'+(R.overdue?' checked':'')+(ed?'':' disabled')+'> Keep reminding every week while a certificate is overdue</label>'+
+   '<label class="chk2"><input type="checkbox" id="rmWeekly"'+(R.weekly?' checked':'')+(ed?'':' disabled')+'> Send a weekly summary every <select id="rmDay"'+(ed?'':' disabled')+'>'+opts(["Monday","Tuesday","Wednesday","Thursday","Friday"],R.weekDay)+'</select> at <input type="time" id="rmTime" value="'+esc(R.weekTime)+'"'+(ed?'':' disabled')+'></label>'+
+   '<div class="note">Emails are sent by the central server, so they go out even when the vessel is offline. Your company Outlook / Microsoft 365 account would send them.</div></div></section>';
+  const sum=R.weekly?'<div class="urow"><span class="when">'+fmtIn(nextWeekday(R.weekDay))+'<small>'+esc(R.weekTime)+'</small></span><span style="min-width:0"><div><b>Weekly summary</b></div><div class="meta">All vessels · '+S.groups.filter(g=>g.when==="summary").map(g=>esc(g.name)).join(", ")+'</div></span><button class="btn" type="button" data-email="summary">Preview email</button></div>':'';
+  const list='<section class="panel"><div class="panel-h"><h3>Emails going out in the next 30 days</h3><span class="eyebrow">'+up.length+' reminders</span></div><div>'+sum+
+   (up.length?up.slice(0,60).map((u,i)=>{const it=byId(u.c.itemId);const gs=groupsFor(u.c,u.rd,u.overdue);
+    return'<div class="urow"><span class="when">'+(u.in===0?'Today':fmtIn(u.in))+'<small>'+esc(u.reason)+'</small></span><span style="min-width:0"><div><b>'+esc(u.c.type)+'</b> · <button class="linkish" type="button" data-open="'+it.id+'">'+it.id+'</button> '+esc(it.description)+(fleet()?' <span class="muted">· '+esc(siteById(it.site).short)+'</span>':'')+'</div><div class="meta">'+(gs.length?'To: '+gs.map(g=>esc(g.name)).join(", "):'<span style="color:var(--bad)">Nobody is set to get this. Add a group under “Who gets emails”.</span>')+'</div></span>'+
+     '<button class="btn" type="button" data-email="'+u.c.id+'|'+u.rd+'|'+(u.overdue?1:0)+'|'+u.in+'">Preview email</button></div>'}).join(""):'<div class="empty">No reminders due in the next 30 days.</div>')+'</div></section>';
+  return'<div class="grid2" style="grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)">'+rules+list+'</div>'}
+const WHEN_TXT={all:"Every reminder",30:"Only from 30 days before expiry",overdue:"Only when overdue",summary:"Weekly summary only"};
+function certGroups(){const ed=editor();
+  return(ed?'<form id="grpForm" class="panel newgroup"><b>New group</b><input type="text" id="gName" placeholder="Group name, e.g. Survey Team – MV Sea Kestrel" aria-label="Group name"><input type="email" id="gMail" placeholder="First email address" aria-label="Email"><button class="btn primary" type="submit">Add group</button></form>':'')+
+  '<div class="groups">'+S.groups.map(g=>'<section class="panel gcard"><div class="panel-h"><h3>'+esc(g.name)+'</h3>'+(ed?'<button class="linkish" type="button" data-g-del="'+g.id+'">Remove</button>':'')+'</div><div class="panel-b stack" style="gap:10px">'+
+    '<div class="fgrid">'+
+     '<label>Gets<select data-g="when" data-gid="'+g.id+'"'+(ed?'':' disabled')+'>'+Object.keys(WHEN_TXT).map(k=>'<option value="'+k+'"'+(g.when===k?' selected':'')+'>'+WHEN_TXT[k]+'</option>').join("")+'</select></label>'+
+     '<label>Vessels<select data-g="site" data-gid="'+g.id+'"'+(ed?'':' disabled')+'><option value="ALL"'+(g.site==="ALL"?' selected':'')+'>All vessels and sites</option>'+SITES.map(x=>'<option value="'+x.id+'"'+(g.site===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label>'+
+     '<label class="full">Certificate types<select data-g="type" data-gid="'+g.id+'"'+(ed?'':' disabled')+'><option value="ALL"'+(g.type==="ALL"?' selected':'')+'>All types</option>'+CERT_TYPES.map(t=>'<option'+(g.type===t?' selected':'')+'>'+t+'</option>').join("")+'</select></label></div>'+
+    '<div class="chips">'+g.members.map(m=>'<span class="pill mono">'+esc(m)+(ed?'<button type="button" data-g-rm="'+g.id+'|'+esc(m)+'" aria-label="Remove '+esc(m)+'">×</button>':'')+'</span>').join("")+'</div>'+
+    (ed?'<form class="chips gadd" data-gadd="'+g.id+'" style="gap:6px"><input type="email" placeholder="Add email address" aria-label="Add email to '+esc(g.name)+'" style="flex:1 1 200px"><button class="btn" type="submit">Add</button></form>':'')+
+   '</div></section>').join("")+'</div><p class="note" style="margin:0">Groups decide who gets which reminder. A group can cover one vessel or all of them, one certificate type or all of them. Demo addresses use a fake domain; nothing is sent.</p>'}
+
+function emailShell(o){return'<div class="mail"><div class="mail-h"><div><span class="muted">From</span> Equipment Tracker &lt;no-reply@'+MAILDOM+'&gt;</div><div><span class="muted">To</span> '+(o.to.length?o.to.map(esc).join(", "):'<i>nobody</i>')+'</div><div><span class="muted">Sent</span> '+esc(o.when)+'</div><div class="mail-subj">'+esc(o.subject)+'</div></div><div class="mail-b">'+o.body+'</div>'+
+  '<div class="mail-f">'+o.foot+'</div></div>'}
+function pEmail(){const p=panel;const R=S.remind;const dd=R.days.filter(d=>d>0).sort((a,b)=>b-a);const ruleTxt=(dd.length?dd.join(", ")+" days before expiry":"")+(R.days.indexOf(0)>-1?(dd.length?", ":"")+"on the day it expires":"")+(R.overdue?", then weekly while overdue":"");
+  if(p.summary){const sites=SITES.map(x=>{const cs=S.certs.filter(c=>{const it=byId(c.itemId);return it&&it.site===x.id&&it.status!=="Lost"});return[x,cs.filter(c=>daysTo(c.expires)<0).length,cs.filter(c=>{const d=daysTo(c.expires);return d>=0&&d<=30}).length,cs.filter(c=>{const d=daysTo(c.expires);return d>30&&d<=90}).length]});
+    const hot=S.certs.filter(c=>{const it=byId(c.itemId);return it&&it.status!=="Lost"&&daysTo(c.expires)<=30}).sort((a,b)=>a.expires<b.expires?-1:1);
+    const gs=S.groups.filter(g=>g.when==="summary");
+    const body='<p>Good morning,</p><p>Here is this week’s certificate summary for the fleet.</p><table class="mtab"><tr><th>Vessel / site</th><th>Expired</th><th>Due in 30 days</th><th>Due in 31–90 days</th></tr>'+sites.map(r=>'<tr><td>'+esc(r[0].name)+'</td><td class="'+(r[1]?'mbad':'')+'">'+r[1]+'</td><td class="'+(r[2]?'mwarn':'')+'">'+r[2]+'</td><td>'+r[3]+'</td></tr>').join("")+'</table>'+
+     '<p style="margin-top:14px"><b>Needs action now</b></p><table class="mtab"><tr><th>Item</th><th>Certificate</th><th>Vessel</th><th>Expires</th></tr>'+hot.slice(0,15).map(c=>{const it=byId(c.itemId);const d=daysTo(c.expires);return'<tr><td>'+it.id+' '+esc(it.description)+'</td><td>'+esc(c.type)+'</td><td>'+esc(siteById(it.site).short)+'</td><td class="'+(d<0?'mbad':'mwarn')+'">'+fmtD(c.expires)+'</td></tr>'}).join("")+'</table>'+(hot.length>15?'<p class="muted">…and '+(hot.length-15)+' more in the app.</p>':'')+
+     '<p><span class="mbtn">Open the certificates list</span></p>';
+    return{label:"Weekly summary preview",wide:true,head:'<div class="eyebrow">Email preview</div><h3>Weekly certificate summary</h3><div class="muted" style="font-size:13px;margin-top:3px">Demo preview: no email is sent.</div>',
+     body:emailShell({to:gs.flatMap(g=>g.members),when:fmtIn(nextWeekday(R.weekDay))+" "+TODAY.getFullYear()+", "+R.weekTime,subject:"Weekly certificate summary – "+hot.filter(c=>daysTo(c.expires)<0).length+" expired, "+hot.filter(c=>daysTo(c.expires)>=0).length+" due in 30 days",body,
+      foot:'You get this because you’re in: '+gs.map(g=>esc(g.name)).join(", ")+'. Change who gets it under Certificates › Who gets emails.'})}}
+  const c=S.certs.find(x=>x.id===p.certId);const it=byId(c.itemId);const d=daysTo(c.expires);const gs=groupsFor(c,p.rd,p.overdue);
+  const subj=(p.overdue?"OVERDUE: ":"")+c.type+" certificate "+(p.overdue?"expired "+fmtD(c.expires):p.rd===0?"expires today":"due in "+p.rd+" days")+" – "+it.id+" "+it.description+" ("+siteById(it.site).short+")";
+  const body='<p>Hello,</p><p>'+(p.overdue?'The <b>'+esc(c.type.toLowerCase())+'</b> certificate for the item below <b>expired on '+fmtD(c.expires)+'</b>. Please arrange '+(c.type==="Load test"?'a new load test':'recalibration or testing')+' and take the item out of service if your procedures require it.':'The <b>'+esc(c.type.toLowerCase())+'</b> certificate for the item below '+(p.rd===0?'<b>expires today</b>':'expires in <b>'+p.rd+' days</b>, on '+fmtD(c.expires))+'. Please book '+(c.type==="Load test"?'the load test':'the calibration')+' so it doesn’t lapse.')+'</p>'+
+   '<table class="mtab kvm"><tr><th>Item</th><td>'+it.id+' · '+esc(it.manufacturer+" "+it.description)+'</td></tr><tr><th>Serial</th><td class="mono">'+esc(it.serial)+'</td></tr><tr><th>Vessel / site</th><td>'+esc(siteName(it.site))+'</td></tr><tr><th>Location</th><td>'+esc(it.location)+'</td></tr><tr><th>Certificate</th><td>'+esc(c.type)+' · '+esc(c.certNo)+'</td></tr><tr><th>Issued by</th><td>'+esc(c.issuer)+'</td></tr><tr><th>Expires</th><td class="'+(d<0?'mbad':'mwarn')+'">'+fmtD(c.expires)+'</td></tr></table>'+
+   '<p><span class="mbtn">Open the item</span> <span class="mbtn ghost">Upload the new certificate</span></p>';
+  return{label:"Reminder email preview",wide:true,head:'<div class="eyebrow">Email preview</div><h3>'+esc(c.type)+' reminder</h3><div class="muted" style="font-size:13px;margin-top:3px">Demo preview: no email is sent.</div>',
+   body:(gs.length?'':'<div class="warnbox"><b>Nobody would get this email</b><div>No group covers '+esc(c.type)+' certificates on '+esc(siteName(it.site))+'. Add one under Who gets emails.</div></div>')+
+   emailShell({to:gs.flatMap(g=>g.members),when:(p.in===0?"Today":fmtIn(p.in))+", 07:00",subject:subj,body,foot:'You get this because you’re in: '+(gs.map(g=>esc(g.name)).join(", ")||"—")+'. Reminders are sent '+esc(ruleTxt)+'.'})}}
+
+/* =====================================================================
+   IMPORT / EXPORT
+   ===================================================================== */
+const IMP_FIELDS={eq:[["id","Record ID"],["category","Category"],["manufacturer","Manufacturer"],["description","Description",1],["serial","Serial number",1],["assetTag","Asset tag"],["status","Status"],["location","Location"],["caseLoc","Case"],["owner","Owner"],["verified","Date verified"],["certExp","Certificate expiry"],["cost","Value (USD)"],["eccn","ECCN"],["coo","Country of origin"],["schedB","Schedule B"],["notes","Notes"]],
+  sp:[["id","Record ID"],["kind","Type"],["description","Description",1],["unit","Unit"],["qty","Quantity on hand",1],["min","Reorder level"],["location","Location"],["box","Box / bin"]],
+  hd:[["id","Record ID"],["manufacturer","Manufacturer"],["size","Size"],["serial","Serial number",1],["status","Status"],["dataDesc","Contents"],["client","Client"],["job","Job number"],["issued","Date issued"]]};
+const SYN={id:["recordid","id","trackerid","itemid"],category:["category","group","class","equipmenttype"],manufacturer:["manufacturer","make","mfr","brand","maker","mfg"],description:["description","desc","itemdescription","descriptionofmaterial","equipment","item","name","product"],
+  serial:["serial","serialno","serialnumber","sn","snmrpo","serialnum"],assetTag:["assettag","asset","assetno","assetnumber","tag","dmstag","assetid"],status:["status","condition","state"],location:["location","loc","where","storedat"],caseLoc:["case","caselocation","caseno"],
+  owner:["owner","ownersupplier","supplier","ownership"],verified:["dateverified","verified","lastverified","lastchecked","checked"],certExp:["certexpiry","certexp","calibrationdue","caldue","certificateexpiry","expiry","expires","calexpiry","certdue","calibrationexpiry"],
+  cost:["cost","value","price","usd","valueusd","unitvalue"],eccn:["eccn"],coo:["coo","countryoforigin","origin"],schedB:["scheduleb","schedb","htsc","hts","schedulebnumber"],notes:["notes","comments","remarks","comment"],
+  kind:["type","category","kind"],unit:["unit","uom","units"],qty:["qty","quantity","onhand","count","stock"],min:["min","reorder","reorderlevel","minimum","reorderat"],box:["box","bin","boxbin","drawer","shelf"],
+  size:["size","capacity"],dataDesc:["contents","data","datadescription","description"],client:["client","customer"],job:["job","jobno","jobnumber","project","projectno"],issued:["issued","dateissued","datesent","sent"]};
+const nz=x=>String(x==null?"":x).toLowerCase().replace(/[^a-z0-9]/g,"");
+let imp={step:1,type:"eq",site:null};
+function impReset(keep){imp={step:1,type:keep?imp.type:"eq",site:keep?imp.site:null}}
+function autoMap(headers,type){const used={},map=headers.map(()=>"");const F=IMP_FIELDS[type].map(f=>f[0]);
+  headers.forEach((h,i)=>{const n=nz(h);const f=F.find(k=>!used[k]&&(SYN[k]||[]).indexOf(n)>-1);if(f){map[i]=f;used[f]=1}});
+  headers.forEach((h,i)=>{if(map[i])return;const n=nz(h);if(n.length<3)return;const f=F.find(k=>!used[k]&&(SYN[k]||[]).some(sy=>sy.length>=4&&(n.indexOf(sy)>-1)));if(f){map[i]=f;used[f]=1}});
+  return map}
+function parseCSV(text){text=String(text).replace(/^﻿/,"");const first=text.split(/\r?\n/)[0]||"";const delim=[",",";","\t"].map(d=>[d,first.split(d).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  const rows=[];let row=[],f="",q=false;
+  for(let i=0;i<text.length;i++){const ch=text[i];
+    if(q){if(ch==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=ch}
+    else if(ch==='"'&&f==="")q=true;else if(ch===delim){row.push(f);f=""}else if(ch==="\n"){row.push(f);rows.push(row);row=[];f=""}else if(ch!=="\r")f+=ch}
+  if(f!==""||row.length){row.push(f);rows.push(row)}
+  return rows.filter(r=>r.some(x=>String(x).trim()!==""))}
+const MONS={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,sept:9,oct:10,nov:11,dec:12};
+function parseDate(v){if(v===null||v===undefined||String(v).trim()==="")return{v:""};const t=String(v).trim();let y,m,d;let r;
+  if(typeof v==="number"||/^\d{5}(\.\d+)?$/.test(t)){const dt=new Date(Date.UTC(1899,11,30)+Math.floor(+t)*864e5);y=dt.getUTCFullYear();m=dt.getUTCMonth()+1;d=dt.getUTCDate()}
+  else if(r=t.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/)){y=+r[1];m=+r[2];d=+r[3]}
+  else if(r=t.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/)){let a=+r[1],b=+r[2];y=+r[3];if(y<100)y+=2000;if(a>12){d=a;m=b}else{m=a;d=b}}
+  else if(r=t.match(/^(\d{1,2})[\s\-]([A-Za-z]{3,9})[\s\-,]+(\d{4})$/)){d=+r[1];m=MONS[r[2].toLowerCase().slice(0,4)]||MONS[r[2].toLowerCase().slice(0,3)];y=+r[3]}
+  else if(r=t.match(/^([A-Za-z]{3,9})\s+(\d{1,2}),?\s+(\d{4})$/)){m=MONS[r[1].toLowerCase().slice(0,3)];d=+r[2];y=+r[3]}
+  else return{bad:true};
+  if(!m||m>12||!d||d>31)return{bad:true};const s=y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");return y>2040||y<1990?{v:s,odd:y}:{v:s}}
+const ST_EQ=[["In Service",["inservice","inuse","active","deployed","service","use","ok","working","installed"]],["Spare / Storage",["spare","storage","spares","stored","store","sparestorage","instorage","stock"]],["Needs Verification",["needsverification","verify","unverified","check","needscheck","tbc","tocheck"]],["Sent Back",["sentback","returned","shipped","return","rtn","shore","sentashore"]],["Defective",["defective","faulty","broken","us","unserviceable","fault","damaged","repair","forrepair"]],["Lost","lost,missing,cantfind".split(",")]];
+const ST_HD=[["On Hand",["onhand","onboard","instock","blank","available","stock"]],["Issued to Client",["issuedtoclient","issued","withclient","delivered","sent","client"]],["Missing",["missing","lost"]],["Reformatted",["reformatted","wiped","reused"]]];
+function normStatus(v,type){const n=nz(v);if(!n)return{v:type==="hd"?"On Hand":"In Service",def:1};const L=type==="hd"?ST_HD:ST_EQ;const exact=L.find(x=>nz(x[0])===n);if(exact)return{v:exact[0]};const hit=L.find(x=>x[1].indexOf(n)>-1);return hit?{v:hit[0],fixed:1}:{v:L[0][0],unknown:1}}
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,i)=>i);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+function matchLoc(v,site){const L=locsFor(site);const t=String(v||"").trim();if(!t)return{v:L[0],blank:1};
+  const ex=L.find(l=>l.toLowerCase()===t.toLowerCase());if(ex)return{v:ex,same:ex===t};
+  const n=nz(t);let best=L.find(l=>nz(l)===n);
+  if(!best){const tok=t.toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(Boolean);best=L.find(l=>{const lt=l.toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(Boolean);return lt.length&&lt.every(w=>tok.indexOf(w)>-1)})}
+  if(!best)best=L.find(l=>lev(nz(l),n)<=2);
+  return best?{v:best,fixed:1}:{v:t,isNew:1}}
+const numOf=v=>{const t=String(v==null?"":v).replace(/[$£€,\s]/g,"");if(t==="")return{v:""};const x=+t;return isNaN(x)?{bad:1}:{v:x}};
+const NOSN=/^(n\/?a|none|no ?s\/?n|-+|tbc|unknown|nil|\?+)$/i;
+
+function impCheck(){const T=imp.type,site=imp.site,F=IMP_FIELDS[T];const rows=imp.rows,map=imp.map;const out=[];const seen={};
+  rows.forEach((r,ri)=>{const raw={};map.forEach((f,i)=>{if(f)raw[f]=r[i]==null?"":String(r[i]).trim()});
+    if(T==="eq"||T==="hd")raw._num=r;const iss=[];const add=(lvl,msg)=>iss.push([lvl,msg]);const rec={};
+    F.filter(f=>f[2]).forEach(f=>{if(!(raw[f[0]]||"").length&&!(T==="eq"&&f[0]==="serial"))add("err","Missing "+f[1].toLowerCase())});
+    const id=(raw.id||"").toUpperCase();if(id){const pre=T.toUpperCase().replace("EQ","EQ");if(/^(EQ|SP|HD)-\d{1,6}$/.test(id)&&id.indexOf({eq:"EQ",sp:"SP",hd:"HD"}[T])===0){if(byId(id))add("err","ID "+id+" is already used");else{rec.id=id}}else add("info","ID “"+raw.id+"” ignored – a new ID will be given")}
+    if(T==="eq"){let sn=raw.serial||"";if(!sn||NOSN.test(sn)){rec.serial="No S/N";add("fix","No serial number – saved as “No S/N”")}else{rec.serial=sn;
+        const dbh=S.eq.find(e=>e.serial.toUpperCase()===sn.toUpperCase());if(dbh)add("err","Serial already in the database as "+dbh.id);
+        const k=sn.toUpperCase();if(seen[k])add("err","Same serial as row "+seen[k]+" in this file");else seen[k]=ri+2}
+      const tag=raw.assetTag||"";if(tag){const t=S.eq.find(e=>(e.assetTag||"").toUpperCase()===tag.toUpperCase());if(t)add("warn","Asset tag also on "+t.id)}rec.assetTag=tag;
+      rec.category=raw.category||"";if(!rec.category){rec.category="Uncategorised";add("fix","No category – set to Uncategorised")}else if(!S.eq.some(e=>e.category.toLowerCase()===rec.category.toLowerCase()))add("info","New category “"+rec.category+"”");else rec.category=S.eq.find(e=>e.category.toLowerCase()===rec.category.toLowerCase()).category;
+      ["manufacturer","description","caseLoc","owner","eccn","coo","schedB","notes"].forEach(k=>rec[k]=raw[k]||"");
+      ["verified","certExp"].forEach(k=>{const p=parseDate(raw[k]);if(p.bad){add("warn","Couldn’t read date “"+raw[k]+"” – left blank");rec[k]=""}else if(p.odd){add("fix","Year "+p.odd+" in “"+raw[k]+"” looks like a typo – left blank");rec[k]=""}else rec[k]=p.v});
+      const c=numOf(raw.cost);if(c.bad){add("warn","Value “"+raw.cost+"” isn’t a number – set to 0");rec.cost=0}else rec.cost=c.v===""?0:c.v}
+    if(T==="sp"){rec.description=raw.description||"";rec.kind=raw.kind||"Consumable";if(["Consumable","Connector Kit","Bulk Cable"].indexOf(rec.kind)<0){const k=nz(rec.kind);rec.kind=k.indexOf("cable")>-1?"Bulk Cable":k.indexOf("conn")>-1?"Connector Kit":"Consumable";add("fix","Type “"+raw.kind+"” – set to "+rec.kind)}
+      rec.unit=(raw.unit||"EA").toUpperCase();const q=numOf(raw.qty);if(q.bad||q.v===""){if(raw.qty)add("err","Quantity “"+raw.qty+"” isn’t a number")}else rec.qty=q.v;const mn=numOf(raw.min);rec.min=mn.bad||mn.v===""?0:mn.v;rec.box=raw.box||"";
+      const ex=rec.description&&S.sp.find(x=>x.site===site&&x.description.toLowerCase()===rec.description.toLowerCase());if(ex){rec.mergeInto=ex.id;add("fix","Already stocked as "+ex.id+" – "+(rec.qty||0)+" "+ex.unit+" will be added to it")}}
+    if(T==="hd"){rec.serial=raw.serial||"";["manufacturer","size","dataDesc","client","job"].forEach(k=>rec[k]=raw[k]||"");if(!rec.dataDesc)rec.dataDesc="Blank";
+      if(rec.serial){const h=S.hd.find(x=>x.serial.toUpperCase()===rec.serial.toUpperCase());if(h)add("info","Drive used before ("+h.id+") – allowed for reformatted drives");const k=rec.serial.toUpperCase();if(seen[k])add("warn","Same serial as row "+seen[k]+" in this file");else seen[k]=ri+2}
+      const p=parseDate(raw.issued);rec.issued=p.v&&!p.odd?p.v:"";if(p.bad)add("warn","Couldn’t read date “"+raw.issued+"” – left blank");
+      if(rec.client){const c=CLIENTS.find(x=>nz(x)===nz(rec.client)||nz(x).indexOf(nz(rec.client))===0);if(c&&c!==rec.client){add("fix","Client “"+rec.client+"” → "+c);rec.client=c}}}
+    if(T!=="sp"){const st=normStatus(raw.status,T);rec.status=st.v;if(st.fixed)add("fix","Status “"+raw.status+"” → "+st.v);if(st.unknown)add("fix","Unknown status “"+raw.status+"” – set to "+st.v)}
+    if(T!=="hd"){const lc=matchLoc(raw.location,site);rec.location=lc.v;if(lc.blank)add("fix","No location – set to "+lc.v);else if(lc.fixed)add("fix","Location “"+raw.location+"” → "+lc.v);else if(lc.isNew)add("info","New location “"+lc.v+"”")}
+    const err=iss.some(x=>x[0]==="err");out.push({n:ri+2,rec,iss,err,on:!err})});
+  imp.checked=out}
+const IMP_SAMPLES={
+ eq:()=>{const ex=S.eq.find(e=>e.site===imp.site&&e.serial!=="No S/N")||S.eq[0];return[
+  "Item Description,Manufacturer,Serial No,Asset Tag,Category,Status,Location,Cert Expiry,Value (USD),Comments",
+  "USBL Transponder – Omni,Kongsberg,KO55210X,DMS-90001,Subsea Sensors,In use,ROV 1 hangar,03/15/2027,\"$9,800.00\",",
+  "Wideband Mini Transponder,Sonardyne,SO77102B,DMS-90002,Subsea Sensors,Spare,Crawlspace,2027-01-09,8700,",
+  "Wideband Mini Transponder,Sonardyne,SO77102B,DMS-90003,Subsea Sensors,Spare,Crawlspace,2027-01-09,8700,Entered twice?",
+  "\""+ex.description+"\","+ex.manufacturer+","+ex.serial+",,"+ex.category+",In Service,Survey desk,,"+ex.cost+",Already in the tracker",
+  "Digiquartz Depth Sensor,Paroscientific,N/A,DMS-90005,Subsea Sensors,In Service,Workshop below main deck,15-Jan-2027,7400,",
+  "Gyrocompass,iXblue,IX40917Q,DMS-90006,Surface Sensors,U/S,Bridge,04/28/2056,48000,Sent for repair",
+  ",Dell,DL88213K,DMS-90007,Computers,In Service,Survey Desk,,2900,Description missing",
+  "Rugged Field Laptop,Dell,DL88214M,DMS-90008,Computers,In Service,Online room,,3400,",
+  "HD Zoom Camera,Imenco,IM30311A,DMS-90009,Video Equipment,Needs check,ROV-2 Hangar,,5600,",
+  "Shackle 4.75 t,Crosby,CR11200,DMS-90010,Lifting Gear,In Service,Container on deck,12/01/2026,180,",
+  "Insulation Tester,Megger,ME55012,DMS-90011,Tools,In Service,Tool crib,2027-06-30,1650,",
+  "\"24\"\" Monitor\",HP,HP20091Z,,Monitors,In Service,Bridge,,210,"].join("\n")},
+ sp:()=>["Description,Type,Qty,Unit,Reorder,Location,Bin",
+  "Electrical Tape,Consumable,6,RL,6,Workshop below deck,Consumables bin 1",
+  "Cable Ties 200 mm (bag of 100),Consumables,4,BG,2,Workshop Below Deck,Consumables bin 2",
+  "Butt Splice Connectors (bag of 50),Connectors,3,BG,1,Survey desk,Connector drawer 2",
+  "Cat6 Shielded Cable,Cable,100,M,50,Crawlspace,Cable reel rack",
+  "Nitrile Gloves (box of 100),Consumable,ten,BX,2,Workshop Below Deck,",
+  "Zinc Anode 2 kg,Consumable,8,EA,4,Container on deck,"].join("\n"),
+ hd:()=>{const ex=S.hd.find(h=>h.site===imp.site&&h.status!=="Reformatted")||S.hd[0];return["Manufacturer,Size,Serial Number,Contents,Client,Job No,Status,Date Issued",
+  "Seagate,4 TB HDD,NA7K22QX,Client copy – survey video,Gulfline,J-2644,With client,10/20/2026",
+  "WD,8 TB HDD,WX9P01LM,Blank,,,On hand,",
+  ex.manufacturer+","+ex.size+","+ex.serial+",Office copy – project data,,J-2645,On hand,",
+  "Seagate,4 TB HDD,,Backup – raw sensor logs,,J-2645,On hand,",
+  "Seagate,2 TB SSD,NA3TT7Y1,Client copy – as-built report data,Bayou subsea,J-2646,Issued,2026-10-29"].join("\n")}};
+function impLoadRows(name,rows,sheets){let h=0;while(h<rows.length&&rows[h].filter(x=>String(x).trim()!=="").length<2)h++;
+  const headers=(rows[h]||[]).map(x=>String(x).trim());const data=rows.slice(h+1).filter(r=>r.some(x=>String(x).trim()!==""));
+  if(!headers.length||!data.length){toast("That file has no rows to import.");return}
+  imp.file=name;imp.headers=headers;imp.rows=data;imp.map=autoMap(headers,imp.type);imp.step=2;if(sheets)imp.sheets=sheets;render()}
+let xlsxP=null;
+function loadXLSX(){if(window.XLSX)return Promise.resolve(window.XLSX);if(!xlsxP)xlsxP=new Promise((res,rej)=>{const sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";sc.onload=()=>window.XLSX?res(window.XLSX):rej();sc.onerror=()=>{xlsxP=null;rej()};document.head.appendChild(sc)});return xlsxP}
+function pickSheet(names,type){const k={eq:"equip",sp:"suppl",hd:"drive"}[type];return names.find(n=>n.toLowerCase().indexOf(k)>-1)||names[0]}
+function impFile(file){if(!file)return;const name=file.name||"file";
+  if(/\.(xlsx|xlsm|xls)$/i.test(name)){toast("Reading "+name+"…");loadXLSX().then(X=>file.arrayBuffer().then(buf=>{const wb=X.read(buf,{type:"array"});const sheets={};wb.SheetNames.forEach(n=>sheets[n]=X.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:""}));
+      imp.sheetNames=wb.SheetNames;imp.sheet=pickSheet(wb.SheetNames,imp.type);impLoadRows(name,sheets[imp.sheet],sheets)})).catch(()=>toast("Couldn’t open the Excel file here. Save it as CSV (File › Save As › CSV) and try again."));return}
+  const fr=new FileReader();fr.onload=()=>{imp.sheets=null;impLoadRows(name,parseCSV(fr.result))};fr.onerror=()=>toast("Couldn’t read that file.");fr.readAsText(file)}
+const TYPE_TXT={eq:"Equipment",sp:"Supplies",hd:"Hard drives"};
+function vImport(){if(!imp.site)imp.site=curSite();const ed=editor();
+  const steps=["Choose file","Match columns","Check","Done"];
+  const head='<div class="page-head"><div><div class="eyebrow">Load spreadsheets · export to Excel</div><h2>Import & export</h2></div></div>'+
+   '<ol class="steps">'+steps.map((x,i)=>'<li class="'+(imp.step===i+1?'on':imp.step>i+1?'done':'')+'"><span>'+(i+1)+'</span>'+x+'</li>').join("")+'</ol>';
+  let body="";
+  if(!ed)body='<div class="locked">Only editors can import. Viewers can still export below.</div>';
+  else if(imp.step===1)body='<section class="panel"><div class="panel-b stack" style="gap:14px"><div class="fgrid">'+
+    '<label>What are you importing?<select id="impType">'+Object.keys(TYPE_TXT).map(k=>'<option value="'+k+'"'+(imp.type===k?' selected':'')+'>'+TYPE_TXT[k]+'</option>').join("")+'</select></label>'+
+    '<label>Into which vessel / site?<select id="impSite">'+SITES.map(x=>'<option value="'+x.id+'"'+(imp.site===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join("")+'</select></label></div>'+
+    '<label class="dropzone" for="impFile"><b>Drop a CSV or Excel file here</b><span class="muted">or tap to choose one · .csv, .xlsx, .xls</span></label><input id="impFile" type="file" accept=".csv,.txt,.xlsx,.xls,.xlsm,text/csv" hidden>'+
+    '<div class="act-row"><button class="btn primary" type="button" data-imp-sample="1">Try a sample file with problems in it</button><button class="btn" type="button" data-imp-template="1">Download a blank template (CSV)</button></div>'+
+    '<div class="note">Nothing is saved until the last step. Your file is read on this device only.</div></div></section>';
+  else if(imp.step===2){const F=IMP_FIELDS[imp.type];const req=F.filter(f=>f[2]&&!(imp.type==="eq"&&f[0]==="serial")).map(f=>f[0]);const missing=req.filter(r=>imp.map.indexOf(r)<0);
+    body='<section class="panel"><div class="panel-h"><h3>'+esc(imp.file)+'</h3><span class="eyebrow">'+imp.rows.length+' rows · '+TYPE_TXT[imp.type]+' → '+esc(siteName(imp.site))+'</span></div><div class="panel-b stack" style="gap:12px">'+
+     (imp.sheets&&imp.sheetNames&&imp.sheetNames.length>1?'<label class="chk2">Sheet <select id="impSheet">'+opts(imp.sheetNames,imp.sheet)+'</select></label>':'')+
+     '<div class="note">We matched the columns we recognised. Check the ones marked “Don’t import”, then continue.</div>'+
+     '<div class="maptbl"><div class="mh"><span>Column in your file</span><span>Example values</span><span>Goes into</span></div>'+
+     imp.headers.map((h,i)=>{const ex=imp.rows.map(r=>r[i]).filter(x=>String(x).trim()!=="").slice(0,2).map(x=>esc(String(x).slice(0,28))).join(" · ");
+      return'<div class="mr'+(imp.map[i]?'':' skip')+'"><span class="mono">'+esc(h||"(no name)")+'</span><span class="muted">'+(ex||"—")+'</span><select data-imp-map="'+i+'" aria-label="Field for '+esc(h)+'"><option value="">Don’t import</option>'+F.map(f=>'<option value="'+f[0]+'"'+(imp.map[i]===f[0]?' selected':'')+(imp.map.indexOf(f[0])>-1&&imp.map[i]!==f[0]?' disabled':'')+'>'+f[1]+(f[2]?' *':'')+'</option>').join("")+'</select></div>'}).join("")+'</div>'+
+     (missing.length?'<div class="warnbox"><b>Still needed</b><div>Match a column to: '+missing.map(m=>F.find(f=>f[0]===m)[1]).join(", ")+'.</div></div>':'')+
+     '<div class="act-row"><button class="btn" type="button" data-imp-back="1">Back</button><button class="btn primary" type="button" data-imp-check="1"'+(missing.length?' disabled':'')+'>Check the data</button></div></div></section>'}
+  else if(imp.step===3){const C=imp.checked;const ok=C.filter(r=>!r.err&&!r.iss.some(x=>x[0]==="fix"||x[0]==="warn")),fx=C.filter(r=>!r.err&&r.iss.some(x=>x[0]==="fix"||x[0]==="warn")),er=C.filter(r=>r.err);const n=C.filter(r=>r.on).length;
+    const only=imp.only!==false;const shown=only?C.filter(r=>r.iss.length):C;
+    body='<div class="kpis"><div class="kpi"><div class="n">'+ok.length+'</div><div class="l">Rows ready as they are</div></div><div class="kpi pend"><div class="n">'+fx.length+'</div><div class="l">Fixed or need a look</div></div><div class="kpi alert"><div class="n">'+er.length+'</div><div class="l">Can’t import (skipped)</div></div><div class="kpi"><div class="n">'+n+'</div><div class="l">Will be imported</div></div></div>'+
+     '<section class="panel"><div class="panel-h"><h3>Problems found</h3><label class="chk2"><input type="checkbox" id="impOnly"'+(only?' checked':'')+'> Only rows with problems</label></div>'+
+     '<div class="chktbl">'+(shown.length?shown.map((r,i)=>{const idx=C.indexOf(r);const R=r.rec;const nm=imp.type==="hd"?(R.manufacturer+" "+R.size):(R.description||"(no description)");
+      return'<div class="cr'+(r.err?' bad':'')+'"><input type="checkbox" data-imp-row="'+idx+'"'+(r.on?' checked':'')+(r.err?' disabled':'')+' aria-label="Import row '+r.n+'"><span class="mono muted">Row '+r.n+'</span><span style="min-width:0"><div class="t">'+esc(nm)+(R.serial?' · <span class="mono">'+esc(R.serial)+'</span>':'')+(imp.type==="sp"&&R.qty!==undefined?' · '+R.qty+' '+esc(R.unit):'')+'</div>'+
+       (r.iss.length?'<div class="iss">'+r.iss.map(x=>'<span class="chip c-'+({err:"bad",warn:"warn",fix:"info",info:"idle"})[x[0]]+'">'+esc(x[1])+'</span>').join("")+'</div>':'<div class="meta">No problems</div>')+'</span></div>'}).join(""):'<div class="empty">No problems found.</div>')+'</div></section>'+
+     '<div class="act-row"><button class="btn" type="button" data-imp-back="1">Back to columns</button><button class="btn primary" type="button" data-imp-go="1"'+(n?'':' disabled')+'>Import '+n+' row'+(n===1?'':'s')+' into '+esc(siteById(imp.site).short)+'</button></div>'}
+  else if(imp.step===4){const last=S.imports[0];
+    body='<section class="panel"><div class="panel-b stack" style="gap:10px"><div class="chip c-ok" style="justify-self:start">Imported</div><h3>'+last.created.length+' new '+(imp.type==="sp"?"supply lines":imp.type==="hd"?"hard drives":"items")+(last.merged.length?' and '+last.merged.length+' existing line'+(last.merged.length===1?'':'s')+' topped up':'')+'</h3>'+
+     '<div class="muted">'+esc(last.file)+' → '+esc(siteName(last.site))+'. '+last.skipped+' row'+(last.skipped===1?' was':'s were')+' skipped. Every new record is in the Activity log.</div>'+
+     '<div class="act-row"><a class="btn primary" href="#'+({eq:"equipment",sp:"supplies",hd:"drives"})[last.type]+'" data-imp-view="'+last.site+'">View them</a><button class="btn" type="button" data-imp-undo="'+last.id+'">Undo this import</button><button class="btn" type="button" data-imp-new="1">Import another file</button></div></div></section>'}
+  const hist=S.imports.length?'<section class="panel"><div class="panel-h"><h3>Import history</h3><span class="eyebrow">'+S.imports.length+'</span></div>'+S.imports.slice(0,10).map(x=>'<div class="urow"><span class="when">'+fmtD(iso(new Date(x.at)))+'<small>'+ago(x.at)+'</small></span><span style="min-width:0"><div><b>'+esc(x.file)+'</b> · '+TYPE_TXT[x.type]+' → '+esc(siteById(x.site).short)+'</div><div class="meta">'+(x.undone?'Undone':x.created.length+' added'+(x.merged.length?', '+x.merged.length+' topped up':'')+', '+x.skipped+' skipped')+' · by '+esc(x.by)+'</div></span>'+(x.undone||!ed?'':'<button class="btn" type="button" data-imp-undo="'+x.id+'">Undo</button>')+'</div>').join("")+'</section>':'';
+  const exp='<section class="panel"><div class="panel-h"><h3>Export</h3><span class="eyebrow">'+(fleet()?'All vessels':esc(siteName(S.site)))+'</span></div><div class="panel-b stack" style="gap:10px"><div class="act-row"><button class="btn" type="button" data-export="eq">Equipment ('+EQ().length+')</button><button class="btn" type="button" data-export="sp">Supplies ('+SP().length+')</button><button class="btn" type="button" data-export="hd">Hard drives ('+HD().length+')</button><button class="btn" type="button" data-export="certs">Certificates ('+CERTS().length+')</button></div><div class="note">Saves a CSV file that opens in Excel. The finished app also saves straight to .xlsx.</div></div></section>';
+  return'<div class="stack">'+head+body+'<div class="grid2">'+exp+hist+'</div></div>'}
+function impRun(){const T=imp.type,site=imp.site;const batch={id:"I"+(S.seq++),file:imp.file,type:T,site,at:Date.now(),by:"You",created:[],merged:[],skipped:0};
+  imp.checked.forEach(r=>{if(!r.on){batch.skipped++;return}const R=r.rec;let it;
+    if(T==="sp"&&R.mergeInto){const ex=byId(R.mergeInto);ex.qty+=+R.qty||0;batch.merged.push([ex.id,+R.qty||0]);record(ex,"Quantity changed","+"+(R.qty||0)+" "+ex.unit+" from "+imp.file);return}
+    const id=R.id&&!byId(R.id)?R.id:nextIdFor(T);
+    if(T==="eq"){it={type:"eq",id,site,category:R.category,manufacturer:R.manufacturer||"Unknown",description:R.description,serial:R.serial,assetTag:R.assetTag,status:R.status,location:R.location,caseLoc:R.caseLoc||"No case",owner:R.owner||"Company",verified:R.verified||iso(TODAY),certExp:"",
+      cost:+R.cost||0,eccn:R.eccn||"EAR99",coo:R.coo||COO[R.manufacturer]||"",schedB:R.schedB||SCHEDB[R.category]||"",dims:(PACK[R.category]||[""])[0],weightLb:(PACK[R.category]||["",""])[1]||"",notes:R.notes};S.eq.push(it);
+      if(R.certExp)newCert(it,R.category==="Lifting Gear"?"Load test":"Calibration",R.certExp)}
+    else if(T==="sp"){it={type:"sp",id,site,kind:R.kind,description:R.description,unit:R.unit,min:+R.min||0,qty:+R.qty||0,location:R.location,box:R.box||"—"};S.sp.push(it)}
+    else{it={type:"hd",id,site,manufacturer:R.manufacturer||"Unknown",size:R.size||"—",serial:R.serial,status:R.status,job:R.job,client:R.client,dataDesc:R.dataDesc,issued:R.issued||(R.status==="Issued to Client"?iso(TODAY):"")};S.hd.push(it)}
+    batch.created.push(id);S.log.unshift({id:"L"+Date.now()+Math.random().toString(36).slice(2,6),at:Date.now(),who:"You",ref:id,what:"Imported",detail:imp.file+" · row "+r.n,synced:false})});
+  S.imports.unshift(batch);save();if(S.online)scheduleSync();imp.step=4;render();toast("Imported "+batch.created.length+" record"+(batch.created.length===1?"":"s")+".")}
+function impUndo(id){const b=S.imports.find(x=>x.id===id);if(!b||b.undone)return;const set=new Set(b.created);
+  S.eq=S.eq.filter(x=>!set.has(x.id));S.sp=S.sp.filter(x=>!set.has(x.id));S.hd=S.hd.filter(x=>!set.has(x.id));S.certs=S.certs.filter(c=>!set.has(c.itemId));
+  b.merged.forEach(([mid,q])=>{const x=byId(mid);if(x)x.qty=Math.max(0,x.qty-q)});b.undone=true;save();if(imp.step===4)impReset(true);render();toast("Import undone. "+b.created.length+" record"+(b.created.length===1?"":"s")+" removed.")}
+const csvCell=v=>{const t=String(v==null?"":v);return/[",\n]/.test(t)?'"'+t.replace(/"/g,'""')+'"':t};
+async function saveFile(filename,data,mime){const inClaude=!!(window.claude&&typeof window.claude.use==="function");const dl=inClaude?await getDownloads():null;
+  if(dl){try{await dl.save({filename,data});toast("Saved "+filename)}catch(e){const c=e&&e.code;if(c!=="declined")toast("Couldn't save the file in this view.")}return}
+  if(inClaude){toast("Downloading isn't available for this viewer.");return}
+  const url=URL.createObjectURL(new Blob([data],{type:mime||"text/csv"}));const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);toast("Saved "+filename)}
+function exportCSV(kind){const stamp=iso(TODAY);const sn=fleet()?"All vessels":siteById(S.site).short;let head,rows;
+  if(kind==="certs"){head=["Item ID","Item","Serial","Vessel / site","Certificate","Certificate no","Issued","Expires","Issued by","Status"];rows=CERTS().map(c=>{const it=byId(c.itemId);return[it.id,it.manufacturer+" "+it.description,it.serial,siteName(it.site),c.type,c.certNo,c.issued,c.expires,c.issuer,certState(c)[0]]})}
+  else{const F=IMP_FIELDS[kind];head=F.map(f=>f[1]).concat(["Vessel / site"]);const list=kind==="eq"?EQ():kind==="sp"?SP():HD();
+    rows=list.map(x=>F.map(f=>f[0]==="id"?x.id:x[f[0]]).concat([siteName(x.site)]))}
+  const csv="﻿"+[head].concat(rows).map(r=>r.map(csvCell).join(",")).join("\r\n");
+  saveFile(((kind==="certs"?"Certificates":TYPE_TXT[kind])+" - "+sn+" - "+stamp).replace(/[^A-Za-z0-9 ._-]/g,"")+".csv",csv,"text/csv")}
+
+const VIEWS={overview:vOverview,equipment:vEquipment,supplies:vSupplies,drives:vDrives,certs:vCerts,scan:vScan,labels:vLabels,reports:vReports,documents:vDocuments,import:vImport,activity:vActivity};
 function render(){renderTabs();renderSync();const v=document.getElementById("view");v.innerHTML=VIEWS[tab]();
-  if(tab==="equipment")eqRows();if(tab==="supplies")spRows();if(tab==="drives")hdRows();}
-function refreshList(){if(tab==="equipment")eqRows();else if(tab==="supplies")spRows();else if(tab==="drives")hdRows();else if(tab!=="scan"&&tab!=="labels")render()}
+  if(tab==="certs"&&(S.certView||"list")==="list")certRows();if(tab==="equipment")eqRows();if(tab==="supplies")spRows();if(tab==="drives")hdRows();}
+function refreshList(){if(tab==="certs"&&(S.certView||"list")==="list"){certRows();return}if(tab==="equipment")eqRows();else if(tab==="supplies")spRows();else if(tab==="drives")hdRows();else if(tab!=="scan"&&tab!=="labels")render()}
 
 /* ---------- detail sheet ---------- */
 let openId=null;
@@ -1031,32 +1433,33 @@ function refreshSheet(){if(!openId)return;const it=byId(openId);const root=docum
   const reps=S.reports.filter(r=>(r.data.itemId===it.id)||((r.data.lines||[]).some(l=>l.id===it.id)));let title,sub,fields,acts="";
   if(it.type==="eq"){const cd=it.certExp?daysTo(it.certExp):null;
     title=it.description;sub=esc(it.manufacturer)+" · "+esc(it.category);
-    fields=kv([["Serial",esc(it.serial),1],["Asset tag",esc(it.assetTag),1],["Location",esc(it.location)],["Case",esc(it.caseLoc)],["Owner",esc(it.owner)],["Last verified",fmtD(it.verified)+' <span class="muted">('+(-daysTo(it.verified))+' d)</span>'],
-      ["Calibration cert",it.certExp?fmtD(it.certExp)+(cd<0?' <span class="chip c-bad">Expired</span>':cd<=60?' <span class="chip c-warn">'+cd+' d</span>':''):""],["Cost","$"+Number(it.cost).toLocaleString(),1],["Export class (ECCN)",esc(it.eccn),1],["Notes",esc(it.notes)]]);
+    fields=kv([["Serial",esc(it.serial),1],["Asset tag",esc(it.assetTag),1],["Vessel / site",esc(siteName(it.site))],["Location",esc(it.location)],["Case",esc(it.caseLoc)],["Owner",esc(it.owner)],["Last verified",fmtD(it.verified)+' <span class="muted">('+(-daysTo(it.verified))+' d)</span>'],
+      ["Cost","$"+Number(it.cost).toLocaleString(),1],["Export class (ECCN)",esc(it.eccn),1],["Notes",esc(it.notes)]]);
     if(editor())acts='<div class="actions"><h3>Update</h3>'+
-      '<div class="act-row"><select id="aLoc" aria-label="New location">'+opts(LOCS,it.location)+'</select><button class="btn primary" type="button" data-act="move">Move here</button></div>'+
+      '<div class="act-row"><select id="aLoc" aria-label="New location">'+opts(locsFor(it.site),it.location)+'</select><button class="btn primary" type="button" data-act="move">Move here</button></div>'+transferRow(it)+
       '<div class="act-row"><select id="aSt" aria-label="New status">'+opts(EQ_STATUS,it.status)+'</select><button class="btn" type="button" data-act="status">Set status</button></div>'+
       '<div class="act-row"><button class="btn" type="button" data-act="verify">✓ Mark verified today</button></div>'+
       '<div class="act-row"><input type="text" id="aNote" placeholder="Add a note (e.g. sent for repair)" aria-label="Note"><button class="btn" type="button" data-act="note">Add note</button></div>'+
       '<div class="act-row" style="border-top:1px solid var(--line);padding-top:10px"><button class="btn" type="button" data-new-report="fr" data-item="'+it.id+'">Create fault report</button><button class="btn" type="button" data-new-report="om" data-item="'+it.id+'">Ship on a manifest</button></div></div>';
   }else if(it.type==="sp"){title=it.description;sub=esc(it.kind);
-    fields=kv([["On hand",'<b>'+it.qty+'</b> '+esc(it.unit)+(it.qty<=it.min?' <span class="chip c-'+(it.qty?'warn':'bad')+'">'+(it.qty?'Low':'Out')+'</span>':'')],["Reorder at",it.min+" "+esc(it.unit)],["Location",esc(it.location)],["Box / bin",esc(it.box)]]);
+    fields=kv([["Vessel / site",esc(siteName(it.site)),0,1],["On hand",'<b>'+it.qty+'</b> '+esc(it.unit)+(it.qty<=it.min?' <span class="chip c-'+(it.qty?'warn':'bad')+'">'+(it.qty?'Low':'Out')+'</span>':'')],["Reorder at",it.min+" "+esc(it.unit)],["Location",esc(it.location)],["Box / bin",esc(it.box)]]);
     if(editor())acts='<div class="actions"><h3>Update</h3><div class="act-row" style="align-items:center"><span class="qty'+(it.qty<=it.min?' low':'')+'"><button type="button" data-q="-1" data-id="'+it.id+'" aria-label="Use one">−</button><span>'+it.qty+' '+esc(it.unit)+'</span><button type="button" data-q="1" data-id="'+it.id+'" aria-label="Add one">+</button></span><span class="note">Use or restock</span></div>'+
-      '<div class="act-row"><select id="aLoc" aria-label="New location">'+opts(LOCS,it.location)+'</select><button class="btn primary" type="button" data-act="move">Move here</button></div></div>';
+      '<div class="act-row"><select id="aLoc" aria-label="New location">'+opts(locsFor(it.site),it.location)+'</select><button class="btn primary" type="button" data-act="move">Move here</button></div></div>';
   }else{title=it.manufacturer+" "+it.size;sub="Data drive";
     const same=S.hd.filter(h=>h.id!==it.id&&h.serial.toUpperCase()===it.serial.toUpperCase());
-    fields=kv([["Serial",esc(it.serial),1],["Contents",esc(it.dataDesc)],["Client",esc(it.client)],["Job number",esc(it.job),1],["Date issued",it.issued?fmtD(it.issued):""],["Status",chip(it.status)]].concat(same.length?[["Same drive, other uses",same.map(h=>'<button class="linkish" type="button" data-open="'+h.id+'">'+h.id+'</button> <span class="muted">'+esc(h.status+" · "+h.dataDesc+(h.client?" · "+h.client:""))+'</span>').join("<br>"),0,1]]:[]));
+    fields=kv([["Vessel / site",esc(siteName(it.site)),0,1],["Serial",esc(it.serial),1],["Contents",esc(it.dataDesc)],["Client",esc(it.client)],["Job number",esc(it.job),1],["Date issued",it.issued?fmtD(it.issued):""],["Status",chip(it.status)]].concat(same.length?[["Same drive, other uses",same.map(h=>'<button class="linkish" type="button" data-open="'+h.id+'">'+h.id+'</button> <span class="muted">'+esc(h.status+" · "+h.dataDesc+(h.client?" · "+h.client:""))+'</span>').join("<br>"),0,1]]:[]));
     if(editor()&&it.status==="Reformatted")acts='<div class="infobox"><div>This record is closed. The drive was reformatted and reused'+(it.reusedAs?' as <button class="linkish" type="button" data-open="'+it.reusedAs+'">'+it.reusedAs+'</button>':'')+'. Its job and client history stay here.</div></div>';
     else if(editor())acts='<div class="actions"><h3>Update</h3>'+(it.status==="On Hand"?
       '<div class="act-row"><select id="aCl" aria-label="Client">'+opts(CLIENTS,it.client||CLIENTS[0])+'</select><button class="btn primary" type="button" data-act="issue">Issue to client</button></div>':
       it.status==="Issued to Client"?'<div class="act-row"><button class="btn primary" type="button" data-act="return">Mark returned</button></div>':
       '<div class="act-row"><button class="btn primary" type="button" data-act="found">Mark found</button></div>')+
       (it.status==="On Hand"?'<div class="act-row"><button class="btn" type="button" data-new-report="tr" data-item="'+it.id+'">Create transmittal</button><button class="btn" type="button" data-act="reuse">Reformat for reuse</button></div>':'')+
-      (it.status!=="Missing"?'<div class="act-row"><button class="btn" type="button" data-act="missing">Report missing</button></div>':'')+'</div>';}
+      transferRow(it)+(it.status!=="Missing"?'<div class="act-row"><button class="btn" type="button" data-act="missing">Report missing</button></div>':'')+'</div>';}
   if(!editor())acts='<div class="locked">You have view-only access. Ask an editor to change this item.</div>';
   root.innerHTML='<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="'+esc(it.id)+'">'+
    '<div class="sheet-h"><div style="min-width:0"><div class="idbig">'+it.id+'</div><h3>'+esc(title)+'</h3><div class="muted" style="font-size:13px;margin-top:3px">'+sub+'</div>'+(it.status?'<div style="margin-top:8px">'+chip(it.status)+'</div>':'')+'</div><button class="x" type="button" data-close="1" aria-label="Close">×</button></div>'+
    '<div class="sheet-b">'+acts+fields+
+   (it.type==="eq"?certSection(it):'')+
    '<div class="qrbox"><span class="q">'+qrSvg(it.id,96)+'</span><div><b>QR label</b><div class="note">Stick this on the item. Scanning it opens this page.</div></div></div>'+
    (reps.length?'<section><h3 style="margin-bottom:6px">Reports</h3><div class="list">'+reps.map(r=>'<button class="frow" type="button" data-open-file="'+r.fileId+'">'+IC.doc(RT[r.type].c)+'<span style="min-width:0"><div class="nm">'+esc(r.no)+' '+RT[r.type].label+'</div><div class="meta">'+fmtD(r.date)+' · '+esc(r.title)+'</div></span><span class="chip c-idle">Open</span></button>').join("")+'</div></section>':'')+
    '<section><h3 style="margin-bottom:6px">History</h3><div class="hist">'+(hist.length?hist.map(e=>'<div><span class="mono muted" style="font-size:12px;white-space:nowrap">'+ago(e.at)+'</span><span><b>'+esc(e.what)+'</b> · '+esc(e.detail)+' <span class="muted">· '+esc(e.who)+'</span> '+(e.synced?'':'<span class="chip c-warn">Waiting to sync</span>')+'</span></div>').join(""):'<div><span></span><span class="muted">No changes recorded yet.</span></div>')+'</div></section>'+
@@ -1071,7 +1474,9 @@ function act(kind){const it=byId(openId);if(!it||!editor())return;const val=id=>
   else if(kind==="return"){it.status="On Hand";it.issued="";record(it,"Returned","Back on board from "+it.client)}
   else if(kind==="missing"){const from=it.status;it.status="Missing";record(it,"Reported missing","Was "+from)}
   else if(kind==="found"){it.status="On Hand";record(it,"Found","Located on board")}
-  else if(kind==="reuse"){const nid=nextIdFor("hd");const n={type:"hd",id:nid,manufacturer:it.manufacturer,size:it.size,serial:it.serial,status:"On Hand",job:"",client:"",dataDesc:"Blank",issued:""};
+  else if(kind==="transfer"){const to=val("aSite");if(!to||to===it.site)return;const from=it.site;it.site=to;it.location=locsFor(to)[0];record(it,"Transferred",siteName(from)+" → "+siteName(to));save();
+    if(!fleet()&&S.site!==to){closeSheet();refreshList();toast(it.id+" transferred to "+siteName(to)+". It now shows under that vessel.");return}toast(it.id+" transferred to "+siteName(to))}
+  else if(kind==="reuse"){const nid=nextIdFor("hd");const n={type:"hd",id:nid,site:it.site,manufacturer:it.manufacturer,size:it.size,serial:it.serial,status:"On Hand",job:"",client:"",dataDesc:"Blank",issued:""};
     S.hd.push(n);it.status="Reformatted";it.reusedAs=nid;record(it,"Reformatted",it.dataDesc+" wiped · reused as "+nid);record(n,"Reformatted for reuse","Same drive as "+it.id);
     save();refreshList();openSheet(nid);toast(it.id+" closed. The drive is now "+nid+". Stick its new label on the drive.");return}
   save();refreshSheet();refreshList();}
@@ -1090,6 +1495,27 @@ function scanPhoto(file){if(typeof window.jsQR!=="function"){toast("The scanner 
 
 /* ---------- events ---------- */
 document.addEventListener("click",e=>{const t=e.target;
+  {
+  const sc=t.closest("[data-site]");if(sc){setSite(sc.dataset.site);return}
+  const cv=t.closest("[data-cview]");if(cv){S.certView=cv.dataset.cview;save();render();return}
+  const rn=t.closest("[data-renew]");if(rn){renewCert(rn.dataset.renew);return}
+  const ac=t.closest("[data-addcert]");if(ac){const it=byId(ac.dataset.addcert);const ty=(document.getElementById("ncType")||{}).value||"Calibration";const ex=(document.getElementById("ncExp")||{}).value;if(!ex){toast("Pick the expiry date.");return}
+    const c=newCert(it,ty,ex);record(it,"Certificate added",ty+" · expires "+fmtD(ex));save();refreshSheet();toast(ty+" certificate added.");return}
+  const em=t.closest("[data-email]");if(em){const v=em.dataset.email;if(v==="summary")openPanel({kind:"email",summary:true});else{const p=v.split("|");openPanel({kind:"email",certId:p[0],rd:+p[1],overdue:p[2]==="1",in:+p[3]})}return}
+  const rd=t.closest("[data-rm-day]");if(rd&&editor()){const d=+rd.dataset.rmDay;S.remind.days=S.remind.days.filter(x=>x!==d);save();render();return}
+  const gd=t.closest("[data-g-del]");if(gd&&editor()){S.groups=S.groups.filter(g=>g.id!==gd.dataset.gDel);save();render();toast("Group removed.");return}
+  const gr=t.closest("[data-g-rm]");if(gr&&editor()){const [gid,m]=gr.dataset.gRm.split("|");const g=S.groups.find(x=>x.id===gid);if(g)g.members=g.members.filter(x=>x!==m);save();render();return}
+  const is=t.closest("[data-imp-sample]");if(is){impLoadRows(TYPE_TXT[imp.type].toLowerCase().replace(" ","-")+"-sample.csv",parseCSV(IMP_SAMPLES[imp.type]()));return}
+  const itp=t.closest("[data-imp-template]");if(itp){saveFile(TYPE_TXT[imp.type]+" import template.csv","﻿"+IMP_FIELDS[imp.type].map(f=>csvCell(f[1])).join(",")+"\r\n","text/csv");return}
+  const ib=t.closest("[data-imp-back]");if(ib){imp.step=imp.step===3?2:1;render();return}
+  const ick=t.closest("[data-imp-check]");if(ick){impCheck();imp.step=3;imp.only=imp.checked.some(r=>r.iss.length);render();return}
+  const igo=t.closest("[data-imp-go]");if(igo){impRun();return}
+  const iu=t.closest("[data-imp-undo]");if(iu){impUndo(iu.dataset.impUndo);return}
+  const inw=t.closest("[data-imp-new]");if(inw){impReset(true);render();return}
+  const iv=t.closest("[data-imp-view]");if(iv){S.site=iv.dataset.impView;S.f={q:"",cat:"",st:"",loc:""};S.fs={q:"",kind:""};S.fh={q:"",st:""};save();impReset(true);return}
+  const ex=t.closest("[data-export]");if(ex){exportCSV(ex.dataset.export);return}
+  }
+
   const nr=t.closest("[data-new-report]");if(nr){openReport(nr.dataset.newReport,nr.dataset.item);return}
   const tp=t.closest("[data-tpl]");if(tp){const f=S.files.find(x=>x.kind==="template"&&x.type===tp.dataset.tpl);if(f)openFile(f.id);return}
   const of=t.closest("[data-open-file]");if(of){openFile(of.dataset.openFile);return}
@@ -1112,26 +1538,54 @@ document.addEventListener("click",e=>{const t=e.target;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&(openId||panel))closeSheet();
   if((e.key==="Enter"||e.key===" ")&&e.target.matches&&e.target.matches(".row[role=button]")){e.preventDefault();openSheet(e.target.dataset.open)}});
 document.addEventListener("input",e=>{const id=e.target.id,tg=e.target;
+  if(id==="cq"){S.fc.q=tg.value;certRows();return}
   if(panel&&panel.kind==="report"&&tg.dataset.f&&tg.type!=="checkbox"&&tg.tagName!=="SELECT"){const k=tg.dataset.f;panel.draft[k]=tg.value;
     if(panel.type==="tr"){if(k==="contents")panel.draft.autoContents=!tg.value.trim();if(k==="subject")syncTr()}updatePreview();return}
   if(tg.dataset.pickq!=null){const q=tg.value.toLowerCase().trim();document.querySelectorAll("#pickList .pick-row").forEach(r=>r.hidden=!!q&&r.dataset.txt.indexOf(q)<0);return}
   if(panel&&panel.kind==="add"&&tg.dataset.a&&tg.type!=="checkbox"&&tg.tagName!=="SELECT"){panel.draft[tg.dataset.a]=tg.value;if(["serial","assetTag","description"].indexOf(tg.dataset.a)>-1){panel.confirm=false;const b=document.getElementById("dupBox");if(b)b.innerHTML=dupHTML(panel.draft,panel.addType)}return}
   if(id==="q"){if(tab==="equipment")S.f.q=e.target.value;else if(tab==="supplies")S.fs.q=e.target.value;else if(tab==="drives")S.fh.q=e.target.value;refreshList();save()}});
 document.addEventListener("change",e=>{const id=e.target.id,v=e.target.value,tg=e.target;
+  {
+  if(id==="siteSel"){setSite(v);return}
+  if(id==="cst"||id==="ctype"){S.fc[id==="cst"?"st":"type"]=v;save();certRows();return}
+  if(id==="rmOverdue"){S.remind.overdue=tg.checked;save();render();return}
+  if(id==="rmWeekly"){S.remind.weekly=tg.checked;save();render();return}
+  if(id==="rmDay"){S.remind.weekDay=v;save();render();return}
+  if(id==="rmTime"){S.remind.weekTime=v||"07:00";save();render();return}
+  if(tg.dataset.g&&editor()){const g=S.groups.find(x=>x.id===tg.dataset.gid);if(g){g[tg.dataset.g]=v;save();toast("Saved. "+g.name+" now gets: "+WHEN_TXT[g.when].toLowerCase()+".")}return}
+  if(id==="impType"){imp.type=v;return}
+  if(id==="impSite"){imp.site=v;return}
+  if(id==="impFile"){if(tg.files&&tg.files[0])impFile(tg.files[0]);tg.value="";return}
+  if(id==="impSheet"){imp.sheet=v;impLoadRows(imp.file,imp.sheets[v],imp.sheets);return}
+  if(tg.dataset.impMap!=null){imp.map[+tg.dataset.impMap]=v;render();return}
+  if(tg.dataset.impRow!=null){const r=imp.checked[+tg.dataset.impRow];if(r&&!r.err)r.on=tg.checked;const b=document.querySelector("[data-imp-go]");const n=imp.checked.filter(x=>x.on).length;if(b){b.textContent="Import "+n+" row"+(n===1?"":"s")+" into "+siteById(imp.site).short;b.disabled=!n}return}
+  if(id==="impOnly"){imp.only=tg.checked;render();return}
+  }
+
   if(panel&&panel.kind==="report"&&tg.dataset.f){const k=tg.dataset.f;panel.draft[k]=tg.type==="checkbox"?tg.checked:v;
     if(k==="client"&&panel.type==="tr"){panel.draft.toName="Onboard "+v+" Representative";syncTr()}
     if(k==="job"&&panel.type==="tr"){panel.draft.no=nextNo("tr",panel.draft.date,v);const n=document.querySelector('[data-f="no"]');if(n)n.value=panel.draft.no}
-    if(k==="itemId"||k==="client"||k==="date"||k==="job"){const keep=document.querySelector(".sheet-b");const st=keep?keep.scrollTop:0;renderPanel();const nb=document.querySelector(".sheet-b");if(nb)nb.scrollTop=st}else updatePreview();return}
+    if(k==="itemId"||k==="client"||k==="date"||k==="job"||k==="dest"||k==="vessel"){const keep=document.querySelector(".sheet-b");const st=keep?keep.scrollTop:0;renderPanel();const nb=document.querySelector(".sheet-b");if(nb)nb.scrollTop=st}else updatePreview();return}
   if(panel&&panel.kind==="report"&&tg.dataset.pick){const ids=panel.draft.ids,i=ids.indexOf(tg.dataset.pick);if(tg.checked&&i<0)ids.push(tg.dataset.pick);if(!tg.checked&&i>-1)ids.splice(i,1);
     const c=document.getElementById("pickCount");if(c)c.textContent=ids.length+" selected";if(panel.type==="tr")syncTr();updatePreview();return}
   if(panel&&panel.kind==="add"&&tg.dataset.a){const k=tg.dataset.a;panel.draft[k]=tg.type==="checkbox"?tg.checked:v;
-    if(k==="category"||k==="noSN"){const sb=document.querySelector(".sheet-b");const st=sb?sb.scrollTop:0;renderPanel();const nb=document.querySelector(".sheet-b");if(nb)nb.scrollTop=st}return}
+    if(k==="site"){const L=locsFor(v);if(L.indexOf(panel.draft.location)<0)panel.draft.location=L[Math.min(L.length-1,panel.addType==="sp"?3:0)]}
+    if(k==="category"||k==="noSN"||k==="site"){const sb=document.querySelector(".sheet-b");const st=sb?sb.scrollTop:0;renderPanel();const nb=document.querySelector(".sheet-b");if(nb)nb.scrollTop=st}return}
   if(id==="addPhoto"){if(tg.files&&tg.files[0])decodeFile(tg.files[0],handleAddCode);tg.value="";return}
   if(id==="fcat")S.f.cat=v;else if(id==="fst")S.f.st=v;else if(id==="floc")S.f.loc=v;else if(id==="fkind")S.fs.kind=v;else if(id==="fhst")S.fh.st=v;
   else if(id==="labCat"){S.lab.cat=v;save();render();return}
   else if(id==="photo"){if(e.target.files&&e.target.files[0])scanPhoto(e.target.files[0]);e.target.value="";return}
   else return;save();refreshList()});
-document.addEventListener("submit",e=>{if(e.target.id==="nfForm"){e.preventDefault();const n=(document.getElementById("nfName").value||"").trim().replace(/[\\/]/g,"-");
+document.addEventListener("submit",e=>{
+  {
+  if(e.target.id==="dayForm"){e.preventDefault();const d=parseInt(document.getElementById("dayIn").value,10);if(isNaN(d)||d<0||d>365){toast("Enter a number of days from 0 to 365.");return}if(S.remind.days.indexOf(d)<0)S.remind.days.push(d);save();render();toast("Reminders now also go "+(d===0?"on the day":d+" days before expiry")+".");return}
+  if(e.target.id==="grpForm"){e.preventDefault();const n=document.getElementById("gName").value.trim(),m=document.getElementById("gMail").value.trim();if(!n){toast("Give the group a name.");return}
+    if(m&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){toast("That email address doesn’t look right.");return}
+    S.groups.push({id:"G"+(S.seq++),name:n,members:m?[m]:[],site:fleet()?"ALL":S.site,type:"ALL",when:"all"});save();render();toast("Group “"+n+"” added.");return}
+  if(e.target.dataset&&e.target.dataset.gadd){e.preventDefault();const g=S.groups.find(x=>x.id===e.target.dataset.gadd);const inp=e.target.querySelector("input");const m=(inp.value||"").trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){toast("That email address doesn’t look right.");return}if(g.members.indexOf(m)<0)g.members.push(m);save();render();return}
+  }
+if(e.target.id==="nfForm"){e.preventDefault();const n=(document.getElementById("nfName").value||"").trim().replace(/[\\/]/g,"-");
     if(!n){toast("Type a folder name.");return}if(kidsOf(S.docFolder).some(f=>f.name.toLowerCase()===n.toLowerCase())){toast("There's already a folder called "+n+" here.");return}
     const f={id:"F"+(S.seq++),name:n,parent:S.docFolder,created:Date.now(),by:"You"};S.folders.push(f);newFolderOpen=false;save();render();toast("Folder “"+n+"” created.");return}
   if(e.target.id==="idForm"){e.preventDefault();const v=document.getElementById("idIn").value.trim().toUpperCase();
@@ -1143,6 +1597,9 @@ document.getElementById("roleViewer").addEventListener("click",()=>{S.role="view
 const resetBtn=document.getElementById("resetBtn");let resetArm=false;
 resetBtn.addEventListener("click",()=>{if(!resetArm){resetArm=true;resetBtn.textContent="Tap again to reset";setTimeout(()=>{resetArm=false;resetBtn.textContent="Reset demo data"},3000);return}
   resetArm=false;resetBtn.textContent="Reset demo data";S=build();seedDocs();save();closeSheet();render();toast("Demo data reset.")});
+document.addEventListener("dragover",e=>{const z=e.target.closest&&e.target.closest(".dropzone");if(z){e.preventDefault();z.classList.add("over")}});
+document.addEventListener("dragleave",e=>{const z=e.target.closest&&e.target.closest(".dropzone");if(z)z.classList.remove("over")});
+document.addEventListener("drop",e=>{const z=e.target.closest&&e.target.closest(".dropzone");if(z){e.preventDefault();z.classList.remove("over");const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(f)impFile(f)}});
 window.addEventListener("hashchange",()=>{readHash();render();window.scrollTo(0,0)});
 setInterval(renderSync,30000);
 
